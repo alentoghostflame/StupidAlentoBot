@@ -183,5 +183,5 @@ class StupidAlentoBot:
 stupid_bot = StupidAlentoBot()
 stupid_bot.load_data()
 stupid_bot.update_data()
-stupid_bot.run("NjY2NzY4Njg5NzY4NTYyNzM4.Xh4-5A.N4MmdSZt8P7B16fgXt25JDcjBLA")
+stupid_bot.run("")
 stupid_bot.save_data()
