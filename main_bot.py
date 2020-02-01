@@ -1,6 +1,7 @@
 from stupid_utils import DataSync, default_server_data
 from discord.ext import commands
 from datetime import datetime
+import stupid_utils
 import admin_module
 import info_module
 import typing
@@ -32,13 +33,17 @@ class StupidAlentoBot:
 
         self.data_sync = DataSync(self, self.bot)
         self.bot_data: typing.Dict[str, dict] = {"testing": default_server_data()}
+        self.config = stupid_utils.default_config_file()
 
         # self.bot.add_cog(OnMessageCog())
         self.bot.add_cog(admin_module.AdminCog(self.data_sync, self.bot_data))
         self.bot.add_cog(info_module.InfoCog(self.data_sync, self.bot_data))
 
-    def run(self, token: str):
-        self.bot.run(token)
+    def run(self):
+        if not self.config["token"]:
+            print("Please put your token into your config file.")
+        else:
+            self.bot.run(self.config["token"])
 
     def load_data(self):
         print("Attempting to load bot data.")
@@ -46,7 +51,16 @@ class StupidAlentoBot:
             file = open("save_data.yaml", "r")
             self.bot_data.update(yaml.full_load(file))
         else:
-            print("File doesn't exist yet, using default.")
+            print("Data file doesn't exist yet, using default.")
+
+        if os.path.exists("config.yaml"):
+            file = open("config.yaml", "r")
+            self.config.update(yaml.full_load(file))
+        else:
+            print("Config file doesn't exist yet, using default and creating.")
+            file = open("config.yaml", "w+")
+            yaml.dump(self.config, file, default_flow_style=None)
+
         print("Load complete.")
 
     def save_data(self):
@@ -183,5 +197,5 @@ class StupidAlentoBot:
 stupid_bot = StupidAlentoBot()
 stupid_bot.load_data()
 stupid_bot.update_data()
-stupid_bot.run("")
+stupid_bot.run()
 stupid_bot.save_data()

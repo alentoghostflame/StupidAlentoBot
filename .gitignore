@@ -2,3 +2,4 @@
 __pycache__/
 venv/
 save_data.yaml
+config.yaml
