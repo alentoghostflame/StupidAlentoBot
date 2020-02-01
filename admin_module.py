@@ -1,4 +1,4 @@
-from stupid_utils import DataSync, ENABLE_PHRASES, DISABLE_PHRASES, default_server_data, get_id_from_mention
+# from stupid_utils import DataSync, ENABLE_PHRASES, DISABLE_PHRASES, default_server_data
 from discord.ext import tasks, commands
 from datetime import datetime, timedelta
 # from discord import utils
@@ -14,13 +14,13 @@ REMIND_DELETE_PHRASES: set = {"Hey, I thought I remembered {1} saying \"{0}\"",
 
 
 class AdminCog(commands.Cog, name="Admin Module"):
-    def __init__(self, data_sync: DataSync, bot_data: typing.Dict[str, dict]):
+    def __init__(self, data_sync: stupid_utils.DataSync, bot_data: typing.Dict[str, dict]):
         super().__init__()
         self.data_sync = data_sync
         self.bot_data = bot_data
 
-        self.enable_phrases: set = ENABLE_PHRASES
-        self.disable_phrases: set = DISABLE_PHRASES
+        self.enable_phrases: set = stupid_utils.ENABLE_PHRASES
+        self.disable_phrases: set = stupid_utils.DISABLE_PHRASES
 
         self.remind_delete_phrases: set = REMIND_DELETE_PHRASES
 
@@ -44,7 +44,7 @@ class AdminCog(commands.Cog, name="Admin Module"):
     async def warn(self, context, arg=None, *reason):
         server = context.guild.id
         if server not in self.bot_data:
-            self.bot_data[server] = default_server_data()
+            self.bot_data[server] = stupid_utils.default_server_data()
 
         # if role_check(context.author.roles, self.bot_data[server]["warn_roles"]):
         #     if self.bot_data[server]["warn_role"] == 0:
@@ -73,16 +73,21 @@ class AdminCog(commands.Cog, name="Admin Module"):
             role = context.guild.get_role(int(self.bot_data[server]["warn_role"]))
             await member.add_roles(role, reason="{} warned because: \"{}\"".format(context.author.name,
                                                                                    " ".join(reason)))
+            if reason:
+                await member.add_roles(role, reason="{} warned because: \"{}\"".format(context.author.name,
+                                                                                       " ".join(reason)))
+                await context.send("Warned for 30 seconds for: \"{}\"".format(" ".join(reason)))
+            else:
+                await member.add_roles(role, reason="{} warned them.".format(context.author.name))
+                await context.send("Warned for 30 seconds.")
             self.bot_data[server]["warned_users"].add((member.id, datetime.utcnow() + timedelta(seconds=30)))
-
-            await context.send("Warned for 30 seconds for: \"{}\"".format(" ".join(reason)))
 
     @commands.has_permissions(administrator=True)
     @commands.command(name="set_warn_role", usage="@role", brief="Set the role to give warned users.")
     async def set_warn_role(self, context, arg=None):
         server = context.guild.id
         if server not in self.bot_data:
-            self.bot_data[server] = default_server_data()
+            self.bot_data[server] = stupid_utils.default_server_data()
         self.bot_data[server]["warn_role"], message = set_role_to(self.bot_data[server]["warn_role"], arg,
                                                                   "Set {} to the warned role.",
                                                                   "That role is already set.")
@@ -93,7 +98,7 @@ class AdminCog(commands.Cog, name="Admin Module"):
     async def clear_warn_role(self, context):
         server = context.guild.id
         if server not in self.bot_data:
-            self.bot_data[server] = default_server_data()
+            self.bot_data[server] = stupid_utils.default_server_data()
         if self.bot_data[server]["warn_role"] == 0:
             await context.send("No role was set?")
         else:
@@ -105,7 +110,7 @@ class AdminCog(commands.Cog, name="Admin Module"):
     async def add_warn_role(self, context, arg=None):
         server = context.guild.id
         if server not in self.bot_data:
-            self.bot_data[server] = default_server_data()
+            self.bot_data[server] = stupid_utils.default_server_data()
         message = add_role_to(self.bot_data[server]["warn_roles"], arg, "Added {} to roles that can warn.",
                               "That role can already warn.")
         await context.send(message)
@@ -115,7 +120,7 @@ class AdminCog(commands.Cog, name="Admin Module"):
     async def remove_warn_role(self, context, arg=None):
         server = context.guild.id
         if server not in self.bot_data:
-            self.bot_data[server] = default_server_data()
+            self.bot_data[server] = stupid_utils.default_server_data()
         message = remove_role_from(self.bot_data[server]["warn_roles"], arg, "Removed {} from roles that can warn.",
                                    "That role already can't warn.")
         await context.send(message)
@@ -129,7 +134,7 @@ class AdminCog(commands.Cog, name="Admin Module"):
     async def set_mute_role(self, context, arg=None):
         server = context.guild.id
         if server not in self.bot_data:
-            self.bot_data[server] = default_server_data()
+            self.bot_data[server] = stupid_utils.default_server_data()
         self.bot_data[server]["mute_role"], message = set_role_to(self.bot_data[server]["mute_role"], arg,
                                                                   "Set {} to the muted role.",
                                                                   "That role is already set.")
@@ -140,7 +145,7 @@ class AdminCog(commands.Cog, name="Admin Module"):
     async def clear_mute_role(self, context):
         server = context.guild.id
         if server not in self.bot_data:
-            self.bot_data[server] = default_server_data()
+            self.bot_data[server] = stupid_utils.default_server_data()
         if self.bot_data[server]["mute_role"] == 0:
             await context.send("No role was set?")
         else:
@@ -152,7 +157,7 @@ class AdminCog(commands.Cog, name="Admin Module"):
     async def add_mute_role(self, context, arg=None):
         server = context.guild.id
         if server not in self.bot_data:
-            self.bot_data[server] = default_server_data()
+            self.bot_data[server] = stupid_utils.default_server_data()
         message = add_role_to(self.bot_data[server]["mute_roles"], arg, "Added {} to roles that can mute.",
                               "That role can already mute.")
         await context.send(message)
@@ -162,7 +167,7 @@ class AdminCog(commands.Cog, name="Admin Module"):
     async def remove_mute_role(self, context, arg=None):
         server = context.guild.id
         if server not in self.bot_data:
-            self.bot_data[server] = default_server_data()
+            self.bot_data[server] = stupid_utils.default_server_data()
         message = remove_role_from(self.bot_data[server]["mute_roles"], arg, "Removed {} from roles that can mute.",
                                    "That role already can't mute.")
         await context.send(message)
@@ -223,7 +228,7 @@ class AdminCog(commands.Cog, name="Admin Module"):
     async def toggle_callout_delete(self, context, arg=None):
         server = context.guild.id
         if server not in self.bot_data:
-            self.bot_data[server] = default_server_data()
+            self.bot_data[server] = stupid_utils.default_server_data()
 
         self.bot_data[server]["callout_delete_enabled"], message = toggle_feature(arg, "callout_delete", self.enable_phrases, self.disable_phrases, self.bot_data[server]["callout_delete_enabled"])
         await context.send(message)
@@ -231,7 +236,7 @@ class AdminCog(commands.Cog, name="Admin Module"):
     async def callout_delete(self, message: discord.Message):
         server = message.guild.id
         if server not in self.bot_data:
-            self.bot_data[server] = default_server_data()
+            self.bot_data[server] = stupid_utils.default_server_data()
         try:
             if self.bot_data[server]["callout_delete_enabled"] and not message.author.bot and await check_audit_message_delete(message, message.author):
                 await message.channel.send(random.sample(self.remind_delete_phrases, 1)[0].format(message.content, mention(message.author.id)))
