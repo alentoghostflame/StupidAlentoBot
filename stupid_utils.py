@@ -18,6 +18,14 @@ class DataSync:
         # self.callout_delete_enable: dict = dict()
 
 
+def default_config_file() -> dict:
+    output = dict()
+
+    output["token"] = ""
+
+    return output
+
+
 def default_server_data():
     output = dict()
     output["messages_read_total"] = 0
