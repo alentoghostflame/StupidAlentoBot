@@ -55,3 +55,11 @@ def get_id_from_mention(mention: str) -> int:
     numbers = re.compile('\\d+(?:\\.\\d+)?')
     if bool(re.search('\\d', mention)):
         return int(numbers.findall(mention)[0])
+
+
+def rm_id_from_bot_data(bot_data: dict, guild_id: int, user_id: int, bot_data_section):
+    set_copy: set = bot_data[guild_id][bot_data_section].copy()
+    for user_date in bot_data[guild_id][bot_data_section]:
+        if user_date[0] == user_id:
+            set_copy.remove(user_date)
+            print("Removed user ID {} from bot data.".format(user_date[0]))
