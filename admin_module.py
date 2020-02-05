@@ -46,41 +46,43 @@ class AdminCog(commands.Cog, name="Admin Module"):
         if server not in self.bot_data:
             self.bot_data[server] = stupid_utils.default_server_data()
 
-        # if role_check(context.author.roles, self.bot_data[server]["warn_roles"]):
-        #     if self.bot_data[server]["warn_role"] == 0:
-        #         await context.send("You need to assign a warn role via `;set_warn_role @role` first.")
-        #     else:
-        #         role_obj = context.guild.get_role(int(self.bot_data[server]["warn_role"]))
-        #         user_obj = context.guild.get_member(get_id_from_mention(arg))
-        #         await user_obj.add_roles(role_obj, reason="{} issued a Warn".format(context.author.name))
-        #         time = datetime.utcnow() + timedelta(seconds=30)
-        #         self.bot_data[server]["warned_users"].add((get_id_from_mention(arg), time))
-        #         await context.send("Warned for 30 minutes.")
-        # else:
-        #     await context.send("You lack the role required to warn.")
-
         member = stupid_utils.get_user_from_mention(context.guild, arg)
+        warn_role = context.guild.get_role(int(self.bot_data[server]["warn_role"]))
 
         if not role_check(context.author.roles, self.bot_data[server]["warn_roles"]):
             await context.send("You lack the role required to warn.")
-        elif self.bot_data[server]["warn_role"] == 0:
-            await context.send("You need to assign a warn role via `;set_warn_role @role` first.")
+        elif not warn_role:
+            await context.send("You need to assign a valid warn role via `;set_warn_role @role` first.")
         elif not member:
             await context.send("That doesn't appear to be a user on your server.")
         elif role_check(member.roles, self.bot_data[server]["warn_roles"]):
             await context.send("You can't warn the warners.")
+        elif role_check(member.roles, {warn_role.id}):
+            mute_role = context.guild.get_role(int(self.bot_data[server]["warn_role"]))
+            if not mute_role:
+                await context.send("You need to assign a valid mute role via `;set_mute_role @role` before the "
+                                   "double-warn -> mute can happen.")
+            elif reason:
+                await member.add_roles(mute_role, reason="{} did the 2nd warn for: \"{}\"".format(context.author.name,
+                                                                                                  " ".join(reason)))
+                await context.send("Due to double warn, muted for 30 minutes for: \"{}\"".format(" ".join(reason)))
+                stupid_utils.rm_id_from_bot_data(self.bot_data, server, member.id, "muted_users")
+                self.bot_data[server]["muted_users"].add((member.id, datetime.utcnow() + timedelta(minutes=30)))
+            else:
+                await member.add_roles(mute_role, reason="{} did the 2nd warn.".format(context.author.name))
+                await context.send("Due to double warn, muted for 30 minutes.")
+                stupid_utils.rm_id_from_bot_data(self.bot_data, server, member.id, "muted_users")
+                self.bot_data[server]["muted_users"].add((member.id, datetime.utcnow() + timedelta(minutes=30)))
         else:
-            role = context.guild.get_role(int(self.bot_data[server]["warn_role"]))
-            await member.add_roles(role, reason="{} warned because: \"{}\"".format(context.author.name,
-                                                                                   " ".join(reason)))
             if reason:
-                await member.add_roles(role, reason="{} warned because: \"{}\"".format(context.author.name,
-                                                                                       " ".join(reason)))
+                await member.add_roles(warn_role, reason="{} warned because: \"{}\"".format(context.author.name,
+                                                                                            " ".join(reason)))
                 await context.send("Warned for 30 seconds for: \"{}\"".format(" ".join(reason)))
             else:
-                await member.add_roles(role, reason="{} warned them.".format(context.author.name))
-                await context.send("Warned for 30 seconds.")
-            self.bot_data[server]["warned_users"].add((member.id, datetime.utcnow() + timedelta(seconds=30)))
+                await member.add_roles(warn_role, reason="{} warned them.".format(context.author.name))
+                await context.send("Warned for 30 minutes.")
+            stupid_utils.rm_id_from_bot_data(self.bot_data, server, member.id, "warned_users")
+            self.bot_data[server]["warned_users"].add((member.id, datetime.utcnow() + timedelta(minutes=30)))
 
     @commands.has_permissions(administrator=True)
     @commands.command(name="set_warn_role", usage="@role", brief="Set the role to give warned users.")
@@ -129,6 +131,36 @@ class AdminCog(commands.Cog, name="Admin Module"):
     Mute Related
     
     """
+    @commands.command(name="mute", usage="@user", brief="Mute the user.")
+    async def mute(self, context, arg=None, *reason):
+        server = context.guild.id
+        if server not in self.bot_data:
+            self.bot_data[server] = stupid_utils.default_server_data()
+
+        member = stupid_utils.get_user_from_mention(context.guild, arg)
+
+        if not role_check(context.author.roles, self.bot_data[server]["mute_roles"]):
+            await context.send("You lack the role required to mute.")
+        elif self.bot_data[server]["mute_role"] == 0:
+            await context.send("You need to assign a mute role via `;set_mute_role @role` first.")
+        elif not member:
+            await context.send("That doesn't appear to be a user on your server.")
+        elif role_check(member.roles, self.bot_data[server]["mute_roles"]):
+            await context.send("You can't mute the muters.")
+        else:
+            role = context.guild.get_role(int(self.bot_data[server]["mute_role"]))
+            await member.add_roles(role, reason="{} muted because: \"{}\"".format(context.author.name,
+                                                                                  " ".join(reason)))
+            if reason:
+                await member.add_roles(role, reason="{} muted because: \"{}\"".format(context.author.name,
+                                                                                      " ".join(reason)))
+                await context.send("Muted for 30 minutes for: \"{}\"".format(" ".join(reason)))
+            else:
+                await member.add_roles(role, reason="{} muted them.".format(context.author.name))
+                await context.send("Muted for 30 minutes.")
+            stupid_utils.rm_id_from_bot_data(self.bot_data, server, member.id, "muted_users")
+            self.bot_data[server]["muted_users"].add((member.id, datetime.utcnow() + timedelta(minutes=30)))
+
     @commands.has_permissions(administrator=True)
     @commands.command(name="set_mute_role", usage="@role", brief="Set the role to give muted users.")
     async def set_mute_role(self, context, arg=None):
@@ -188,9 +220,10 @@ class AdminCog(commands.Cog, name="Admin Module"):
                 temp_warned_users: set = self.bot_data[server]["warned_users"].copy()
 
                 for user_date in self.bot_data[server]["warned_users"]:
-                    user_obj = server_obj.get_member(user_date[0])
-                    await user_obj.remove_roles(warn_role_obj, reason="Warn Time Expired.")
-                    temp_warned_users.remove(user_date)
+                    if user_date[1] < datetime.utcnow():
+                        user_obj = server_obj.get_member(user_date[0])
+                        await user_obj.remove_roles(warn_role_obj, reason="Warn Time Expired.")
+                        temp_warned_users.remove(user_date)
                 self.bot_data[server]["warned_users"] = temp_warned_users.copy()
 
             if self.bot_data[server]["mute_role"] != 0:
@@ -198,9 +231,11 @@ class AdminCog(commands.Cog, name="Admin Module"):
                 temp_muted_users = self.bot_data[server]["muted_users"].copy()
 
                 for user_date in self.bot_data[server]["muted_users"]:
-                    user_obj = server_obj.get_member(user_date[0])
-                    await user_obj.remove_roles(mute_role_obj, reason="Mute Time Expired.")
-                    temp_muted_users.remove(user_date)
+                    if user_date[1] < datetime.utcnow():
+                        user_obj = server_obj.get_member(user_date[0])
+                        await user_obj.remove_roles(mute_role_obj, reason="Mute Time Expired.")
+                        temp_muted_users.remove(user_date)
+                        print("Removed mute on {}.".format(user_obj.name))
                 self.bot_data[server]["muted_users"] = temp_muted_users.copy()
     """
     
@@ -223,6 +258,7 @@ class AdminCog(commands.Cog, name="Admin Module"):
     Call-out related.
     
     """
+    @commands.has_permissions(administrator=True)
     @commands.command(name="callout_delete", usage="true/false, on/off, enable/disable, online/offline",
                       brief="Toggle call-out on message delete.")
     async def toggle_callout_delete(self, context, arg=None):
@@ -254,11 +290,8 @@ Outside of Cog.
 
 
 async def check_audit_message_delete(message: discord.Message, user: discord.User):
-    # after_time = datetime.datetime.utcnow().replace(tzinfo=None) - datetime.timedelta(seconds=30)
-    # audit_logs = message.guild.audit_logs(limit=1, action=discord.AuditLogAction.message_delete, after=after_time)
     audit_logs = message.guild.audit_logs(limit=1, action=discord.AuditLogAction.message_delete)
     async for audit in audit_logs:
-        # if audit.target.id == user.id and after_time > audit.created_at:
         if audit.target.id == user.id:
             return False
     return True
