@@ -239,22 +239,6 @@ class AdminCog(commands.Cog, name="Admin Module"):
                 self.bot_data[server]["muted_users"] = temp_muted_users.copy()
     """
     
-    Error Related
-    
-    """
-    @set_mute_role.error
-    @clear_mute_role.error
-    @add_mute_role.error
-    @remove_mute_role.error
-    @set_warn_role.error
-    @clear_warn_role.error
-    @add_warn_role.error
-    @remove_warn_role.error
-    async def administrator_permission_error(self, context, error):
-        if isinstance(error, commands.MissingPermissions):
-            await context.send("You lack the administrator permission.")
-    """
-    
     Call-out related.
     
     """
@@ -280,6 +264,29 @@ class AdminCog(commands.Cog, name="Admin Module"):
             if ex.code == 50013:
                 self.bot_data[server]["callout_delete_enabled"] = False
                 await message.channel.send("I need permission to view the audit log to call out deletes. Disabling.")
+    """
+
+    Error Related
+
+    """
+    @set_mute_role.error
+    @clear_mute_role.error
+    @add_mute_role.error
+    @remove_mute_role.error
+    @set_warn_role.error
+    @clear_warn_role.error
+    @add_warn_role.error
+    @remove_warn_role.error
+    @toggle_callout_delete.error
+    async def administrator_permission_error(self, context, error):
+        if isinstance(error, commands.MissingPermissions):
+            await context.send("You lack the administrator permission.")
+
+    @warn.error
+    @mute.error
+    async def missing_access_error(self, context, error):
+        if isinstance(error, commands.CommandInvokeError):
+            await context.send("`403 FORBIDDEN: Missing Access` Am I missing a permission?")
 
 
 """
