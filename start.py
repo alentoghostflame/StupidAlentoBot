@@ -41,10 +41,16 @@ def setup_logging():
     sys.excepthook = log_exception_handler
 
 
-setup_logging()
-logger = logging.getLogger("Main")
 stupid_bot = StupidAlentoBot()
-stupid_bot.load_data()
-stupid_bot.update_data()
-stupid_bot.run()
-stupid_bot.save_data()
+logger = logging.getLogger("Main")
+try:
+    setup_logging()
+    logger = logging.getLogger("Main")
+    # stupid_bot = StupidAlentoBot()
+    stupid_bot.load_data()
+    stupid_bot.update_data()
+    stupid_bot.run()
+    stupid_bot.save_data()
+except:
+    logger.critical("SOMETHING TERRIBLE HAPPENED!")
+    stupid_bot.save_data()
