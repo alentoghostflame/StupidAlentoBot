@@ -32,7 +32,8 @@ def default_server_data():
     output["messages_sent_total"] = 0
 
     # noinspection SpellCheckingInspection
-    output["callout_delete_enabled"] = True
+    output["callout_delete_enabled"]: bool = True
+    output["info_braces_enabled"]: bool = False
 
     output["warn_roles"] = set()
     output["warn_role"] = 0
@@ -41,6 +42,8 @@ def default_server_data():
 
     output["warned_users"]: set = set()  # (user_id, datetime)
     output["muted_users"]: set = set()  # (user_id, datetime)
+
+    output["info"]: dict = dict()
 
     return output
 
@@ -63,3 +66,21 @@ def rm_id_from_bot_data(bot_data: dict, guild_id: int, user_id: int, bot_data_se
         if user_date[0] == user_id:
             set_copy.remove(user_date)
             print("Removed user ID {} from bot data.".format(user_date[0]))
+
+
+def toggle_feature(arg: str, feature_name: str, enable_phrases: set, disable_phrases: set, enabled_var: bool):
+    if arg:
+        if any(x in arg.lower() for x in enable_phrases):
+            if enabled_var:
+                return True, "{} is already enabled.".format(feature_name)
+            else:
+                return True, "{} enabled.".format(feature_name)
+        elif any(x in arg.lower() for x in disable_phrases):
+            if enabled_var:
+                return False, "{} disabled.".format(feature_name)
+            else:
+                return False, "{} is already disabled.".format(feature_name)
+        else:
+            return enabled_var, "Argument `{}` is invalid for feature `{}`.".format(arg, feature_name)
+    else:
+        return enabled_var, "You need to actually say something after `;{}`, like enable or disable.".format(feature_name.lower())
