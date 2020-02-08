@@ -1,8 +1,14 @@
 from discord.ext import commands
 import stupid_utils
+import logging
 import discord
 import typing
+import sys
 import re
+
+
+logger = logging.getLogger("Main")
+sys.excepthook = stupid_utils.log_exception_handler
 
 
 class InfoCog(commands.Cog, name="Info Module"):
@@ -16,7 +22,7 @@ class InfoCog(commands.Cog, name="Info Module"):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print("Info Module Ready.")
+        logger.info("Info Module Ready.")
 
     @commands.Cog.listener()
     async def on_message(self, message):
@@ -24,7 +30,7 @@ class InfoCog(commands.Cog, name="Info Module"):
             await self.info(message)
 
     @commands.command(name="info", usage="<enable, disable>", brief="Enable or disable")
-    async def into_toggle(self, context, arg=None):
+    async def info_toggle(self, context, arg=None):
         server = context.guild.id
         if server not in self.bot_data:
             self.bot_data[server] = stupid_utils.default_server_data()
@@ -77,10 +83,6 @@ class InfoCog(commands.Cog, name="Info Module"):
                     embed.add_field(name=keyword, value=self.bot_data[server]["info"][keyword], inline=True)
             if embed.fields:
                 await message.channel.send(embed=embed)
-
-
-
-
 
     @info_admin.error
     async def administrator_permission_error(self, context, error):

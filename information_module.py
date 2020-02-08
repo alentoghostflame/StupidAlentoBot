@@ -1,7 +1,14 @@
 from stupid_utils import DataSync, default_server_data
 from discord.ext import commands
+import stupid_utils
 import discord
+import logging
 import typing
+import sys
+
+
+logger = logging.getLogger("Main")
+sys.excepthook = stupid_utils.log_exception_handler
 
 
 class InformationalCog(commands.Cog, name="Information Module"):

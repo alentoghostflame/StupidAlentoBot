@@ -3,14 +3,21 @@ from discord.ext import tasks, commands
 from datetime import datetime, timedelta
 # from discord import utils
 import stupid_utils
+import logging
 import discord
 import typing
 import random
+import sys
 import re
 
 
 REMIND_DELETE_PHRASES: set = {"Hey, I thought I remembered {1} saying \"{0}\"",
                               "Hey {1}, didn't you say something like \"{0}\"?", "\"{0}\" - {1}."}
+
+
+logger = logging.getLogger("Main")
+
+sys.excepthook = stupid_utils.log_exception_handler
 
 
 class AdminCog(commands.Cog, name="Admin Module"):

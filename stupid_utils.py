@@ -1,10 +1,28 @@
 from discord.ext import commands
+import traceback
+import logging
 import discord
+import sys
 import re
 
 
 ENABLE_PHRASES: set = {"true", "on", "enable", "online"}
 DISABLE_PHRASES: set = {"false", "off", "disable", "offline"}
+
+
+logger = logging.getLogger("Main")
+
+
+def log_exception_handler(error_type, value, tb):
+    # TODO: Unify logging errors.
+    the_logger = logging.getLogger("Main")
+    the_logger.critical("Uncaught exception:\n"
+                        "Type: {}\n"
+                        "Value: {}\n"
+                        "Traceback:\n {}".format(str(error_type), str(value), "".join(traceback.format_tb(tb))))
+
+
+sys.excepthook = log_exception_handler
 
 
 class DataSync:

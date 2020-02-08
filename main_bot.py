@@ -4,8 +4,10 @@ import information_module
 import stupid_utils
 import admin_module
 import info_module
+import logging
 import typing
 import yaml
+import sys
 import os
 # import discord
 # import random
@@ -25,6 +27,10 @@ import os
 # SELF_CORRECTION_EXPLICIT_TRIGGERS: set = {"SAB", "sab", "stupidalentobot"}
 # SELF_CORRECTION_PHRASES: set = {"Just @mention me next time.", "Instead of calling me that, try {1}",
 #                                 "Calling me the correct name ({1}) would be nice."}
+
+
+logger = logging.getLogger("Main")
+sys.excepthook = stupid_utils.log_exception_handler
 
 
 class StupidAlentoBot:
@@ -77,7 +83,6 @@ class StupidAlentoBot:
             for key in default_dict:
                 if key not in self.bot_data[server]:
                     self.bot_data[server][key] = default_dict[key].copy()
-
 
 
 # class OnMessageCog(commands.Cog, name="On Message"):
@@ -201,8 +206,4 @@ class StupidAlentoBot:
 #     return " ".join(placeholder)
 
 
-stupid_bot = StupidAlentoBot()
-stupid_bot.load_data()
-stupid_bot.update_data()
-stupid_bot.run()
-stupid_bot.save_data()
+
