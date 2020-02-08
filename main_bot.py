@@ -1,6 +1,6 @@
 from stupid_utils import DataSync, default_server_data
 from discord.ext import commands
-from datetime import datetime
+import information_module
 import stupid_utils
 import admin_module
 import info_module
@@ -37,6 +37,7 @@ class StupidAlentoBot:
 
         # self.bot.add_cog(OnMessageCog())
         self.bot.add_cog(admin_module.AdminCog(self.data_sync, self.bot_data))
+        self.bot.add_cog(information_module.InformationalCog(self.data_sync, self.bot_data))
         self.bot.add_cog(info_module.InfoCog(self.data_sync, self.bot_data))
 
     def run(self):
@@ -71,6 +72,12 @@ class StupidAlentoBot:
 
     def update_data(self):
         print("Updating bot data.")
+        default_dict = stupid_utils.default_server_data()
+        for server in self.bot_data:
+            for key in default_dict:
+                if key not in self.bot_data[server]:
+                    self.bot_data[server][key] = default_dict[key].copy()
+
 
 
 # class OnMessageCog(commands.Cog, name="On Message"):
