@@ -38,36 +38,70 @@ class InfoCog(commands.Cog, name="Info Module"):
         self.bot_data[server]["info_braces_enabled"], message = stupid_utils.toggle_feature(arg, "info", self.enable_phrases, self.disable_phrases, self.bot_data[server]["info_braces_enabled"])
         await context.send(message)
 
+    # @commands.has_permissions(administrator=True)
+    # @commands.command(name="info_admin", usage="<create, delete, edit, list>", brief="Create, delete, or edit keywords.")
+    # async def info_admin(self, context, arg1=None, arg2=None, *args):
+    #     server = context.guild.id
+    #     if server not in self.bot_data:
+    #         self.bot_data[server] = stupid_utils.default_server_data()
+    #
+    #     if not arg1 or not arg2:
+    #         await context.send("You need to specify at least 2 arguments.")
+    #     elif arg1 == "create":
+    #         flag = False
+    #         if arg2 in self.bot_data[server]["info"]:
+    #             flag = True
+    #         self.bot_data[server]["info"][arg2] = " ".join(args)
+    #         if flag:
+    #             await context.send("Success, overwrote previous entry.")
+    #         else:
+    #             await context.send("Created \"{}\"".format(arg2))
+    #     elif arg1 == "delete":
+    #         flag = self.bot_data[server]["info"].pop(arg2, None)
+    #         if flag:
+    #             await context.send("Success, entry deleted.")
+    #         else:
+    #             await context.send("Entry not found?")
+    #     elif arg1 == "edit":
+    #         await context.send("Not really implemented, create overrides anyways.")
+    #     elif arg1 == "list":
+    #         await context.send("List of all valid keywords: {}".format(list(self.bot_data[server]["info"].keys())))
+    #     else:
+    #         await context.send("Invalid first argument.")
     @commands.has_permissions(administrator=True)
-    @commands.command(name="info_admin", usage="<create, delete, edit, list>", brief="Create, delete, or edit keywords.")
-    async def info_admin(self, context, arg1=None, arg2=None, *args):
+    @commands.command(name="info_admin", usage="<create, delete, list> (\"arg2\") (\"arg3\")",
+                      brief="Create, delete, or list keywords.")
+    async def info_admin(self, context, arg1=None, arg2=None, arg3=None, *args):
         server = context.guild.id
         if server not in self.bot_data:
             self.bot_data[server] = stupid_utils.default_server_data()
 
-        if not arg1 or not arg2:
-            await context.send("You need to specify at least 2 arguments.")
+        flag = False
+
+        if not arg1:
+            await context.send("You need at least 1 argument")
+        elif arg1 == "list":
+            await context.send("List of keywords: {}".format(list(self.bot_data[server]["info"])))
+        elif args:
+            await context.send("There seems to be more than 3 arguments. Did you wrap them in quotes (\")?")
+        elif not arg2:
+            await context.send("You need at least 2 arguments for that.")
+        elif arg1 == "delete":
+            flag = self.bot_data[server]["info"].pop(arg2, False)
+            if flag:
+                await context.send("Deleted keyword \"{}\"".format(arg2))
+            else:
+                await context.send("Couldn't find keyword \"{}\"".format(arg2))
+        elif not arg3:
+            await context.send("You need at least 3 arguments for that.")
         elif arg1 == "create":
-            flag = False
             if arg2 in self.bot_data[server]["info"]:
                 flag = True
-            self.bot_data[server]["info"][arg2] = " ".join(args)
+            self.bot_data[server]["info"][arg2] = arg3
             if flag:
-                await context.send("Success, overwrote previous entry.")
+                await context.send("Overwrote keyword \"{}\".".format(arg2))
             else:
-                await context.send("Created \"{}\"".format(arg2))
-        elif arg1 == "delete":
-            flag = self.bot_data[server]["info"].pop(arg2, None)
-            if flag:
-                await context.send("Success, entry deleted.")
-            else:
-                await context.send("Entry not found?")
-        elif arg1 == "edit":
-            await context.send("Not really implemented, create overrides anyways.")
-        elif arg1 == "list":
-            await context.send("List of all valid keywords: {}".format(list(self.bot_data[server]["info"].keys())))
-        else:
-            await context.send("Invalid first argument.")
+                await context.send("Created keyword \"{}\"".format(arg2))
 
     async def info(self, message):
         server = message.guild.id
