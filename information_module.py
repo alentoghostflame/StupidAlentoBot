@@ -4,7 +4,7 @@ import discord
 import typing
 
 
-class InfoCog(commands.Cog, name="Info Module"):
+class InformationalCog(commands.Cog, name="Information Module"):
     def __init__(self, data_sync: DataSync, bot_data: typing.Dict[str, dict]):
         super().__init__()
         self.data_sync = data_sync
@@ -12,7 +12,7 @@ class InfoCog(commands.Cog, name="Info Module"):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print("Info Module Ready.")
+        print("Information Module Ready.")
 
     @commands.Cog.listener()
     async def on_message(self, message):
@@ -54,7 +54,7 @@ class InfoCog(commands.Cog, name="Info Module"):
         embed.add_field(name="Explicit Content Filter", value=str(guild.explicit_content_filter), inline=True)
         embed.add_field(name="Default Notifications", value=str(guild.default_notifications), inline=True)
         embed.add_field(name="Features", value=str(guild.features), inline=True)
-        embed.add_field(name="Bost Tier", value=str(guild.premium_tier), inline=True)
+        embed.add_field(name="Boost Tier", value=str(guild.premium_tier), inline=True)
         embed.add_field(name="User Boost Count", value=str(guild.premium_subscription_count), inline=True)
         embed.add_field(name="Preferred Locale", value=str(guild.preferred_locale), inline=True)
         # guild.channels
