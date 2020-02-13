@@ -26,6 +26,10 @@ class InfoCog(commands.Cog, name="Info Module"):
 
     @commands.Cog.listener()
     async def on_message(self, message):
+        server = message.guild.id
+        if server not in self.bot_data:
+            self.bot_data[server] = stupid_utils.default_server_data()
+
         if self.bot_data[message.guild.id]["info_braces_enabled"] and not message.author.bot and not message.content.startswith(";"):
             await self.info(message)
 
@@ -77,8 +81,7 @@ class InfoCog(commands.Cog, name="Info Module"):
 
     async def info(self, message):
         server = message.guild.id
-        if server not in self.bot_data:
-            self.bot_data[server] = stupid_utils.default_server_data()
+
         embed = discord.Embed(title="Info Requested", color=0xffff00)
         found_keys = set()
 
