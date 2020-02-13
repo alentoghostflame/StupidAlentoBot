@@ -37,8 +37,8 @@ class InformationalCog(commands.Cog, name="Information Module"):
         embed.add_field(name="Messages Read", value=str(self.data_sync.messages_read), inline=True)
         embed.add_field(name="Messages Sent", value=str(self.data_sync.messages_sent), inline=True)
 
-        embed.add_field(name="Callout Delete", value=str(self.bot_data[server]["callout_delete_enabled"])
-                        , inline=True)
+        embed.add_field(name="Callout Delete", value=str(self.bot_data[server]["callout_delete_enabled"]), inline=True)
+        embed.add_field(name="Info Braces", value=str(self.bot_data[server]["info_braces_enabled"]), inline=True)
         await context.send(embed=embed)
 
     @commands.command(name="server_info", brief="Show information about the server.")
