@@ -1,5 +1,6 @@
 from datetime import datetime
 from main_bot import StupidAlentoBot
+import stupid_utils
 import traceback
 import logging
 import sys
@@ -10,13 +11,13 @@ FORMAT = "[{asctime}][{filename}][{lineno:3}][{funcName}][{levelname}] {message}
 LOGGING_LEVEL = logging.DEBUG
 
 
-def log_exception_handler(error_type, value, tb):
-    # TODO: Unify logging errors.
-    the_logger = logging.getLogger("Main")
-    the_logger.critical("Uncaught exception:\n"
-                        "Type: {}\n"
-                        "Value: {}\n"
-                        "Traceback:\n {}".format(str(error_type), str(value), "".join(traceback.format_tb(tb))))
+# def log_exception_handler(error_type, value, tb):
+#     # TODO: Unify logging errors.
+#     the_logger = logging.getLogger("Main")
+#     the_logger.critical("Uncaught exception:\n"
+#                         "Type: {}\n"
+#                         "Value: {}\n"
+#                         "Traceback:\n {}".format(str(error_type), str(value), "".join(traceback.format_tb(tb))))
 
 
 def setup_logging():
@@ -38,14 +39,14 @@ def setup_logging():
     setup_logger.addHandler(log_console_handler)
 
     setup_logger.setLevel(LOGGING_LEVEL)
-    sys.excepthook = log_exception_handler
+    sys.excepthook = stupid_utils.log_exception_handler
 
 
 stupid_bot = StupidAlentoBot()
 logger = logging.getLogger("Main")
 try:
     setup_logging()
-    logger = logging.getLogger("Main")
+    # logger = logging.getLogger("Main")
     # stupid_bot = StupidAlentoBot()
     stupid_bot.load_data()
     stupid_bot.update_data()
