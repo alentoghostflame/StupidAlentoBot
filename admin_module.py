@@ -229,7 +229,8 @@ class AdminCog(commands.Cog, name="Admin Module"):
                 for user_date in self.bot_data[server]["warned_users"]:
                     if user_date[1] < datetime.utcnow():
                         user_obj = server_obj.get_member(user_date[0])
-                        await user_obj.remove_roles(warn_role_obj, reason="Warn Time Expired.")
+                        if user_obj:
+                            await user_obj.remove_roles(warn_role_obj, reason="Warn Time Expired.")
                         temp_warned_users.remove(user_date)
                 self.bot_data[server]["warned_users"] = temp_warned_users.copy()
 
@@ -240,7 +241,8 @@ class AdminCog(commands.Cog, name="Admin Module"):
                 for user_date in self.bot_data[server]["muted_users"]:
                     if user_date[1] < datetime.utcnow():
                         user_obj = server_obj.get_member(user_date[0])
-                        await user_obj.remove_roles(mute_role_obj, reason="Mute Time Expired.")
+                        if user_obj:
+                            await user_obj.remove_roles(mute_role_obj, reason="Mute Time Expired.")
                         temp_muted_users.remove(user_date)
                         print("Removed mute on {}.".format(user_obj.name))
                 self.bot_data[server]["muted_users"] = temp_muted_users.copy()
