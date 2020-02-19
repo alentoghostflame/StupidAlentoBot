@@ -1,7 +1,9 @@
 from discord.ext import commands
+from datetime import datetime
 import traceback
 import logging
 import discord
+import typing
 import sys
 import re
 
@@ -34,6 +36,20 @@ class DataSync:
         self.messages_sent: int = 0
 
         # self.callout_delete_enable: dict = dict()
+
+
+class StoredServerData:
+    def __init__(self):
+        self.callout_delete_enabled: bool = False
+
+        self.info_braces_enabled: bool = True
+
+        self.warn_role_id: int = 0
+        self.warner_roles: typing.Set[int] = set()
+        self.warned_users: typing.Set[typing.Tuple[int, datetime]] = set()
+        self.mute_role_id: int = 0
+        self.muter_roles: typing.Set[int] = set()
+        self.muted_users: typing.Set[typing.Tuple[int, datetime]] = set()
 
 
 def default_config_file() -> dict:
@@ -90,14 +106,14 @@ def toggle_feature(arg: str, feature_name: str, enable_phrases: set, disable_phr
     if arg:
         if any(x in arg.lower() for x in enable_phrases):
             if enabled_var:
-                return True, "{} is already enabled.".format(feature_name)
+                return True, "`{}` is already enabled.".format(feature_name)
             else:
-                return True, "{} enabled.".format(feature_name)
+                return True, "`{}` enabled.".format(feature_name)
         elif any(x in arg.lower() for x in disable_phrases):
             if enabled_var:
-                return False, "{} disabled.".format(feature_name)
+                return False, "`{}` disabled.".format(feature_name)
             else:
-                return False, "{} is already disabled.".format(feature_name)
+                return False, "`{}` is already disabled.".format(feature_name)
         else:
             return enabled_var, "Argument `{}` is invalid for feature `{}`.".format(arg, feature_name)
     else:
