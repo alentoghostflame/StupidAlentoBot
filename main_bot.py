@@ -1,4 +1,7 @@
+from storage_module.stupid_storage import RAMStorage, DiskStorage
 from stupid_utils import DataSync, default_server_data
+from eval_module.eval import EvalCog
+from misc_module.misc import MiscCog
 from discord.ext import commands
 import information_module
 import stupid_utils
@@ -41,10 +44,21 @@ class StupidAlentoBot:
         self.bot_data: typing.Dict[str, dict] = {"testing": default_server_data()}
         self.config = stupid_utils.default_config_file()
 
+        self.ram_storage = RAMStorage()
+        self.disk_storage = DiskStorage()
+
         # self.bot.add_cog(OnMessageCog())
+        self.bot.event(self.on_command_error)
         self.bot.add_cog(admin_module.AdminCog(self.data_sync, self.bot_data))
         self.bot.add_cog(information_module.InformationalCog(self.data_sync, self.bot_data))
         self.bot.add_cog(info_module.InfoCog(self.data_sync, self.bot_data))
+        self.bot.add_cog(MiscCog(self.disk_storage))
+        self.bot.add_cog(EvalCog(self.bot, self.disk_storage))
+
+    async def on_command_error(self, ctx, error):
+        if isinstance(error, commands.CommandNotFound):
+            return
+        raise error
 
     def run(self):
         if not self.config["token"]:
@@ -68,12 +82,15 @@ class StupidAlentoBot:
             file = open("config.yaml", "w+")
             yaml.dump(self.config, file, default_flow_style=None)
 
+        self.disk_storage.load_servers(open("test_save_data.yaml", "r"))
         print("Load complete.")
 
     def save_data(self):
         print("Attempting to save bot data.")
         file = open("save_data.yaml", "w+")
         yaml.dump(self.bot_data, file, default_flow_style=None)
+        file2 = open("test_save_data.yaml", "w")
+        self.disk_storage.save_servers(file2)
         print("Save complete.")
 
     def update_data(self):
