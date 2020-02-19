@@ -1,7 +1,7 @@
 from datetime import datetime
 from main_bot import StupidAlentoBot
 import stupid_utils
-import traceback
+# import traceback
 import logging
 import sys
 import os
