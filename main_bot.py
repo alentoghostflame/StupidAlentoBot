@@ -1,11 +1,13 @@
 from storage_module.stupid_storage import RAMStorage, DiskStorage
 from stupid_utils import DataSync, default_server_data
+from admin_module.admin import AdminCog
 from eval_module.eval import EvalCog
 from misc_module.misc import MiscCog
+from faq_module.faq import FAQCog
 from discord.ext import commands
 import information_module
 import stupid_utils
-import admin_module
+import old_admin_module
 import info_module
 import logging
 import typing
@@ -48,12 +50,14 @@ class StupidAlentoBot:
         self.disk_storage = DiskStorage()
 
         # self.bot.add_cog(OnMessageCog())
-        self.bot.event(self.on_command_error)
-        self.bot.add_cog(admin_module.AdminCog(self.data_sync, self.bot_data))
+        # self.bot.event(self.on_command_error)
+        self.bot.add_cog(old_admin_module.AdminCog(self.data_sync, self.bot_data))
         self.bot.add_cog(information_module.InformationalCog(self.data_sync, self.bot_data))
-        self.bot.add_cog(info_module.InfoCog(self.data_sync, self.bot_data))
+        # self.bot.add_cog(info_module.InfoCog(self.data_sync, self.bot_data))
         self.bot.add_cog(MiscCog(self.disk_storage))
         self.bot.add_cog(EvalCog(self.bot, self.disk_storage))
+        self.bot.add_cog(AdminCog(self.disk_storage))
+        self.bot.add_cog(FAQCog(self.disk_storage))
 
     async def on_command_error(self, ctx, error):
         if isinstance(error, commands.CommandNotFound):
@@ -90,6 +94,7 @@ class StupidAlentoBot:
         file = open("save_data.yaml", "w+")
         yaml.dump(self.bot_data, file, default_flow_style=None)
         file2 = open("test_save_data.yaml", "w")
+        self.disk_storage.clean_servers(self.bot)
         self.disk_storage.save_servers(file2)
         print("Save complete.")
 
