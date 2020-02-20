@@ -65,6 +65,14 @@ def default_config_file() -> dict:
     return output
 
 
+def has_any_role(guild: discord.Guild, warner_roles: set, member: discord.Member) -> bool:
+    for role in warner_roles:
+        for user_role in member.roles:
+            if guild.get_role(role) == user_role:
+                return True
+    return False
+
+
 def default_server_data():
     output = dict()
     output["messages_read_total"] = 0
