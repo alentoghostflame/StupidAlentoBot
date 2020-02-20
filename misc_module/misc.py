@@ -33,7 +33,8 @@ class MiscCog(commands.Cog, name="Misc Module"):
                                                                                "list.")
     async def welcome(self, context, arg1=None, arg2=None, *args):
         if not arg1:
-            await context.send("You need to specify at least one argument, such as toggle, add, remove, or list.")
+            await context.send("You need to specify at least one argument, such as `toggle`, `add`, `remove`, or "
+                               "`list`.")
         elif args:
             await context.send("You specified too many arguments. Did you forget to wrap them in quotes (\"example\")?")
         elif arg1 == "toggle":
@@ -44,6 +45,8 @@ class MiscCog(commands.Cog, name="Misc Module"):
             await self.remove_welcome(context, arg2)
         elif arg1 == "list":
             await self.list_welcome(context, arg2)
+        else:
+            await context.send("Invalid first argument.")
 
     @commands.has_permissions(administrator=True)
     @commands.command(name="set_welcome_channel", brief="Use in channel to welcome users in.")
@@ -108,11 +111,6 @@ class MiscCog(commands.Cog, name="Misc Module"):
                     await context.send("Index out of bounds.")
             except ValueError:
                 await context.send("Specify a valid number.")
-        # elif arg in server_data.welcome_messages:
-        #     server_data.welcome_messages.pop(arg)
-        #     await context.send("Welcome message removed.")
-        # else:
-        #     await context.send("Message not found.")
 
     async def list_welcome(self, context, arg=None):
         server_data = self.disk_storage.get_server(context.guild.id)
