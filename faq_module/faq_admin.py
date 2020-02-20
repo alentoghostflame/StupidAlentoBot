@@ -4,10 +4,10 @@ from discord.ext import commands
 from faq_module import text
 import stupid_utils
 import logging
-import discord
+# import discord
 import typing
 import sys
-import re
+# import re
 
 
 logger = logging.getLogger("Main")
@@ -28,13 +28,15 @@ async def faq_admin(server_data: DiskServerData, context, arg1=None, arg2=None, 
     elif arg1 == "remove_keyword":
         await remove_keyword(server_data.faq_phrases, context, arg2, arg3)
     elif arg1 == "list_keywords":
-        await list_keywords(server_data.faq_phrases, context, arg2, arg3)
-    elif arg1 == "add_edit_role":
-        pass
-    elif arg1 == "remove_edit_role":
-        pass
+        await list_keywords(server_data.faq_phrases, context, arg2)
     elif arg1 == "list_edit_roles":
-        pass
+        await list_edit_roles(server_data.faq_edit_roles, context)
+    elif not context.author.guild_permissions.administrator:
+        await context.send(text.LACK_ADMINISTRATOR)
+    elif arg1 == "add_edit_role":
+        await add_edit_role(server_data.faq_edit_roles, context, arg2)
+    elif arg1 == "remove_edit_role":
+        await remove_edit_role(server_data.faq_edit_roles, context, arg2)
     else:
         await context.send(text.INVALID_FIRST_ARGUMENT)
 
@@ -80,7 +82,7 @@ async def remove_keyword(faq_phrases: typing.Dict[str, str], context: commands.C
             logger.debug("User {} tried to remove keyword {}".format(context.author.display_name, keyword))
 
 
-async def list_keywords(faq_phrases: typing.Dict[str, str], context: commands.Context, arg1=None, arg2=None):
+async def list_keywords(faq_phrases: typing.Dict[str, str], context: commands.Context, arg1=None):
     if arg1:
         await context.send(text.DONT_NEED_ADD_ARGS)
         logger.debug("User {} specified too many arguments.".format(context.author.display_name))
@@ -89,7 +91,44 @@ async def list_keywords(faq_phrases: typing.Dict[str, str], context: commands.Co
         logger.debug("User {} asked for list of keywords.".format(context.author.display_name))
 
 
-async def add_edit_role(faq_edit_roles: typing.Set[int], context: commands.Context, arg1, arg2):
+async def add_edit_role(faq_edit_roles: typing.Set[int], context: commands.Context, arg1):
     role = context.guild.get_role(int(stupid_utils.get_numbers(arg1)[0]))
     if not arg1:
-        pass
+        await context.send(text.ADD_EDIT_ROLE_HELP)
+        logger.debug("User {} didn't specify a keyword.".format(context.author.display_name))
+    if not role:
+        await context.send(text.INVALID_ROLE)
+        logger.debug("User {} didn't specify a valid role.".format(context.author.display_name))
+    else:
+        faq_edit_roles.add(role.id)
+        await context.send(text.ROLE_ADDED)
+        logger.debug("User {} added role {}: {}.".format(context.author.display_name, role.id, role.name))
+
+
+async def remove_edit_role(faq_edit_roles: typing.Set[int], context: commands.Context, arg1):
+    role_id = int(stupid_utils.get_numbers(arg1)[0])
+    if not arg1:
+        await context.send(text.REMOVE_EDIT_ROLE_HELP)
+        logger.debug("User {} didn't specify a keyword.".format(context.author.display_name))
+    else:
+        if role_id in faq_edit_roles:
+            faq_edit_roles.remove(role_id)
+            await context.send(text.ROLE_REMOVED)
+            logger.debug("User {} removed role {}".format(context.author.display_name, role_id))
+        else:
+            await context.send(text.ROLE_NOT_FOUND)
+            logger.debug("User {} tried to remove role {}".format(context.author.display_name, role_id))
+
+
+async def list_edit_roles(faq_edit_roles: typing.Set[int], context: commands.Context):
+    output = ""
+    for role_id in faq_edit_roles:
+        role = context.guild.get_role(role_id)
+        if role:
+            output += "`{}`: {}\n".format(role_id, role.name)
+        else:
+            output += "`{}`: N/A\n".format(role_id)
+    await context.send("List of roles that can edit: \n{}".format(output))
+    logger.debug("User {} asked for list of edit roles.".format(context.author.display_name))
+
+
