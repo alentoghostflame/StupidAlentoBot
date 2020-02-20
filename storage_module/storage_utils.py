@@ -22,6 +22,10 @@ class DiskServerData:
         self.welcome_channel_id: int = 0
         self.welcome_messages: typing.List[str] = list()
 
+    def __setstate__(self, state: dict):
+        self.__dict__ = state
+        self.faq_edit_roles = state.get("faq_edit_roles", set())
+
 
 def get_all_server_names(server_storage: typing.Dict[int, DiskServerData], bot: commands.Bot) -> dict:
     output = dict()
