@@ -52,6 +52,11 @@ class StoredServerData:
         self.muted_users: typing.Set[typing.Tuple[int, datetime]] = set()
 
 
+def get_numbers(string: str) -> typing.List[str]:
+    comp = re.compile("(\\d+)")
+    return comp.findall(string)
+
+
 def default_config_file() -> dict:
     output = dict()
 
@@ -115,6 +120,6 @@ def toggle_feature(arg: str, feature_name: str, enable_phrases: set, disable_phr
             else:
                 return False, "`{}` is already disabled.".format(feature_name)
         else:
-            return enabled_var, "Argument `{}` is invalid for feature `{}`.".format(arg, feature_name)
+            return enabled_var, "Argument `{}` is not a valid on/off for feature `{}`.".format(arg, feature_name)
     else:
-        return enabled_var, "You need to actually say something after `;{}`, like enable or disable.".format(feature_name.lower())
+        return enabled_var, "You need to actually say something after the command, like enable or disable."
