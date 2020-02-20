@@ -4,7 +4,11 @@ from discord.ext import commands
 # import stupid_utils
 import traceback
 import textwrap
+import logging
 import io
+
+
+logger = logging.getLogger("Main")
 
 
 class EvalCog(commands.Cog, name="Eval Module"):
@@ -12,6 +16,10 @@ class EvalCog(commands.Cog, name="Eval Module"):
         super().__init__()
         self.bot = bot
         self.disk_storage = disk_storage
+
+    @commands.Cog.listener()
+    async def on_ready(self):
+        logger.info("Eval module ready.")
 
     @commands.is_owner()
     @commands.command(name="eval")
@@ -23,6 +31,7 @@ class EvalCog(commands.Cog, name="Eval Module"):
             'author': context.author,
             'guild': context.guild,
             'message': context.message,
+            "disk_storage": self.disk_storage,
             # 'source': context.getsource
         }
 
