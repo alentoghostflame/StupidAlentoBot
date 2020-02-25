@@ -1,0 +1,6 @@
+WARN_REASON = "{} Warned because: {}"
+DEFAULT_WARN_REASON = "No reason given."
+WARN_GIVEN = "5 minute warn given."
+WARN_DOUBLE = "Already had a warn, muted."
+WARN_MUTE_MISSING = "Can't do 2 warns -> mute due to mute not being assigned a role."
+WARN_DOUBLE_REASON = "{} Doubled warned because: {}"
