@@ -55,3 +55,10 @@ try:
 except:
     logger.critical("SOMETHING TERRIBLE HAPPENED!")
     stupid_bot.save_data()
+# setup_logging()
+# # logger = logging.getLogger("Main")
+# # stupid_bot = StupidAlentoBot()
+# stupid_bot.load_data()
+# stupid_bot.update_data()
+# stupid_bot.run()
+# stupid_bot.save_data()
