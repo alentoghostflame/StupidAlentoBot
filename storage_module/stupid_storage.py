@@ -29,6 +29,9 @@ class DiskStorage:
     def get_server_names(self, bot: commands.Bot) -> dict:
         return storage_utils.get_all_server_names(self._guilds, bot)
 
+    def get_guild_ids(self) -> set:
+        return set(self._guilds.keys())
+
     def load_servers(self, file=None):
         logger.debug("Loading servers from file {}".format(file.name))
         if file:
