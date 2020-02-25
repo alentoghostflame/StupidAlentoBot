@@ -8,7 +8,7 @@ from discord.ext import commands
 import information_module
 import stupid_utils
 import old_admin_module
-import info_module
+# import info_module
 import logging
 import typing
 import yaml
@@ -56,7 +56,7 @@ class StupidAlentoBot:
         # self.bot.add_cog(info_module.InfoCog(self.data_sync, self.bot_data))
         self.bot.add_cog(MiscCog(self.disk_storage))
         self.bot.add_cog(EvalCog(self.bot, self.disk_storage))
-        self.bot.add_cog(AdminCog(self.disk_storage))
+        self.bot.add_cog(AdminCog(self.disk_storage, self.bot))
         self.bot.add_cog(FAQCog(self.disk_storage))
 
     async def on_command_error(self, ctx, error):
@@ -94,7 +94,8 @@ class StupidAlentoBot:
         file = open("save_data.yaml", "w+")
         yaml.dump(self.bot_data, file, default_flow_style=None)
         file2 = open("test_save_data.yaml", "w")
-        self.disk_storage.clean_servers(self.bot)
+        # TODO: do NOT re-enable clean_servers() until safeguards are added to stop the file from getting wiped if Discord isn't reached before shutting down the bot.
+        # self.disk_storage.clean_servers(self.bot)
         self.disk_storage.save_servers(file2)
         print("Save complete.")
 
