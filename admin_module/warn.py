@@ -1,16 +1,11 @@
-# from storage_module.stupid_storage import DiskStorage
-# from storage_module.disk_storage import DiskStorage
 from storage_module.server_data import DiskServerData
 from datetime import datetime, timedelta
+from universal_module import utils
 from discord.ext import commands
 from admin_module import text
 import universal_module
-from universal_module import utils
 import logging
-# import discord
-# import typing
 import sys
-# import re
 
 
 logger = logging.getLogger("Main")
