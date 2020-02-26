@@ -2,7 +2,5 @@
 __pycache__/
 venv/
 logs/
-save_data.yaml
 config.yaml
-test_save_data.yaml
-
+data/
