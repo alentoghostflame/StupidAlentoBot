@@ -1,19 +1,23 @@
-from storage_module.stupid_storage import DiskStorage
+from storage_module.disk_storage import DiskStorage
+from storage_module.ram_storage import RAMStorage
+from misc_module.status import bot_status
+from universal_module import utils
 from discord.ext import commands
-import stupid_utils
 import logging
 import discord
 import random
 import sys
 
 logger = logging.getLogger("Main")
-sys.excepthook = stupid_utils.log_exception_handler
+sys.excepthook = utils.log_exception_handler
 
 
 class MiscCog(commands.Cog, name="Misc Module"):
-    def __init__(self, disk_storage: DiskStorage):
+    def __init__(self, bot: commands.Bot, disk_storage: DiskStorage, ram_storage: RAMStorage):
         super().__init__()
+        self.bot = bot
         self.disk_storage = disk_storage
+        self.ram_storage = ram_storage
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -25,6 +29,17 @@ class MiscCog(commands.Cog, name="Misc Module"):
         logger.debug("Member {} joined a server, {}".format(member.display_name, server_data.welcome_enabled))
         if server_data.welcome_enabled:
             await self.send_welcome(member)
+
+    @commands.Cog.listener()
+    async def on_message(self, message: discord.Message):
+        self.ram_storage.total_messages_read += 1
+        if message.author.id == self.bot.user.id:
+            self.ram_storage.total_messages_sent += 1
+
+    @commands.command(name="status", brief="Lists information about the bot and what it does on your server.")
+    async def status(self, context):
+        server_data = self.disk_storage.get_server(context.guild.id)
+        await bot_status(server_data, self.ram_storage, context)
 
     @commands.has_permissions(administrator=True)
     @commands.command(name="welcome", usage="toggle, add, remove, list", brief="Interacts with the welcome system. Use "
@@ -79,10 +94,10 @@ class MiscCog(commands.Cog, name="Misc Module"):
                                "`;set_welcome_channel` in the channel for welcomes to be forwarded to. Not enabling "
                                "welcomes.")
         else:
-            server_data.welcome_enabled, message = stupid_utils.toggle_feature(arg, "welcome",
-                                                                               stupid_utils.ENABLE_PHRASES,
-                                                                               stupid_utils.DISABLE_PHRASES,
-                                                                               server_data.welcome_enabled)
+            server_data.welcome_enabled, message = utils.toggle_feature(arg, "welcome",
+                                                                        utils.ENABLE_PHRASES,
+                                                                        utils.DISABLE_PHRASES,
+                                                                        server_data.welcome_enabled)
             await context.send(message)
 
     async def add_welcome(self, context, arg=None):
