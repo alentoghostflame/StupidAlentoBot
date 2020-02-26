@@ -1,7 +1,6 @@
-from storage_module.stupid_storage import DiskStorage
+from storage_module.disk_storage import DiskStorage
 from contextlib import redirect_stdout
 from discord.ext import commands
-# import stupid_utils
 import traceback
 import textwrap
 import logging
