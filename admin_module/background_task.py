@@ -1,8 +1,9 @@
-from storage_module.stupid_storage import DiskStorage
+from storage_module.disk_storage import DiskStorage
 from discord.ext import commands
 from datetime import datetime
 # from admin_module import text
-import stupid_utils
+
+from universal_module import utils
 import logging
 import typing
 import discord
@@ -10,7 +11,7 @@ import sys
 
 
 logger = logging.getLogger("Main")
-sys.excepthook = stupid_utils.log_exception_handler
+sys.excepthook = utils.log_exception_handler
 
 
 async def background_task(bot: commands.Bot, disk_storage: DiskStorage):
@@ -18,13 +19,13 @@ async def background_task(bot: commands.Bot, disk_storage: DiskStorage):
     for guild_id in guild_ids:
         guild_data = disk_storage.get_server(guild_id)
         guild = bot.get_guild(guild_id)
-        warn_role = guild.get_role(guild_data.warn_role_id)
-        mute_role = guild.get_role(guild_data.mute_role_id)
-
-        if warn_role:
-            await if_time_remove_role(guild_data.warned_users, guild, warn_role)
-        if mute_role:
-            await if_time_remove_role(guild_data.muted_users, guild, mute_role)
+        if guild:
+            warn_role = guild.get_role(guild_data.warn_role_id)
+            mute_role = guild.get_role(guild_data.mute_role_id)
+            if warn_role:
+                await if_time_remove_role(guild_data.warned_users, guild, warn_role)
+            if mute_role:
+                await if_time_remove_role(guild_data.muted_users, guild, mute_role)
 
 
 async def if_time_remove_role(member_set: typing.Set[typing.Tuple[int, datetime]], guild: discord.Guild,
