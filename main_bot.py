@@ -1,21 +1,12 @@
-from storage_module.stupid_storage import RAMStorage, DiskStorage
-from stupid_utils import DataSync, default_server_data
+from storage_module.storage import StorageManager
 from admin_module.admin import AdminCog
 from eval_module.eval import EvalCog
 from misc_module.misc import MiscCog
 from faq_module.faq import FAQCog
 from discord.ext import commands
-import information_module
-import stupid_utils
-import old_admin_module
-# import info_module
+import universal_module.utils
 import logging
-import typing
-import yaml
 import sys
-import os
-# import discord
-# import random
 
 
 # ENABLE_PHRASES: set = {"true", "on", "enable", "online"}
@@ -35,77 +26,80 @@ import os
 
 
 logger = logging.getLogger("Main")
-sys.excepthook = stupid_utils.log_exception_handler
+sys.excepthook = universal_module.utils.log_exception_handler
 
 
 class StupidAlentoBot:
     def __init__(self):
         self.bot = commands.Bot(command_prefix=";")
 
-        self.data_sync = DataSync(self, self.bot)
-        self.bot_data: typing.Dict[str, dict] = {"testing": default_server_data()}
-        self.config = stupid_utils.default_config_file()
+        # self.data_sync = DataSync(self, self.bot)
+        # self.bot_data: typing.Dict[str, dict] = {"testing": default_server_data()}
+        # self.config = utils.default_config_file()
+        self.storage_manager = StorageManager()
 
-        self.ram_storage = RAMStorage()
-        self.disk_storage = DiskStorage()
+        self.disk_storage = self.storage_manager.get_disk_storage()
+        self.ram_storage = self.storage_manager.get_ram_storage()
 
         # self.bot.add_cog(OnMessageCog())
         # self.bot.event(self.on_command_error)
-        self.bot.add_cog(old_admin_module.AdminCog(self.data_sync, self.bot_data))
-        self.bot.add_cog(information_module.InformationalCog(self.data_sync, self.bot_data))
+        # self.bot.add_cog(old_admin_module.AdminCog(self.data_sync, self.bot_data))
+        # self.bot.add_cog(information_module.InformationalCog(self.data_sync, self.bot_data))
         # self.bot.add_cog(info_module.InfoCog(self.data_sync, self.bot_data))
-        self.bot.add_cog(MiscCog(self.disk_storage))
+        self.bot.add_cog(MiscCog(self.bot, self.disk_storage, self.ram_storage))
         self.bot.add_cog(EvalCog(self.bot, self.disk_storage))
         self.bot.add_cog(AdminCog(self.disk_storage, self.bot))
         self.bot.add_cog(FAQCog(self.disk_storage))
 
-    async def on_command_error(self, ctx, error):
-        if isinstance(error, commands.CommandNotFound):
-            return
-        raise error
+    # async def on_command_error(self, ctx, error):
+    #     if isinstance(error, commands.CommandNotFound):
+    #         return
+    #     raise error
 
     def run(self):
-        if not self.config["token"]:
+        if not self.disk_storage.config.token:
             print("Please put your token into your config file.")
         else:
-            self.bot.run(self.config["token"])
+            self.bot.run(self.disk_storage.config.token)
 
     def load_data(self):
-        print("Attempting to load bot data.")
-        if os.path.exists("save_data.yaml"):
-            file = open("save_data.yaml", "r")
-            self.bot_data.update(yaml.full_load(file))
-        else:
-            print("Data file doesn't exist yet, using default.")
+        # print("Attempting to load bot data.")
+        # if os.path.exists("save_data.yaml"):
+        #     file = open("save_data.yaml", "r")
+        #     self.bot_data.update(yaml.full_load(file))
+        # else:
+        #     print("Data file doesn't exist yet, using default.")
 
-        if os.path.exists("config.yaml"):
-            file = open("config.yaml", "r")
-            self.config.update(yaml.full_load(file))
-        else:
-            print("Config file doesn't exist yet, using default and creating.")
-            file = open("config.yaml", "w+")
-            yaml.dump(self.config, file, default_flow_style=None)
+        # if os.path.exists("config.yaml"):
+        #     file = open("config.yaml", "r")
+        #     self.config.update(yaml.full_load(file))
+        # else:
+        #     print("Config file doesn't exist yet, using default and creating.")
+        #     file = open("config.yaml", "w+")
+        #     yaml.dump(self.config, file, default_flow_style=None)
+        self.storage_manager.load_everything()
 
-        self.disk_storage.load_servers(open("test_save_data.yaml", "r"))
+        # self.disk_storage.load_server_data_from(open("test_save_data.yaml", "r"))
         print("Load complete.")
 
     def save_data(self):
         print("Attempting to save bot data.")
-        file = open("save_data.yaml", "w+")
-        yaml.dump(self.bot_data, file, default_flow_style=None)
-        file2 = open("test_save_data.yaml", "w")
+        # file = open("save_data.yaml", "w+")
+        # yaml.dump(self.bot_data, file, default_flow_style=None)
+        # file2 = open("test_save_data.yaml", "w")
         # TODO: do NOT re-enable clean_servers() until safeguards are added to stop the file from getting wiped if Discord isn't reached before shutting down the bot.
         # self.disk_storage.clean_servers(self.bot)
-        self.disk_storage.save_servers(file2)
+        # self.disk_storage.save_server_data_to(file2)
+        self.storage_manager.save_everything()
         print("Save complete.")
 
-    def update_data(self):
-        print("Updating bot data.")
-        default_dict = stupid_utils.default_server_data()
-        for server in self.bot_data:
-            for key in default_dict:
-                if key not in self.bot_data[server]:
-                    self.bot_data[server][key] = default_dict[key].copy()
+    # def update_data(self):
+    #     print("Updating bot data.")
+    #     default_dict = universal_module.utils.default_server_data()
+    #     for server in self.bot_data:
+    #         for key in default_dict:
+    #             if key not in self.bot_data[server]:
+    #                 self.bot_data[server][key] = default_dict[key].copy()
 
 
 # class OnMessageCog(commands.Cog, name="On Message"):
