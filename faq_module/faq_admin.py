@@ -1,17 +1,14 @@
-# from storage_module.stupid_storage import DiskStorage
-from storage_module.storage_utils import DiskServerData
+from storage_module.server_data import DiskServerData
+from universal_module import utils
 from discord.ext import commands
 from faq_module import text
-import stupid_utils
 import logging
-# import discord
 import typing
 import sys
-# import re
 
 
 logger = logging.getLogger("Main")
-sys.excepthook = stupid_utils.log_exception_handler
+sys.excepthook = utils.log_exception_handler
 
 
 async def faq_admin(server_data: DiskServerData, context, arg1=None, arg2=None, arg3=None, *args):
@@ -42,9 +39,9 @@ async def faq_admin(server_data: DiskServerData, context, arg1=None, arg2=None, 
 
 
 async def toggle(server_data: DiskServerData, context: commands.Context, arg: str):
-    server_data.faq_enabled, message = stupid_utils.toggle_feature(arg, "faq", stupid_utils.ENABLE_PHRASES,
-                                                                   stupid_utils.DISABLE_PHRASES,
-                                                                   server_data.faq_enabled)
+    server_data.faq_enabled, message = utils.toggle_feature(arg, "faq", utils.ENABLE_PHRASES,
+                                                            utils.DISABLE_PHRASES,
+                                                            server_data.faq_enabled)
     await context.send(message)
 
 
@@ -92,7 +89,7 @@ async def list_keywords(faq_phrases: typing.Dict[str, str], context: commands.Co
 
 
 async def add_edit_role(faq_edit_roles: typing.Set[int], context: commands.Context, arg1):
-    role = context.guild.get_role(int(stupid_utils.get_numbers(arg1)[0]))
+    role = context.guild.get_role(int(utils.get_numbers(arg1)[0]))
     if not arg1:
         await context.send(text.ADD_EDIT_ROLE_HELP)
         logger.debug("User {} didn't specify a keyword.".format(context.author.display_name))
@@ -106,7 +103,7 @@ async def add_edit_role(faq_edit_roles: typing.Set[int], context: commands.Conte
 
 
 async def remove_edit_role(faq_edit_roles: typing.Set[int], context: commands.Context, arg1):
-    role_id = int(stupid_utils.get_numbers(arg1)[0])
+    role_id = int(utils.get_numbers(arg1)[0])
     if not arg1:
         await context.send(text.REMOVE_EDIT_ROLE_HELP)
         logger.debug("User {} didn't specify a keyword.".format(context.author.display_name))

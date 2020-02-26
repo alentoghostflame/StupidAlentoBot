@@ -1,7 +1,4 @@
-# from storage_module.stupid_storage import DiskStorage
-# from storage_module.storage_utils import DiskServerData
-# from discord.ext import commands
-import stupid_utils
+from universal_module import utils
 import logging
 import discord
 import typing
@@ -10,7 +7,7 @@ import re
 
 
 logger = logging.getLogger("Main")
-sys.excepthook = stupid_utils.log_exception_handler
+sys.excepthook = utils.log_exception_handler
 
 
 async def provide_info(faq_phrases: typing.Dict[str, str], message: discord.Message):

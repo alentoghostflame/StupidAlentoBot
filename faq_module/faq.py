@@ -1,16 +1,15 @@
-from storage_module.stupid_storage import DiskStorage
+from storage_module.disk_storage import DiskStorage
+from universal_module import utils
+from discord.ext import commands
 import faq_module.text as text
 import faq_module.provide_faq
 import faq_module.faq_admin
-from discord.ext import commands
-import stupid_utils
 import logging
-# import discord
 import sys
 
 
 logger = logging.getLogger("Main")
-sys.excepthook = stupid_utils.log_exception_handler
+sys.excepthook = utils.log_exception_handler
 
 
 class FAQCog(commands.Cog, name="FAQ Module"):
@@ -33,7 +32,7 @@ class FAQCog(commands.Cog, name="FAQ Module"):
     async def faq_admin(self, context: commands.Context, arg1=None, arg2=None, arg3=None, *args):
         server_data = self.disk_storage.get_server(context.guild.id)
 
-        if not stupid_utils.has_any_role(context.guild, server_data.faq_edit_roles, context.author) and not \
+        if not utils.has_any_role(context.guild, server_data.faq_edit_roles, context.author) and not \
                 context.author.guild_permissions.administrator:
             await context.send(text.LACK_PERMISSION_OR_ROLE)
             logger.debug("User {} lacks a permission or role.".format(context.author.display_name))
