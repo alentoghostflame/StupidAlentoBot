@@ -26,11 +26,6 @@ class StupidAlentoBot:
         self.bot.add_cog(AdminCog(self.disk_storage, self.bot))
         self.bot.add_cog(FAQCog(self.disk_storage))
 
-    # async def on_command_error(self, ctx, error):
-    #     if isinstance(error, commands.CommandNotFound):
-    #         return
-    #     raise error
-
     def run(self):
         if not self.disk_storage.config.token:
             print("Please put your token into your config file.")
