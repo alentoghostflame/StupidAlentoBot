@@ -1,9 +1,11 @@
 # from storage_module.stupid_storage import DiskStorage
-from storage_module.storage_utils import DiskServerData
+# from storage_module.disk_storage import DiskStorage
+from storage_module.server_data import DiskServerData
 from datetime import datetime, timedelta
 from discord.ext import commands
 from admin_module import text
-import stupid_utils
+import universal_module
+from universal_module import utils
 import logging
 # import discord
 # import typing
@@ -12,35 +14,33 @@ import sys
 
 
 logger = logging.getLogger("Main")
-sys.excepthook = stupid_utils.log_exception_handler
+sys.excepthook = utils.log_exception_handler
 
 
 async def warn(warner_roles: set, warn_role_id: int, warned_users: set, mute_role_id: int, muted_users: set,
-               context: commands.Context, user_mention=None, reason=text.DEFAULT_WARN_REASON, *args):
-    member = stupid_utils.get_user_from_mention(context.guild, user_mention)
+               context: commands.Context, user_mention=None, reason=text.WARN_DEFAULT_REASON, *args):
+    member = utils.get_user_from_mention(context.guild, user_mention)
     warn_role = context.guild.get_role(warn_role_id)
     mute_role = context.guild.get_role(mute_role_id)
 
-    if not stupid_utils.has_any_role(context.guild, warner_roles, context.author) or not \
+    if not utils.has_any_role(context.guild, warner_roles, context.author) or not \
             context.author.guild_permissions.administrator:
-        await context.send("You lack the role required to warn users.")
+        await context.send(text.WARN_MISSING_ROLE)
         logger.debug("User {} lacked role required to warn.".format(context.author.display_name))
-    elif stupid_utils.has_any_role(context.guild, warner_roles, member) or member.guild_permissions.administrator:
-        await context.send("You can't warn the warners.")
+    elif utils.has_any_role(context.guild, warner_roles, member) or member.guild_permissions.administrator:
+        await context.send(text.WARN_CANT_WARN_WARNERS)
+        logger.debug("User {} tried to warn a warner.".format(context.author.display_name))
     elif args:
-        print(args)
-        await context.send("You specified too many arguments. Did you forget to wrap them in quotes?")
+        await context.send(universal_module.text.TOO_MANY_ARGUMENTS)
         logger.debug("User {} specified too many arguments.".format(context.author.display_name))
     elif not warn_role:
-        await context.send("The selected warn role is non-existent. Fix that by using `;warn_admin set_warn_role @role`"
-                           " replacing @role with mentioning the role.")
+        await context.send(text.WARN_MUTE_MISSING)
         logger.debug("User {} warned with non-existent warn role.".format(context.author.display_name))
     elif user_mention is None:
-        await context.send("This command warns the given user for 30 minutes. Use `;warn @user` replacing `@user` with "
-                           "mentioning the user.")
+        await context.send(text.WARN_HELP)
         logger.debug("User {} didn't specify any arguments.".format(context.author.display_name))
     elif member is None:
-        await context.send("That doesn't appear to be a valid member.")
+        await context.send(universal_module.text.INVALID_MEMBER_ID)
         logger.debug("User {} didn't specify a valid user.".format(context.author.display_name))
     elif warn_role in member.roles:
         if mute_role:
@@ -80,7 +80,7 @@ async def warn_admin(server_data: DiskServerData, context, arg1=None, arg2=None,
 
 
 async def add_warner_role(warner_roles: set, context: commands.Context, role_mention=None):
-    role = context.guild.get_role(int(stupid_utils.get_numbers(role_mention)[0]))
+    role = context.guild.get_role(int(utils.get_numbers(role_mention)[0]))
     if not role_mention:
         await context.send("Adds a role to the list of roles allowed to warn people. @mention the role after the "
                            "command to add it, like `;warn_admin add_warner_role @role`")
@@ -95,7 +95,7 @@ async def add_warner_role(warner_roles: set, context: commands.Context, role_men
 
 
 async def remove_warner_role(warner_roles: set, context: commands.Context, role_mention=None):
-    role = context.guild.get_role(int(stupid_utils.get_numbers(role_mention)[0]))
+    role = context.guild.get_role(int(utils.get_numbers(role_mention)[0]))
     if not role_mention:
         await context.send("Removes a role from the list of roles allowed to warn people. @mention the role after the "
                            "command to remove it, like `;warn_admin add_warner_role @role`")
@@ -110,7 +110,7 @@ async def remove_warner_role(warner_roles: set, context: commands.Context, role_
 
 
 async def set_warn_role(server_data: DiskServerData, context: commands.Context, role_mention=None):
-    role = context.guild.get_role(int(stupid_utils.get_numbers(role_mention)[0]))
+    role = context.guild.get_role(int(utils.get_numbers(role_mention)[0]))
     if not role_mention:
         await context.send("Sets the role to warn users with. @mention the role after the command to set it, like "
                            "`;warn_admin set_warn_role @role`")
@@ -118,7 +118,7 @@ async def set_warn_role(server_data: DiskServerData, context: commands.Context, 
     if not role:
         await context.send("Invalid role specified.")
         logger.debug("User {} specified an invalid role.".format(context.author.display_name))
-        print(stupid_utils.get_numbers(role_mention))
+        print(utils.get_numbers(role_mention))
     else:
         server_data.warn_role_id = role.id
         await context.send("Role set.")
@@ -133,16 +133,3 @@ async def unset_warn_role(server_data: DiskServerData, context: commands.Context
         server_data.warn_role_id = 0
         await context.send("Role unset.")
         logger.debug("User {} unset the role.".format(context.author.display_name))
-
-
-# def get_numbers(string: str) -> typing.List[str]:
-#     comp = re.compile("(\\d+)")
-#     return comp.findall(string)
-#
-#
-# def has_any_role(guild: discord.Guild, warner_roles: set, member: discord.Member) -> bool:
-#     for role in warner_roles:
-#         for user_role in member.roles:
-#             if guild.get_role(role) == user_role:
-#                 return True
-#     return False
