@@ -8,6 +8,7 @@ import discord
 import random
 import sys
 
+
 logger = logging.getLogger("Main")
 sys.excepthook = universal_module.utils.log_exception_handler
 
