@@ -19,8 +19,8 @@ class DiskServerData:
         self.muted_users: typing.Set[typing.Tuple[int, datetime]] = set()
 
         self.welcome_enabled: bool = False
-        self.welcome_channel_id: int = 0
         self.welcome_messages: typing.List[str] = list()
+        self.welcome_channel_id: int = 0
 
     def __setstate__(self, state: dict):
         self.__dict__ = state
