@@ -1,2 +1,7 @@
 TOO_MANY_ARGUMENTS = "You specified too many arguments. Did you forget to wrap multi-word arguments in quotes?"
+FIRST_ARGUMENT_INVALID = "First argument was invalid."
 INVALID_MEMBER_ID = "Could not find a valid member with that ID."
+INVALID_CHANNEL_ID = "Could not find a valid channel with that ID."
+INDEX_OUT_OF_BOUNDS = "Index out of bounds."
+INVALID_NUMBER = "Specify a valid number."
+PERMISSION_MISSING_ADMINISTRATOR = "You are missing the administrator permission."
