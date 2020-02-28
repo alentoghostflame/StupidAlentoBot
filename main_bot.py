@@ -28,7 +28,7 @@ class StupidAlentoBot:
 
     def run(self):
         if not self.disk_storage.config.token:
-            print("Please put your token into your config file.")
+            logger.critical("Please put your token into config.yaml")
         else:
             self.bot.run(self.disk_storage.config.token)
 
