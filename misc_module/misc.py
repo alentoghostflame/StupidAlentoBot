@@ -1,3 +1,4 @@
+from misc_module.callout_delete import callout_delete, callout_delete_admin
 from misc_module.welcome import welcome, welcome_admin
 from storage_module.disk_storage import DiskStorage
 from storage_module.ram_storage import RAMStorage
@@ -39,16 +40,30 @@ class MiscCog(commands.Cog, name="Misc Module"):
         if message.author.id == self.bot.user.id:
             self.ram_storage.total_messages_sent += 1
 
+    @commands.Cog.listener()
+    async def on_message_delete(self, message):
+        server_data = self.disk_storage.get_server(message.guild.id)
+        if server_data.callout_delete_enabled:
+            await callout_delete(server_data, message)
+
     @commands.command(name="status", brief="Lists information about the bot and what it does on your server.")
     async def status(self, context):
         server_data = self.disk_storage.get_server(context.guild.id)
         await bot_status(server_data, self.ram_storage, context)
 
     @commands.has_permissions(administrator=True)
-    @commands.command(name="welcome_admin", usage="toggle, add, remove, list, set_channel, unset_channel")
+    @commands.command(name="welcome_admin", usage="toggle, add, remove, list, set_channel, unset_channel",
+                      brief="Control welcome messages on join.")
     async def welcome_admin_command(self, context, arg1=None, arg2=None, *args):
         server_data = self.disk_storage.get_server(context.guild.id)
         await welcome_admin(server_data, context, arg1, arg2, *args)
+
+    @commands.has_permissions(administrator=True)
+    @commands.command(name="callout_delete_admin", usage="toggle",
+                      brief="Control the calling out of deletes with this command.")
+    async def callout_delete_admin_command(self, context, arg1=None, arg2=None, *args):
+        server_data = self.disk_storage.get_server(context.guild.id)
+        await callout_delete_admin(server_data, context, arg1, arg2, *args)
 
     # @commands.has_permissions(administrator=True)
     # @commands.command(name="welcome", usage="toggle, add, remove, list", brief="Interacts with the welcome system. Use "

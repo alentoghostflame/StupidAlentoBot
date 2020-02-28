@@ -14,3 +14,8 @@ WELCOME_ADD_HELP = "Adds a welcome message. Wrap the message in quotes, and use 
 WELCOME_ADD_SUCCESS = "Added welcome message."
 WELCOME_REMOVE_HELP = "Removes a welcome message of the given index."
 WELCOME_REMOVE_SUCCESS = "Successfully removed welcome message."
+
+CALLOUT_DELETE_MISSING_AUDIT_PERMISSION = "I need permission to view the audit log to call out deletes. Disabling " \
+                                          "calling out deletes."
+CALLOUT_DELETE_ADMIN_HELP = "Admin command for controlling the calling out of deletes. Supports of up to 2 arguments." \
+                            " Acceptable first arguments are `toggle`, and that's it."
