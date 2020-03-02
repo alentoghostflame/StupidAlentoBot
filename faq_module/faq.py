@@ -28,7 +28,9 @@ class FAQCog(commands.Cog, name="FAQ Module"):
         if server_data.faq_enabled and not message.author.bot and not message.content.startswith(";"):
             await faq_module.provide_faq.provide_info(server_data.faq_phrases, message)
 
-    @commands.command(name="faq_admin", usage="", brief="")
+    @commands.command(name="faq_admin", usage="toggle, add_keyword, remove_keyword, list_keywords, list_edit_roles, "
+                                              "add_edit_role, remove_edit_role",
+                      brief="Controls the FAQ feature on your server.")
     async def faq_admin(self, context: commands.Context, arg1=None, arg2=None, arg3=None, *args):
         server_data = self.disk_storage.get_server(context.guild.id)
 
