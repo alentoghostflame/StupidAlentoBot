@@ -19,3 +19,5 @@ CALLOUT_DELETE_MISSING_AUDIT_PERMISSION = "I need permission to view the audit l
                                           "calling out deletes."
 CALLOUT_DELETE_ADMIN_HELP = "Admin command for controlling the calling out of deletes. Supports of up to 2 arguments." \
                             " Acceptable first arguments are `toggle`, and that's it."
+USERINFO_HELP = "Provided a user ID, this command gives info about that user."
+USERINFO_DATETIME_FORMAT = "%b %d %Y %H:%M:%S"

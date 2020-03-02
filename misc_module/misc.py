@@ -2,6 +2,7 @@ from misc_module.callout_delete import callout_delete, callout_delete_admin
 from misc_module.welcome import welcome, welcome_admin
 from storage_module.disk_storage import DiskStorage
 from storage_module.ram_storage import RAMStorage
+from misc_module.userinfo import userinfo
 from misc_module.status import bot_status
 from universal_module import utils
 from discord.ext import commands
@@ -60,10 +61,14 @@ class MiscCog(commands.Cog, name="Misc Module"):
 
     @commands.has_permissions(administrator=True)
     @commands.command(name="callout_delete_admin", usage="toggle",
-                      brief="Control the calling out of deletes with this command.")
+                      brief="Control the calling out of deletes.")
     async def callout_delete_admin_command(self, context, arg1=None, arg2=None, *args):
         server_data = self.disk_storage.get_server(context.guild.id)
         await callout_delete_admin(server_data, context, arg1, arg2, *args)
+
+    @commands.command(name="userinfo", brief="Get information of provided user.")
+    async def userinfo_command(self, context, arg=None):
+        await userinfo(self.bot, context, arg)
 
     # @commands.has_permissions(administrator=True)
     # @commands.command(name="welcome", usage="toggle, add, remove, list", brief="Interacts with the welcome system. Use "

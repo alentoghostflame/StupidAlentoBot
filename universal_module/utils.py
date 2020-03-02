@@ -115,6 +115,13 @@ def rm_id_from_bot_data(bot_data: dict, guild_id: int, user_id: int, bot_data_se
             print("Removed user ID {} from bot data.".format(user_date[0]))
 
 
+async def safe_fetch_user(bot: commands.Bot, user_id: int):
+    try:
+        return await bot.fetch_user(user_id)
+    except discord.NotFound:
+        return None
+
+
 def toggle_feature(arg: str, feature_name: str, enable_phrases: set, disable_phrases: set, enabled_var: bool):
     if arg:
         if any(x in arg.lower() for x in enable_phrases):
