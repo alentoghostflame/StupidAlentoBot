@@ -36,20 +36,12 @@ stupid_bot = StupidAlentoBot()
 logger = logging.getLogger("Main")
 try:
     setup_logging()
-    # logger = logging.getLogger("Main")
-    # stupid_bot = StupidAlentoBot()
     stupid_bot.load_data()
-    # stupid_bot.update_data()
     stupid_bot.run()
-    stupid_bot.save_data()
 except Exception as e:
     logger.critical("SOMETHING TERRIBLE HAPPENED:")
     logger.exception(e)
+    raise e
+finally:
     stupid_bot.save_data()
-# setup_logging()
-# # logger = logging.getLogger("Main")
-# # stupid_bot = StupidAlentoBot()
-# stupid_bot.load_data()
-# # stupid_bot.update_data()
-# stupid_bot.run()
-# stupid_bot.save_data()
+
