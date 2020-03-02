@@ -40,7 +40,7 @@ async def warn(warner_roles: set, warn_role_id: int, warned_users: set, mute_rol
     elif warn_role in member.roles:
         if mute_role:
             await member.add_roles(mute_role, reason=text.WARN_DOUBLE_REASON.format(member.display_name, reason))
-            muted_users.add((member.id, datetime.utcnow() + timedelta(minutes=5)))
+            muted_users.add((member.id, datetime.utcnow() + timedelta(minutes=30)))
             await context.send(text.WARN_DOUBLE)
             logger.debug("User {} double warned user {}".format(context.author.display_name, member.display_name))
         else:
@@ -50,7 +50,7 @@ async def warn(warner_roles: set, warn_role_id: int, warned_users: set, mute_rol
 
     else:
         await member.add_roles(warn_role, reason=text.WARN_REASON.format(member.display_name, reason))
-        warned_users.add((member.id, datetime.utcnow() + timedelta(minutes=5)))
+        warned_users.add((member.id, datetime.utcnow() + timedelta(minutes=30)))
         await context.send(text.WARN_GIVEN)
         logger.debug("User {} warned user {}".format(context.author.display_name, member.display_name))
 
