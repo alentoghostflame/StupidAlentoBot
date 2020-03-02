@@ -15,7 +15,7 @@ sys.excepthook = universal_module.utils.log_exception_handler
 
 class StupidAlentoBot:
     def __init__(self):
-        self.bot = commands.Bot(command_prefix=";")
+        self.bot = commands.Bot(command_prefix=";", case_insensitive=True)
         self.storage_manager = StorageManager()
 
         self.disk_storage = self.storage_manager.get_disk_storage()
