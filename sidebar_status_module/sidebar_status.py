@@ -27,6 +27,6 @@ class SidebarStatusCog(commands.Cog, name="Sidebar Status Module"):
     def cog_unload(self):
         self.desktop_portal_loop.cancel()
 
-    @tasks.loop(seconds=30)
+    @tasks.loop(minutes=5)
     async def desktop_portal_loop(self):
         await desktop_portal_sidebars(self.bot, self.ram_storage)
