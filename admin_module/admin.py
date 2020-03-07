@@ -1,15 +1,15 @@
 from admin_module.background_task import background_task
 from storage_module.disk_storage import DiskStorage
 from discord.ext import commands, tasks
-from universal_module import utils
+# from universal_module import utils
 from admin_module import text
 import admin_module.warn
 import logging
-import sys
+# import sys
 
 
 logger = logging.getLogger("Main")
-sys.excepthook = utils.log_exception_handler
+# sys.excepthook = utils.log_exception_handler
 
 
 class AdminCog(commands.Cog, name="Admin Module"):

@@ -1,14 +1,13 @@
-from storage_module.server_data import DiskServerData
 from discord.ext import commands
 import misc_module.text as text
 import universal_module.utils
 import universal_module.text
 import discord
 import logging
-import sys
+# import sys
 
 logger = logging.getLogger("Main")
-sys.excepthook = universal_module.utils.log_exception_handler
+# sys.excepthook = universal_module.utils.log_exception_handler
 
 
 async def userinfo(bot: commands.Bot, context: commands.Context, arg=None):
@@ -33,6 +32,7 @@ async def userinfo(bot: commands.Bot, context: commands.Context, arg=None):
 
 def get_member_info(member: discord.Member) -> discord.Embed:
     embed = discord.Embed()
+    embed.set_thumbnail(url=member.avatar_url)
     embed.add_field(name="Real Name", value=member.name)
     embed.add_field(name="Display Name", value=member.display_name)
     embed.add_field(name="Roles", value=get_mentions_of_list(member.roles))
