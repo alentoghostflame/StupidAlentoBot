@@ -12,3 +12,5 @@ class RAMStorage:
     def __init__(self):
         self.total_messages_read: int = 0
         self.total_messages_sent: int = 0
+
+        self.dp_last_user_count: int = -1
