@@ -4,7 +4,7 @@ import traceback
 import logging
 import discord
 import typing
-import sys
+# import sys
 import re
 
 
@@ -24,7 +24,7 @@ def log_exception_handler(error_type, value, tb):
                         "Traceback:\n {}".format(str(error_type), str(value), "".join(traceback.format_tb(tb))))
 
 
-sys.excepthook = log_exception_handler
+# sys.excepthook = log_exception_handler
 
 
 class DataSync:
@@ -138,3 +138,12 @@ def toggle_feature(arg: str, feature_name: str, enable_phrases: set, disable_phr
             return enabled_var, "Argument `{}` is not a valid on/off for feature `{}`.".format(arg, feature_name)
     else:
         return enabled_var, "You need to actually say something after the command, like enable or disable."
+
+
+def get_category(guild: discord.Guild, category_id: int) -> discord.CategoryChannel:
+    categories = guild.categories
+    found = None
+    for catagory in categories:
+        if catagory.id == category_id:
+            found = catagory
+    return found
