@@ -23,10 +23,10 @@ class FAQCog(commands.Cog, name="FAQ Module"):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        server_data = self.disk_storage.get_server(message.guild.id)
-
-        if server_data.faq_enabled and not message.author.bot and not message.content.startswith(";"):
-            await faq_module.provide_faq.provide_info(server_data.faq_phrases, message)
+        if message.guild:
+            server_data = self.disk_storage.get_server(message.guild.id)
+            if server_data.faq_enabled and not message.author.bot and not message.content.startswith(";"):
+                await faq_module.provide_faq.provide_info(server_data.faq_phrases, message)
 
     @commands.command(name="faq_admin", usage="toggle, add_keyword, remove_keyword, list_keywords, list_edit_roles, "
                                               "add_edit_role, remove_edit_role",
