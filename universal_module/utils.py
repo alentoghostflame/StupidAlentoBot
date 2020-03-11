@@ -52,9 +52,20 @@ class StoredServerData:
         self.muted_users: typing.Set[typing.Tuple[int, datetime]] = set()
 
 
-def get_numbers(string: str) -> typing.List[str]:
+def get_numbers_legacy(string: str) -> typing.List[str]:
     comp = re.compile("(\\d+)")
     return comp.findall(string)
+
+
+def get_numbers(string: str):
+    if string:
+        comp = re.compile("(\\d+)")
+        num_list = comp.findall(string)
+
+        if num_list:
+            return int("".join(num_list))
+    return None
+
 
 
 def default_config_file() -> dict:

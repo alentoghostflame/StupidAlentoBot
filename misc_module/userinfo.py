@@ -11,7 +11,7 @@ logger = logging.getLogger("Main")
 
 
 async def userinfo(bot: commands.Bot, context: commands.Context, arg=None):
-    user_id = int(universal_module.utils.get_numbers(arg)[0])
+    user_id = int(universal_module.utils.get_numbers_legacy(arg)[0])
     found_user = bot.get_user(user_id)
     if not found_user:
         found_user = await universal_module.utils.safe_fetch_user(bot, user_id)

@@ -89,7 +89,7 @@ async def list_keywords(faq_phrases: typing.Dict[str, str], context: commands.Co
 
 
 async def add_edit_role(faq_edit_roles: typing.Set[int], context: commands.Context, arg1):
-    role = context.guild.get_role(int(utils.get_numbers(arg1)[0]))
+    role = context.guild.get_role(int(utils.get_numbers_legacy(arg1)[0]))
     if not arg1:
         await context.send(text.ADD_EDIT_ROLE_HELP)
         logger.debug("User {} didn't specify a keyword.".format(context.author.display_name))
@@ -103,7 +103,7 @@ async def add_edit_role(faq_edit_roles: typing.Set[int], context: commands.Conte
 
 
 async def remove_edit_role(faq_edit_roles: typing.Set[int], context: commands.Context, arg1):
-    role_id = int(utils.get_numbers(arg1)[0])
+    role_id = int(utils.get_numbers_legacy(arg1)[0])
     if not arg1:
         await context.send(text.REMOVE_EDIT_ROLE_HELP)
         logger.debug("User {} didn't specify a keyword.".format(context.author.display_name))

@@ -1,6 +1,7 @@
 from storage_module.server_data import DiskServerData
 from datetime import datetime, timedelta
 from universal_module import utils
+import universal_module.text
 from discord.ext import commands
 from admin_module import text
 import universal_module
@@ -61,7 +62,7 @@ async def warn_admin(server_data: DiskServerData, context, arg1=None, arg2=None,
                            ", `set_warn_role`, and `unset_warn_role`")
         logger.debug("User {} didn't specify any arguments".format(context.author.display_name))
     elif args:
-        await context.send("You specified too many arguments. Did you forget to wrap them in quotes?")
+        await context.send(universal_module.text.TOO_MANY_ARGUMENTS)
     elif arg1 == "add_warner_role":
         await add_warner_role(server_data.warner_roles, context, arg2)
     elif arg1 == "remove_warner_role":
@@ -75,7 +76,7 @@ async def warn_admin(server_data: DiskServerData, context, arg1=None, arg2=None,
 
 
 async def add_warner_role(warner_roles: set, context: commands.Context, role_mention=None):
-    role = context.guild.get_role(int(utils.get_numbers(role_mention)[0]))
+    role = context.guild.get_role(int(utils.get_numbers_legacy(role_mention)[0]))
     if not role_mention:
         await context.send("Adds a role to the list of roles allowed to warn people. @mention the role after the "
                            "command to add it, like `;warn_admin add_warner_role @role`")
@@ -90,7 +91,7 @@ async def add_warner_role(warner_roles: set, context: commands.Context, role_men
 
 
 async def remove_warner_role(warner_roles: set, context: commands.Context, role_mention=None):
-    role = context.guild.get_role(int(utils.get_numbers(role_mention)[0]))
+    role = context.guild.get_role(int(utils.get_numbers_legacy(role_mention)[0]))
     if not role_mention:
         await context.send("Removes a role from the list of roles allowed to warn people. @mention the role after the "
                            "command to remove it, like `;warn_admin add_warner_role @role`")
@@ -105,7 +106,7 @@ async def remove_warner_role(warner_roles: set, context: commands.Context, role_
 
 
 async def set_warn_role(server_data: DiskServerData, context: commands.Context, role_mention=None):
-    role = context.guild.get_role(int(utils.get_numbers(role_mention)[0]))
+    role = context.guild.get_role(int(utils.get_numbers_legacy(role_mention)[0]))
     if not role_mention:
         await context.send("Sets the role to warn users with. @mention the role after the command to set it, like "
                            "`;warn_admin set_warn_role @role`")
@@ -113,7 +114,7 @@ async def set_warn_role(server_data: DiskServerData, context: commands.Context, 
     if not role:
         await context.send("Invalid role specified.")
         logger.debug("User {} specified an invalid role.".format(context.author.display_name))
-        print(utils.get_numbers(role_mention))
+        print(utils.get_numbers_legacy(role_mention))
     else:
         server_data.warn_role_id = role.id
         await context.send("Role set.")
