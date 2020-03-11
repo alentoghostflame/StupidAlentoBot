@@ -68,7 +68,6 @@ async def announcement_checker(bot: commands.Bot, disk_storage: DiskStorage):
         guild_data = disk_storage.get_server(guild_id)
         guild = bot.get_guild(guild_id)
         if guild and guild_data.steam_announcement_channel_id != 0 and guild_data.steam_announcement_games:
-            logger.debug("Checking games of guild with ID of {}".format(guild_id))
             channel = guild.get_channel(guild_data.steam_announcement_channel_id)
             if channel:
                 for game_id in guild_data.steam_announcement_games:
@@ -76,7 +75,6 @@ async def announcement_checker(bot: commands.Bot, disk_storage: DiskStorage):
 
 
 async def process_server_game(guild_data: DiskServerData, channel: discord.TextChannel, game_id: int):
-    logger.debug("Processing game with ID of {}".format(game_id))
     url = urllib.request.urlopen(BASE_STEAM_GET_NEWS_FOR_APP.format(game_id))
     full_data = json.loads(url.read().decode())
     if full_data and full_data.get("appnews", None) and full_data["appnews"].get("newsitems", None) and \
@@ -86,10 +84,6 @@ async def process_server_game(guild_data: DiskServerData, channel: discord.TextC
             logger.debug("Actually processing the game.")
             guild_data.steam_announcement_last_id[game_id] = data["gid"]
             await channel.send(embed=data_embed_creator(data))
-        else:
-            logger.debug("Already reported this news item, skipping.")
-    else:
-        logger.debug("Game failed checks, skipping.")
 
 
 def data_embed_creator(data: dict) -> discord.Embed:
