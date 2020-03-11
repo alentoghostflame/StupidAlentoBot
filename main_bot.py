@@ -1,3 +1,4 @@
+from steam_announcement_module.steam_announcement import SteamAnnouncementCog
 from sidebar_status_module.sidebar_status import SidebarStatusCog
 from storage_module.storage import StorageManager
 from admin_module.admin import AdminCog
@@ -27,6 +28,7 @@ class StupidAlentoBot:
         self.bot.add_cog(AdminCog(self.disk_storage, self.bot))
         self.bot.add_cog(FAQCog(self.disk_storage))
         self.bot.add_cog(SidebarStatusCog(self.bot, self.ram_storage))
+        self.bot.add_cog(SteamAnnouncementCog(self.bot, self.disk_storage))
 
     def run(self):
         if not self.disk_storage.config.token:
