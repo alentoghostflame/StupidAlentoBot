@@ -22,9 +22,17 @@ class DiskServerData:
         self.welcome_messages: typing.List[str] = list()
         self.welcome_channel_id: int = 0
 
+        self.steam_announcement_games: typing.Set[int] = set()
+        self.steam_announcement_last_id: typing.Dict[int, int] = dict()
+        self.steam_announcement_channel_id: int = 0
+
     def __setstate__(self, state: dict):
         self.__dict__ = state
         self.faq_edit_roles = state.get("faq_edit_roles", set())
+
+        self.steam_announcement_games = state.get("steam_announcement_games", set())
+        self.steam_announcement_last_id = state.get("steam_announcement_data", dict())
+        self.steam_announcement_channel_id = state.get("steam_announcement_channel_id", 0)
 
 
 def get_all_server_names(server_storage: typing.Dict[int, DiskServerData], bot: commands.Bot) -> dict:
