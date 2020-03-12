@@ -1,6 +1,10 @@
 from discord.ext import commands
 from datetime import datetime
+import logging
 import typing
+
+
+logger = logging.getLogger("Main")
 
 
 class DiskServerData:
@@ -23,16 +27,31 @@ class DiskServerData:
         self.welcome_channel_id: int = 0
 
         self.steam_announcement_games: typing.Set[int] = set()
-        self.steam_announcement_last_id: typing.Dict[int, int] = dict()
+        self._steam_announcement_past_ids: typing.Dict[int, typing.Set[int]] = dict()
         self.steam_announcement_channel_id: int = 0
+
+        # self.steam_announcement_webhook_toggle: typing.Dict[bool] = dict()
+        # self.steam_announcement_webhook_names: typing.Dict[str] = dict()
+        # self.steam_announcement_webhook_pfp: typing.Dict[str] = dict()
 
     def __setstate__(self, state: dict):
         self.__dict__ = state
         self.faq_edit_roles = state.get("faq_edit_roles", set())
 
         self.steam_announcement_games = state.get("steam_announcement_games", set())
-        self.steam_announcement_last_id = state.get("steam_announcement_data", dict())
+        # self.steam_announcement_last_id = state.get("steam_announcement_last_id", dict())
+        self._steam_announcement_past_ids = state.get("steam_announcement_past_ids", dict())
         self.steam_announcement_channel_id = state.get("steam_announcement_channel_id", 0)
+
+        # self.steam_announcement_webhook_toggle = state.get("steam_announcement_webhook_toggle", dict())
+        # self.steam_announcement_webhook_names = state.get("steam_announcement_webhook_names", dict())
+        # self.steam_announcement_webhook_pfp = state.get("steam_announcement_webhook_pfp", dict())
+
+    def get_steam_announcement_past_ids(self, game_id: int):
+        if game_id not in self._steam_announcement_past_ids:
+            self._steam_announcement_past_ids[game_id] = set()
+            logger.debug("Created set for game ID of {}".format(game_id))
+        return self._steam_announcement_past_ids[game_id]
 
 
 def get_all_server_names(server_storage: typing.Dict[int, DiskServerData], bot: commands.Bot) -> dict:
