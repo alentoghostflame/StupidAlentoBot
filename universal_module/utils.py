@@ -1,5 +1,6 @@
 from discord.ext import commands
 from datetime import datetime
+import urllib.request
 import traceback
 import logging
 import discord
@@ -158,3 +159,25 @@ def get_category(guild: discord.Guild, category_id: int) -> discord.CategoryChan
         if catagory.id == category_id:
             found = catagory
     return found
+
+
+def is_image_url(image_url: str) -> bool:
+    image_formats = {".png", ".jpeg", ".jpg"}
+    user_agent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36"
+    if str_contains_element(image_url[-5:], image_formats):
+        try:
+            image_request = urllib.request.Request(image_url, data=None, headers={"User-Agent": user_agent})
+            urllib.request.urlopen(image_request)
+            return True
+            # If this is able to complete, then the file ends with an image format and is a reachable URL.
+        except Exception:
+            return False
+    else:
+        return False
+
+
+def str_contains_element(string: str, substring_list: typing.Iterable) -> bool:
+    for substring in substring_list:
+        if substring in string:
+            return True
+    return False
