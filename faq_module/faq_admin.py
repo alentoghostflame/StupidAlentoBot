@@ -1,5 +1,6 @@
 from storage_module.server_data import DiskServerData
-from universal_module import utils
+import universal_module.utils
+import universal_module.text
 from discord.ext import commands
 from faq_module import text
 import logging
@@ -8,7 +9,7 @@ import sys
 
 
 logger = logging.getLogger("Main")
-sys.excepthook = utils.log_exception_handler
+sys.excepthook = universal_module.utils.log_exception_handler
 
 
 async def faq_admin(server_data: DiskServerData, context, arg1=None, arg2=None, arg3=None, *args):
@@ -26,6 +27,8 @@ async def faq_admin(server_data: DiskServerData, context, arg1=None, arg2=None, 
         await remove_keyword(server_data.faq_phrases, context, arg2, arg3)
     elif arg1 == "list_keywords":
         await list_keywords(server_data.faq_phrases, context, arg2)
+    elif arg1 == "list_keywords_full":
+        await list_keywords_full(server_data.faq_phrases, context)
     elif arg1 == "list_edit_roles":
         await list_edit_roles(server_data.faq_edit_roles, context)
     elif not context.author.guild_permissions.administrator:
@@ -39,9 +42,10 @@ async def faq_admin(server_data: DiskServerData, context, arg1=None, arg2=None, 
 
 
 async def toggle(server_data: DiskServerData, context: commands.Context, arg: str):
-    server_data.faq_enabled, message = utils.toggle_feature(arg, "faq", utils.ENABLE_PHRASES,
-                                                            utils.DISABLE_PHRASES,
-                                                            server_data.faq_enabled)
+    server_data.faq_enabled, message = universal_module.utils.toggle_feature(arg, "faq",
+                                                                             universal_module.utils.ENABLE_PHRASES,
+                                                                             universal_module.utils.DISABLE_PHRASES,
+                                                                             server_data.faq_enabled)
     await context.send(message)
 
 
@@ -88,8 +92,18 @@ async def list_keywords(faq_phrases: typing.Dict[str, str], context: commands.Co
         logger.debug("User {} asked for list of keywords.".format(context.author.display_name))
 
 
+async def list_keywords_full(faq_phrases: typing.Dict[str, str], context: commands.Context):
+    output = ""
+    for keyword in faq_phrases:
+        output += "{} : {}\n".format(keyword, faq_phrases[keyword].replace("```", "``" +
+                                                                           universal_module.text.ZERO_WIDTH_SPACE +
+                                                                           "`"))
+    await context.send("List of keywords and phrases: ```{}```".format(output))
+    logger.debug("User {} asked for a list of keywords.".format(context.author.display_name))
+
+
 async def add_edit_role(faq_edit_roles: typing.Set[int], context: commands.Context, arg1):
-    role = context.guild.get_role(int(utils.get_numbers_legacy(arg1)[0]))
+    role = context.guild.get_role(int(universal_module.utils.get_numbers_legacy(arg1)[0]))
     if not arg1:
         await context.send(text.ADD_EDIT_ROLE_HELP)
         logger.debug("User {} didn't specify a keyword.".format(context.author.display_name))
@@ -103,7 +117,7 @@ async def add_edit_role(faq_edit_roles: typing.Set[int], context: commands.Conte
 
 
 async def remove_edit_role(faq_edit_roles: typing.Set[int], context: commands.Context, arg1):
-    role_id = int(utils.get_numbers_legacy(arg1)[0])
+    role_id = int(universal_module.utils.get_numbers_legacy(arg1)[0])
     if not arg1:
         await context.send(text.REMOVE_EDIT_ROLE_HELP)
         logger.debug("User {} didn't specify a keyword.".format(context.author.display_name))
@@ -127,5 +141,3 @@ async def list_edit_roles(faq_edit_roles: typing.Set[int], context: commands.Con
             output += "`{}`: N/A\n".format(role_id)
     await context.send("List of roles that can edit: \n{}".format(output))
     logger.debug("User {} asked for list of edit roles.".format(context.author.display_name))
-
-
