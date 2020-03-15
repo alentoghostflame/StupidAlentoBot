@@ -40,8 +40,11 @@ class DiskServerData:
 
         self.steam_announcement_games = state.get("steam_announcement_games", set())
         # self.steam_announcement_last_id = state.get("steam_announcement_last_id", dict())
-        self._steam_announcement_past_ids = state.get("steam_announcement_past_ids", dict())
+        self._steam_announcement_past_ids = state.get("_steam_announcement_past_ids", dict())
         self.steam_announcement_channel_id = state.get("steam_announcement_channel_id", 0)
+
+        self.steam_announcement_past_ids = None
+        self.steam_announcement_last_id = None
 
         # self.steam_announcement_webhook_toggle = state.get("steam_announcement_webhook_toggle", dict())
         # self.steam_announcement_webhook_names = state.get("steam_announcement_webhook_names", dict())
