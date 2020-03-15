@@ -21,16 +21,30 @@ async def provide_info(faq_phrases: typing.Dict[str, str], message: discord.Mess
 
 
 def provide_info_recursive(faq_phrases: typing.Dict[str, str], message_content, embed: discord.Embed, found_keys: set):
-    comp = re.compile("{(.+?)}")
-    keywords = comp.findall(message_content)
-    for keyword in keywords:
+    for keyword in get_keywords(message_content):
         if keyword in faq_phrases and keyword not in found_keys:
-            if universal_module.utils.is_image_url(faq_phrases[keyword]):
-                found_keys.add(keyword)
+            found_keys.add(keyword)
+            if just_keywords(faq_phrases[keyword]):
+                logger.debug("Found keyword {} that links keyword(s) {}".format(keyword, faq_phrases[keyword]))
+                provide_info_recursive(faq_phrases, faq_phrases[keyword], embed, found_keys)
+            elif universal_module.utils.is_image_url(faq_phrases[keyword]):
                 embed.set_image(url=faq_phrases[keyword])
                 logger.debug("Found image keyword {} with value {}".format(keyword, faq_phrases[keyword]))
             else:
-                found_keys.add(keyword)
                 embed.add_field(name=keyword, value=faq_phrases[keyword], inline=False)
                 logger.debug("Found keyword {} with value {}".format(keyword, faq_phrases[keyword]))
                 provide_info_recursive(faq_phrases, faq_phrases[keyword], embed, found_keys)
+
+
+def get_keywords(input_string: str) -> list:
+    comp = re.compile("{(.+?)}")
+    return comp.findall(input_string)
+
+
+def just_keywords(input_string: str) -> bool:
+    comp = re.compile("({.+?})")
+    keywords = comp.findall(input_string)
+    if keywords and len("".join(keywords)) == len("".join(input_string.split())):
+        return True
+    else:
+        return False
