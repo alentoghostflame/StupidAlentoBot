@@ -68,7 +68,6 @@ def get_numbers(string: str):
     return None
 
 
-
 def default_config_file() -> dict:
     output = dict()
 
@@ -181,3 +180,16 @@ def str_contains_element(string: str, substring_list: typing.Iterable) -> bool:
         if substring in string:
             return True
     return False
+
+
+def find_mentions(guild: discord.Guild, input_string: str) -> typing.List[int]:
+    if input_string:
+        extended_comp = re.compile("<@!?(\\d+)>")
+        raw_mentions = extended_comp.findall(input_string)
+        output = []
+        for raw in raw_mentions:
+            member_id = int(raw)
+            if guild.get_member(member_id):
+                output.append(member_id)
+        return output
+    return []
