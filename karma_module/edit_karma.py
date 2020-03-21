@@ -11,6 +11,9 @@ import typing
 logger = logging.getLogger("Main")
 
 
+KARMA_BLACKLIST = ("c++", )
+
+
 async def edit_karma(server_data: DiskServerData, message: discord.Message):
     split_message_content: typing.List[str] = message.content.split()
     member_id_set = set()
@@ -26,7 +29,7 @@ async def edit_karma(server_data: DiskServerData, message: discord.Message):
         if mention_ids:
             logger.debug("Updating mention set with ID(s) {}".format(mention_ids))
             member_id_set.update(mention_ids)
-        if valid_solo_karma_string(content_section[-karma_string_length:]):
+        if content_section.lower() not in KARMA_BLACKLIST and valid_solo_karma_string(content_section[-karma_string_length:]):
             logger.debug("Found valid solo karma string.")
             if member_id_set:
                 logger.debug("Giving karma to server member(s).")
