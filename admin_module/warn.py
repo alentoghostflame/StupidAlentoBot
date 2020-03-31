@@ -19,10 +19,13 @@ async def warn(warner_roles: set, warn_role_id: int, warned_users: set, mute_rol
     warn_role = context.guild.get_role(warn_role_id)
     mute_role = context.guild.get_role(mute_role_id)
 
-    if not utils.has_any_role(context.guild, warner_roles, context.author) or not \
+    if not utils.has_any_role(context.guild, warner_roles, context.author) and not \
             context.author.guild_permissions.administrator:
         await context.send(text.WARN_MISSING_ROLE)
         logger.debug("User {} lacked role required to warn.".format(context.author.display_name))
+    elif member is None:
+        await context.send(universal_module.text.INVALID_MEMBER_ID)
+        logger.debug("User {} didn't specify a valid user.".format(context.author.display_name))
     elif utils.has_any_role(context.guild, warner_roles, member) or member.guild_permissions.administrator:
         await context.send(text.WARN_CANT_WARN_WARNERS)
         logger.debug("User {} tried to warn a warner.".format(context.author.display_name))
@@ -35,9 +38,6 @@ async def warn(warner_roles: set, warn_role_id: int, warned_users: set, mute_rol
     elif user_mention is None:
         await context.send(text.WARN_HELP)
         logger.debug("User {} didn't specify any arguments.".format(context.author.display_name))
-    elif member is None:
-        await context.send(universal_module.text.INVALID_MEMBER_ID)
-        logger.debug("User {} didn't specify a valid user.".format(context.author.display_name))
     elif warn_role in member.roles:
         if mute_role:
             await member.add_roles(mute_role, reason=text.WARN_DOUBLE_REASON.format(member.display_name, reason))
