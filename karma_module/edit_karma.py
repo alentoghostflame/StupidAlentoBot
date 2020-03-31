@@ -70,7 +70,7 @@ async def give_karma(server_data: DiskServerData, message: discord.Message, give
         await message.channel.send(text.REMOVED_KARMA_FROM_MEMBER.format(-karma_amount, member_display_name,
                                                                          server_data.member_karma[give_karma_to]))
         logger.debug(text.REMOVED_KARMA_FROM_MEMBER.format(-karma_amount, member_display_name,
-                                                                          server_data.member_karma[give_karma_to]))
+                                                           server_data.member_karma[give_karma_to]))
 
 
 def possible_karma_message(input_string: str) -> bool:
