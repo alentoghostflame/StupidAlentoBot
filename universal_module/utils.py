@@ -76,8 +76,8 @@ def default_config_file() -> dict:
     return output
 
 
-def has_any_role(guild: discord.Guild, warner_roles: set, member: discord.Member) -> bool:
-    for role in warner_roles:
+def has_any_role(guild: discord.Guild, given_roles: set, member: discord.Member) -> bool:
+    for role in given_roles:
         for user_role in member.roles:
             if guild.get_role(role) == user_role:
                 return True
@@ -107,9 +107,14 @@ def default_server_data():
 
 
 def get_user_from_mention(guild: discord.Guild, mention: str):
-    member_id = get_id_from_mention(mention)
-    member = guild.get_member(member_id)
-    return member
+    # member_id = get_id_from_mention(mention)
+    # member = guild.get_member(member_id)
+    # return member
+    member_id = get_numbers(mention)
+    if member_id:
+        return guild.get_member(member_id)
+    else:
+        return None
 
 
 def get_id_from_mention(mention: str) -> int:
