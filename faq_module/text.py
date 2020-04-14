@@ -1,6 +1,6 @@
 FAQ_ADMIN_HELP = "This is the central admin command for managing the faq feature. Valid first arguments: " \
-                 "`add_keyword`, `remove_keyword`, `list_keywords`, `add_edit_role`, `remove_edit_role`, " \
-                 "`list_edit_roles`."
+                 "`add_keyword`, `remove_keyword`, `list_keywords`, `list_keywords_full`, `add_edit_role`, " \
+                 "`remove_edit_role`, `list_edit_roles`."
 LACK_PERMISSION_OR_ROLE = "You don't have the role or permission to use that command."
 LACK_ADMINISTRATOR = "You lack the Administrator permission."
 TOO_MANY_ARGUMENTS = "Too many arguments specified. Did you forget to wrap multi-word arguments in quotes?"
@@ -11,10 +11,12 @@ DONT_NEED_ARG2 = "...you don't need another argument for this command."
 ROLE_ADDED = "Role added to list."
 ROLE_REMOVED = "Role removed from list."
 ROLE_NOT_FOUND = "Specified role not found in list."
-ADD_KEYWORD_HELP = "Adds a keyword to the FAQ system. Specify a keyword and a statement that the keyword should give."
+ADD_KEYWORD_HELP = "Adds a keyword to the FAQ system. Specify a keyword and a statement that the keyword should give.\n" \
+                   "An optional third argument is an image URL to have the embed display."
 ADD_KEYWORD_MISSING_STATEMENT = "Statement appears to be missing."
 ADD_KEYWORD_OVERWROTE = "Overwrote keyword `{}`"
 ADD_KEYWORD_NEW = "Created keyword `{}`"
+ADD_KEYWORD_IMAGE_ADDED = "Set the image URL to <{}>"
 REMOVE_KEYWORD_HELP = "Removes a keyword from the FAQ system. Specify a keyword to be removed."
 REMOVE_KEYWORD_FOUND = "Deleted keyword `{}`"
 REMOVE_KEYWORD_MISSING = "Couldn't find keyword `{}`"

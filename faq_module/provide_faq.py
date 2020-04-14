@@ -1,3 +1,4 @@
+from storage_module.server_data import FAQPhraseData
 import universal_module.utils
 import logging
 import discord
@@ -10,7 +11,7 @@ logger = logging.getLogger("Main")
 sys.excepthook = universal_module.utils.log_exception_handler
 
 
-async def provide_info(faq_phrases: typing.Dict[str, str], message: discord.Message):
+async def provide_info(faq_phrases: typing.Dict[str, FAQPhraseData], message: discord.Message):
     embed = discord.Embed(title="Info Requested", color=0xffff00)
     found_keys = set()
 
@@ -20,20 +21,30 @@ async def provide_info(faq_phrases: typing.Dict[str, str], message: discord.Mess
         await message.channel.send(embed=embed)
 
 
-def provide_info_recursive(faq_phrases: typing.Dict[str, str], message_content, embed: discord.Embed, found_keys: set):
+def provide_info_recursive(faq_phrases: typing.Dict[str, FAQPhraseData], message_content: str, embed: discord.Embed, found_keys: set):
     for keyword in get_keywords(message_content):
         if keyword in faq_phrases and keyword not in found_keys:
             found_keys.add(keyword)
-            if just_keywords(faq_phrases[keyword]):
-                logger.debug("Found keyword {} that links keyword(s) {}".format(keyword, faq_phrases[keyword]))
-                provide_info_recursive(faq_phrases, faq_phrases[keyword], embed, found_keys)
-            elif universal_module.utils.is_image_url(faq_phrases[keyword]):
-                embed.set_image(url=faq_phrases[keyword])
-                logger.debug("Found image keyword {} with value {}".format(keyword, faq_phrases[keyword]))
+            if isinstance(faq_phrases[keyword], str):
+                migrate_to_class(faq_phrases, keyword)
+            phrase_data = faq_phrases[keyword]
+            if just_keywords(phrase_data.statement):
+                logger.debug("Found keyword {} that links keyword(s) {}".format(keyword, phrase_data.statement))
+                provide_info_recursive(faq_phrases, phrase_data.statement, embed, found_keys)
             else:
-                embed.add_field(name=keyword, value=faq_phrases[keyword], inline=False)
-                logger.debug("Found keyword {} with value {}".format(keyword, faq_phrases[keyword]))
-                provide_info_recursive(faq_phrases, faq_phrases[keyword], embed, found_keys)
+                embed.add_field(name=keyword, value=phrase_data.statement)
+                logger.debug("Found keyword {} with value {}".format(keyword, phrase_data.statement))
+                if phrase_data.image_url:
+                    embed.set_image(url=phrase_data.image_url)
+                    logger.debug("Found keyword {} with image url {}".format(keyword, phrase_data.image_url))
+                provide_info_recursive(faq_phrases, phrase_data.statement, embed, found_keys)
+
+
+def migrate_to_class(faq_phrases: typing.Dict[str, FAQPhraseData], keyword: str):
+    phrase_data = FAQPhraseData(keyword, str(faq_phrases[keyword]))
+    if universal_module.utils.is_image_url(phrase_data.statement):
+        phrase_data.image_url = phrase_data.statement
+    faq_phrases[keyword] = phrase_data
 
 
 def get_keywords(input_string: str) -> list:

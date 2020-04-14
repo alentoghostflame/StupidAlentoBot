@@ -12,7 +12,7 @@ class DiskServerData:
         self.callout_delete_enabled: bool = False
 
         self.faq_enabled: bool = True
-        self.faq_phrases: typing.Dict[str, str] = dict()
+        self.faq_phrases: typing.Dict[str, FAQPhraseData] = dict()
         self.faq_edit_roles: typing.Set[int] = set()
 
         self.warn_role_id: int = 0
@@ -50,6 +50,16 @@ class DiskServerData:
             self._steam_announcement_past_ids[game_id] = set()
             logger.debug("Created set for game ID of {}".format(game_id))
         return self._steam_announcement_past_ids[game_id]
+
+
+class FAQPhraseData:
+    def __init__(self, key: str, statement: str, image_url: typing.Optional[str] = None):
+        self.key: str = key
+        self.statement: str = statement
+        self.image_url: typing.Optional[str] = image_url
+
+    def __str__(self):
+        return self.statement
 
 
 def get_all_server_names(server_storage: typing.Dict[int, DiskServerData], bot: commands.Bot) -> dict:

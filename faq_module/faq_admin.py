@@ -1,4 +1,5 @@
-from storage_module.server_data import DiskServerData
+from storage_module.server_data import DiskServerData, FAQPhraseData
+from faq_module.provide_faq import migrate_to_class
 import universal_module.utils
 import universal_module.text
 from discord.ext import commands
@@ -12,7 +13,7 @@ logger = logging.getLogger("Main")
 sys.excepthook = universal_module.utils.log_exception_handler
 
 
-async def faq_admin(server_data: DiskServerData, context, arg1=None, arg2=None, arg3=None, *args):
+async def faq_admin(server_data: DiskServerData, context, arg1=None, arg2=None, arg3=None, image_url=None, *args):
     if not arg1:
         await context.send(text.FAQ_ADMIN_HELP)
         logger.debug("User {} didn't specify arguments.".format(context.author.display_name))
@@ -22,7 +23,7 @@ async def faq_admin(server_data: DiskServerData, context, arg1=None, arg2=None, 
     elif arg1 == "toggle":
         await toggle(server_data, context, arg2)
     elif arg1 == "add_keyword":
-        await add_keyword(server_data.faq_phrases, context, arg2, arg3)
+        await add_keyword(server_data.faq_phrases, context, arg2, arg3, image_url=image_url)
     elif arg1 == "remove_keyword":
         await remove_keyword(server_data.faq_phrases, context, arg2, arg3)
     elif arg1 == "list_keywords":
@@ -49,24 +50,43 @@ async def toggle(server_data: DiskServerData, context: commands.Context, arg: st
     await context.send(message)
 
 
-async def add_keyword(faq_phrases: typing.Dict[str, str], context: commands.Context, keyword=None, statement=None):
+async def add_keyword(faq_phrases: typing.Dict[str, FAQPhraseData], context: commands.Context, keyword=None, statement=None, image_url=None):
+    phrase_data = FAQPhraseData(keyword, statement, image_url=image_url)
     if not keyword:
         await context.send(text.ADD_KEYWORD_HELP)
         logger.debug("User {} didn't specify a keyword.".format(context.author.display_name))
     elif not statement:
         await context.send(text.ADD_KEYWORD_MISSING_STATEMENT)
         logger.debug("User {} didn't specify a statement".format(context.author.display_name))
-    elif keyword in faq_phrases:
-        faq_phrases[keyword] = statement
-        await context.send(text.ADD_KEYWORD_OVERWROTE.format(keyword))
-        logger.debug("User {} overwrote keyword {} with {}".format(context.author.display_name, keyword, statement))
+    # elif keyword in faq_phrases:
+    #     # faq_phrases[keyword] = statement
+    #     faq_phrases[keyword] = phrase_data
+    #     await context.send(text.ADD_KEYWORD_OVERWROTE.format(keyword))
+    #     logger.debug("User {} overwrote keyword {} with {}".format(context.author.display_name, keyword, statement))
+    # else:
+    #     faq_phrases[keyword] = statement
+    #     await context.send(text.ADD_KEYWORD_NEW.format(keyword))
+    #     logger.debug("User {} created keyword {} with {}".format(context.author.display_name, keyword, statement))
     else:
-        faq_phrases[keyword] = statement
-        await context.send(text.ADD_KEYWORD_NEW.format(keyword))
-        logger.debug("User {} created keyword {} with {}".format(context.author.display_name, keyword, statement))
+        overwrote_flag = False
+        if keyword in faq_phrases:
+            overwrote_flag = True
+
+        faq_phrases[keyword] = phrase_data
+
+        if overwrote_flag:
+            await context.send(text.ADD_KEYWORD_OVERWROTE.format(keyword))
+            logger.debug("User {} overwrote keyword {} with {}".format(context.author.display_name, keyword, statement))
+        else:
+            await context.send(text.ADD_KEYWORD_NEW.format(keyword))
+            logger.debug("User {} created keyword {} with {}".format(context.author.display_name, keyword, statement))
+        if phrase_data.image_url:
+            await context.send(text.ADD_KEYWORD_IMAGE_ADDED.format(phrase_data.image_url))
+            logger.debug("User {} created keyword {} with image URL {}".format(context.author.display_name, keyword,
+                                                                               phrase_data.image_url))
 
 
-async def remove_keyword(faq_phrases: typing.Dict[str, str], context: commands.Context, keyword=None, arg2=None):
+async def remove_keyword(faq_phrases: typing.Dict[str, FAQPhraseData], context: commands.Context, keyword=None, arg2=None):
     if not keyword:
         await context.send(text.REMOVE_KEYWORD_HELP)
         logger.debug("User {} didn't specify a keyword.".format(context.author.display_name))
@@ -83,7 +103,7 @@ async def remove_keyword(faq_phrases: typing.Dict[str, str], context: commands.C
             logger.debug("User {} tried to remove keyword {}".format(context.author.display_name, keyword))
 
 
-async def list_keywords(faq_phrases: typing.Dict[str, str], context: commands.Context, arg1=None):
+async def list_keywords(faq_phrases: typing.Dict[str, FAQPhraseData], context: commands.Context, arg1=None):
     if arg1:
         await context.send(text.DONT_NEED_ADD_ARGS)
         logger.debug("User {} specified too many arguments.".format(context.author.display_name))
@@ -92,12 +112,15 @@ async def list_keywords(faq_phrases: typing.Dict[str, str], context: commands.Co
         logger.debug("User {} asked for list of keywords.".format(context.author.display_name))
 
 
-async def list_keywords_full(faq_phrases: typing.Dict[str, str], context: commands.Context):
+async def list_keywords_full(faq_phrases: typing.Dict[str, FAQPhraseData], context: commands.Context):
     output = ""
     for keyword in faq_phrases:
-        output += "{} : {}\n".format(keyword, faq_phrases[keyword].replace("```", "``" +
-                                                                           universal_module.text.ZERO_WIDTH_SPACE +
-                                                                           "`"))
+        if isinstance(faq_phrases[keyword], str):
+            migrate_to_class(faq_phrases, keyword)
+        output += "{} : {}\n".format(keyword, faq_phrases[keyword].statement.replace("```", "``" +
+                                                                                     universal_module.text.
+                                                                                     ZERO_WIDTH_SPACE +
+                                                                                     "`"))
     await context.send("List of keywords and phrases: ```{}```".format(output))
     logger.debug("User {} asked for a list of keywords.".format(context.author.display_name))
 
