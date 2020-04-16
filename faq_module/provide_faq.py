@@ -1,5 +1,6 @@
 from storage_module.server_data import FAQPhraseData
 import universal_module.utils
+import universal_module.text
 import logging
 import discord
 import typing
@@ -32,7 +33,7 @@ def provide_info_recursive(faq_phrases: typing.Dict[str, FAQPhraseData], message
                 logger.debug("Found keyword {} that links keyword(s) {}".format(keyword, phrase_data.statement))
                 provide_info_recursive(faq_phrases, phrase_data.statement, embed, found_keys)
             else:
-                embed.add_field(name=keyword, value=phrase_data.statement)
+                embed.add_field(name=keyword, value=phrase_data.statement + universal_module.text.ZERO_WIDTH_SPACE)
                 logger.debug("Found keyword {} with value {}".format(keyword, phrase_data.statement))
                 if phrase_data.image_url:
                     embed.set_image(url=phrase_data.image_url)
