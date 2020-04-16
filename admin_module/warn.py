@@ -35,7 +35,7 @@ async def warn(warner_roles: set, warn_role_id: int, warned_users: set, mute_rol
         await context.send(universal_module.text.TOO_MANY_ARGUMENTS)
         logger.debug("User {} specified too many arguments.".format(context.author.display_name))
     elif not warn_role:
-        await context.send(text.WARN_MUTE_MISSING)
+        await context.send(text.WARN_ROLE_MISSING)
         logger.debug("User {} warned with non-existent warn role.".format(context.author.display_name))
     elif user_mention is None:
         await context.send(text.WARN_HELP)
