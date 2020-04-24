@@ -15,20 +15,20 @@ logger = logging.getLogger("Main")
 sys.excepthook = universal_module.utils.log_exception_handler
 
 
-async def warn(warner_roles: set, warn_role_id: int, warned_users: set, mute_role_id: int, muted_users: set,
-               context: commands.Context, user_mention=None, reason=text.WARN_DEFAULT_REASON, *args):
+async def warn(server_data: DiskServerData, context, user_mention=None, reason=text.WARN_DEFAULT_REASON, *args):
     member: discord.Member = universal_module.utils.get_user_from_mention(context.guild, user_mention)
-    warn_role = context.guild.get_role(warn_role_id)
-    mute_role = context.guild.get_role(mute_role_id)
+    warn_role = context.guild.get_role(server_data.warn_role_id)
+    mute_role = context.guild.get_role(server_data.mute_role_id)
 
-    if not universal_module.utils.has_any_role(context.guild, warner_roles, context.author) and not \
+    if not universal_module.utils.has_any_role(context.guild, server_data.warner_roles, context.author) and not \
             context.author.guild_permissions.administrator:
         await context.send(text.WARN_MISSING_ROLE)
         logger.debug("User {} lacked role required to warn.".format(context.author.display_name))
     elif member is None:
         await context.send(universal_module.text.INVALID_MEMBER_ID)
         logger.debug("User {} didn't specify a valid user.".format(context.author.display_name))
-    elif universal_module.utils.has_any_role(context.guild, warner_roles, member) or member.guild_permissions.administrator:
+    elif universal_module.utils.has_any_role(context.guild, server_data.warner_roles, member) or \
+            member.guild_permissions.administrator:
         await context.send(text.WARN_CANT_WARN_WARNERS)
         logger.debug("User {} tried to warn a warner.".format(context.author.display_name))
     elif args:
@@ -42,10 +42,11 @@ async def warn(warner_roles: set, warn_role_id: int, warned_users: set, mute_rol
         logger.debug("User {} didn't specify any arguments.".format(context.author.display_name))
     elif warn_role in member.roles:
         if mute_role:
-            utils.remove_id_from_set(warned_users, member.id)
-            warned_users.add((member.id, datetime.utcnow() + timedelta(days=30)))
+            utils.remove_id_from_set(server_data.warned_users, member.id)
+            utils.remove_id_from_set(server_data.muted_users, member.id)
+            server_data.warned_users.add((member.id, datetime.utcnow() + timedelta(days=3)))
             await member.add_roles(mute_role, reason=text.WARN_DOUBLE_REASON.format(member.display_name, reason))
-            muted_users.add((member.id, datetime.utcnow() + timedelta(minutes=20)))
+            server_data.muted_users.add((member.id, datetime.utcnow() + timedelta(minutes=20)))
             await context.send(text.WARN_DOUBLE)
             logger.debug("User {} double warned user {}".format(context.author.display_name, member.display_name))
         else:
@@ -54,7 +55,7 @@ async def warn(warner_roles: set, warn_role_id: int, warned_users: set, mute_rol
                                                                                           member.display_name))
     else:
         await member.add_roles(warn_role, reason=text.WARN_REASON.format(member.display_name, reason))
-        warned_users.add((member.id, datetime.utcnow() + timedelta(days=30)))
+        server_data.warned_users.add((member.id, datetime.utcnow() + timedelta(days=30)))
         await context.send(text.WARN_GIVEN)
         logger.debug("User {} warned user {}".format(context.author.display_name, member.display_name))
 

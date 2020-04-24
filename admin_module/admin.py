@@ -28,9 +28,7 @@ class AdminCog(commands.Cog, name="Admin Module"):
     @commands.command(name="warn", usage="@user \"reason\"", brief="Warn the user.")
     async def warn(self, context, mentioned_user=None, reason=None, *args):
         server_data = self.disk_storage.get_server(context.guild.id)
-        await admin_module.warn.warn(server_data.warner_roles, server_data.warn_role_id, server_data.warned_users,
-                                     server_data.mute_role_id, server_data.muted_users, context, mentioned_user, reason,
-                                     *args)
+        await admin_module.warn.warn(server_data, context, mentioned_user, reason, *args)
 
     @commands.has_permissions(administrator=True)
     @commands.command(name="warn_admin", usage="", brief="Admin command to configure warns.")

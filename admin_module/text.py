@@ -5,7 +5,7 @@ WARN_HELP = "This command warns the given user for 30 minutes. Use `;warn @user`
             "the user."
 WARN_DEFAULT_REASON = "No reason given."
 WARN_REASON = "{} Warned because: {}"
-WARN_GIVEN = "30 day warn given."
+WARN_GIVEN = "3 day warn given."
 WARN_DOUBLE = "Already had a warn, muted for 20 minutes."
 WARN_DOUBLE_REASON = "{} Doubled warned because: {}"
 
