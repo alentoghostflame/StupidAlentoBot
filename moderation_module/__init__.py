@@ -1,0 +1,1 @@
+from moderation_module.moderation import ModeratorModule

@@ -1,0 +1,1 @@
+from moderation_module.guild_logging.guild_logging import GuildLoggingCog

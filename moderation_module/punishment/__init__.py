@@ -1,0 +1,2 @@
+from moderation_module.punishment.punishment import PunishmentCog
+from moderation_module.punishment.word_banner import WordBanCog

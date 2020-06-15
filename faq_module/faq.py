@@ -1,42 +1,41 @@
-from storage_module.disk_storage import DiskStorage
-from universal_module import utils
+from faq_module.commands import faq_control, faq_on_message
+from faq_module.storage import FAQManager, FAQConfig
+from alento_bot import DiscordBot, StorageManager
 from discord.ext import commands
-import faq_module.text as text
-import faq_module.provide_faq
-import faq_module.faq_admin
 import logging
-import sys
+import discord
 
 
-logger = logging.getLogger("Main")
-sys.excepthook = utils.log_exception_handler
+logger = logging.getLogger("main_bot")
 
 
-class FAQCog(commands.Cog, name="FAQ Module"):
-    def __init__(self, disk_storage: DiskStorage):
-        super().__init__()
-        self.disk_storage = disk_storage
+class FAQModule:
+    def __init__(self, discord_bot: DiscordBot):
+        self.discord_bot: DiscordBot = discord_bot
+        self.discord_bot.storage.guilds.register_data_name("faq_config", FAQConfig)
+        self.faq_manager: FAQManager = FAQManager(self.discord_bot.storage)
+
+    def register_cogs(self):
+        logger.info("Registering cogs for FAQ.")
+        self.discord_bot.add_cog(FAQCog(self.discord_bot.storage, self.faq_manager, self.discord_bot.bot))
+
+
+class FAQCog(commands.Cog, name="FAQ"):
+    def __init__(self, storage: StorageManager, faq_manager: FAQManager, bot: commands.Bot):
+        self.storage: StorageManager = storage
+        self.faq_manager: FAQManager = faq_manager
+        self.bot = bot
 
     @commands.Cog.listener()
-    async def on_ready(self):
-        logger.info("FAQ cog ready.")
-
-    @commands.Cog.listener()
-    async def on_message(self, message):
+    async def on_message(self, message: discord.Message):
         if message.guild:
-            server_data = self.disk_storage.get_server(message.guild.id)
-            if server_data.faq_enabled and not message.author.bot and not message.content.startswith(";"):
-                await faq_module.provide_faq.provide_info(server_data.faq_phrases, message)
+            faq_config: FAQConfig = self.storage.guilds.get(message.guild.id, "faq_config")
+            if faq_config.enabled and not message.author.bot:
+                context: commands.Context = await self.bot.get_context(message)
+                if not context.valid:
+                    await faq_on_message(self.faq_manager, message)
 
-    @commands.command(name="faq_admin", usage="toggle, add_keyword, remove_keyword, list_keywords, list_edit_roles, "
-                                              "add_edit_role, remove_edit_role",
-                      brief="Controls the FAQ feature on your server.")
-    async def faq_admin(self, context: commands.Context, arg1=None, arg2=None, arg3=None, image_url=None, *args):
-        server_data = self.disk_storage.get_server(context.guild.id)
-
-        if not utils.has_any_role(context.guild, server_data.faq_edit_roles, context.author) and not \
-                context.author.guild_permissions.administrator:
-            await context.send(text.LACK_PERMISSION_OR_ROLE)
-            logger.debug("User {} lacks a permission or role.".format(context.author.display_name))
-        else:
-            await faq_module.faq_admin.faq_admin(server_data, context, arg1, arg2, arg3, image_url, *args)
+    @commands.command("faq_control", aliases=["faq", ])
+    async def faq_control(self, context: commands.Context, arg1=None, arg2=None, arg3=None, arg4=None, *args):
+        faq_config = self.storage.guilds.get(context.guild.id, "faq_config")
+        await faq_control(self.faq_manager, faq_config, context, arg1, arg2, arg3, arg4, *args)

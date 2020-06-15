@@ -1,0 +1,5 @@
+MISSING_PERMISSIONS = "You don't have the permissions to do that."
+IM_MISSING_PERMISSIONS = "Command Invoke Error, I probably don't have the permission to do that.\n{}"
+INVALID_ROLE = "Invalid role specified."
+INVALID_MEMBER = "Invalid guild member specified."
+INVALID_CHANNEL = "Invalid channel specified."
