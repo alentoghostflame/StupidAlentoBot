@@ -26,5 +26,5 @@ WORD_BAN_CONTROL_WORD_REMOVED_FROM_BAN = "Word ||{}|| is no longer banned."
 
 
 WORD_BAN_DELETE_WARN_SUCCESS = "Warned for 3 days, your message contained a banned word: ||{}||"
-WORD_BAN_DELETE_DOUBLE_WARN_SUCCESS = "Muted for 20 mutes due to already having a warn, your message contained a " \
+WORD_BAN_DELETE_DOUBLE_WARN_SUCCESS = "Muted for 20 minutes due to already having a warn, your message contained a " \
                                       "banned word: ||{}||"
