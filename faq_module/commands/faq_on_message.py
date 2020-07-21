@@ -1,10 +1,10 @@
-from faq_module.storage import FAQManager, FAQConfig, FAQData
-from faq_module.commands import text
-from discord.ext import commands
-import faq_module.text
-import logging
+from faq_module.storage import FAQManager  # , FAQConfig, FAQData
+# from faq_module.commands import text
+# from discord.ext import commands
+# import faq_module.text
+# import logging
 import discord
-import typing
+# import typing
 import re
 
 
