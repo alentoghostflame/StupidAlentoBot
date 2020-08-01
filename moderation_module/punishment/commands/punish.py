@@ -31,6 +31,7 @@ async def warn_cmd(punish_manager: PunishmentManager, punish_config: PunishmentC
     elif warn_role in member.roles:
         mute_role = context.guild.get_role(punish_config.mute_role_id)
         if mute_role:
+            await warn(punish_manager, warn_role, context.guild.id, member)
             await mute(punish_manager, mute_role, context.guild.id, member)
             await context.send(text.PUNISH_DOUBLE_WARN)
         else:
