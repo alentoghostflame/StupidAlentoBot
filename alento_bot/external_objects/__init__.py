@@ -1,0 +1,1 @@
+from alento_bot.external_objects.base_module import BaseModule

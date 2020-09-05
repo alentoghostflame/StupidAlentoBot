@@ -31,13 +31,13 @@ class CacheManager:
         return self._caches.get(cache_name, None)
 
     def save(self):
-        logger.info("Saving caches...")
+        logger.debug("Saving caches...")
         for cache in self._caches:
             self._caches[cache].save(exiting=True)
-        logger.info("Caches saved.")
+        logger.debug("Caches saved.")
 
     def load(self):
-        logger.info("Loading caches...")
+        logger.debug("Loading caches...")
         for cache in self._caches:
             self._caches[cache].load()
-        logger.info("Caches loaded.")
+        logger.debug("Caches loaded.")

@@ -25,18 +25,18 @@ class StorageManager:
         Path(f"{data_folder}/users").mkdir(exist_ok=True)
 
     def load(self):
-        logger.info("Loading storage...")
+        logger.debug("Loading storage...")
         self._config_manager.load()
         self.caches.load()
         self._loaded = True
-        logger.info("Storage loaded.")
+        logger.debug("Storage loaded.")
 
     def save(self):
-        logger.info("Saving storage...")
+        logger.debug("Saving storage...")
         self.guilds.save()
         self.users.save()
         self.caches.save()
-        logger.info("Saved.")
+        logger.debug("Saved.")
 
     def loaded(self) -> bool:
         return self._loaded

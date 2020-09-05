@@ -1,28 +1,33 @@
-from moderation_module import ModeratorModule
-from misc_module import MiscModule
-from faq_module import FAQModule
-from alento_bot import DiscordBot
-from alento_bot import CoreCog
+from alento_bot import StupidAlentoBot, CoreModule
+# from moderation_module import ModeratorModule
+# from faq_module import FAQModule
+# from misc_module import MiscModule
+# from misc2_module import MiscModule as Misc2Module
+# from eve_module import EVEModule
 import logging
+
 
 logger = logging.getLogger("main_bot")
 
 
-discord_bot = DiscordBot()
-moderation = ModeratorModule(discord_bot)
-# eve = EVEModule(discord_bot.storage)
-faq = FAQModule(discord_bot)
-misc = MiscModule(discord_bot)
+discord_bot = StupidAlentoBot()
+# moderation = ModeratorModule(discord_bot)
+# faq = FAQModule(discord_bot)
+# eve = EVEModule(discord_bot)
 
 try:
-    discord_bot.add_cog(CoreCog(discord_bot.storage))
+    discord_bot.add_module(CoreModule)
+    # discord_bot.add_module(Misc2Module)
+    # faq.register_cogs()
+    # eve.register_cogs(discord_bot)
+    # moderation.register_cogs()
 
-    moderation.register_cogs()
-    faq.register_cogs()
-    misc.register_cogs()
+    discord_bot.init_modules()
+    discord_bot.init_cogs()
 
     discord_bot.load()
-    moderation.load()
+    # eve.load()
+    # moderation.load()
 
     discord_bot.run()
 except Exception as e:
@@ -30,6 +35,6 @@ except Exception as e:
     logger.exception(e)
     raise e
 finally:
-    moderation.save()
+    # moderation.save()
+    # eve.save()
     discord_bot.save()
-

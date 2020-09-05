@@ -1,7 +1,8 @@
 from alento_bot.storage_module import StorageManager
 from alento_bot.external_objects import BaseModule
+import warnings
+from alento_bot.core_bot import text
 from discord.ext import commands
-from alento_bot.core_module import text
 from typing import Set, Type
 import logging
 import sys
@@ -39,25 +40,41 @@ class StupidAlentoBot:
 
         self.storage: StorageManager = StorageManager()
         self.bot = commands.Bot(command_prefix=self.storage.config.discord_command_prefix, case_insensitive=True)
+        setup_logging()
+        self._legacy_module = LegacyModule(self.bot, self.storage)
+        self._modules.add(self._legacy_module)
+
+    def add_cog(self, cog: commands.Cog):
+        warnings.warn("This function will be removed.", DeprecationWarning)
+        self._legacy_module.add_cog(cog)
 
     def add_module(self, module: Type[BaseModule]):
-        self._module_types.add(module)
+        if issubclass(module, BaseModule):
+            self._module_types.add(module)
+        else:
+            logger.error(f"Given module {module.__name__} does not subclass {module.__name__}")
 
     def init_modules(self):
+        logger.debug("Initializing modules.")
         for module in self._module_types:
+            logger.debug(f"  Initializing the {module.__name__} module.")
             self._modules.add(module(self.bot, self.storage))
 
     def init_cogs(self):
+        logger.debug("Initializing module cogs.")
         for module in self._modules:
+            logger.debug(f"  Initializing the {type(module).__name__} cogs.")
             module.init_cogs()
 
     def load(self):
+        self.storage.load()
         for module in self._modules:
             module.load()
 
     def save(self):
         for module in self._modules:
             module.save()
+        self.storage.save()
 
     def run(self):
         passed_checks = True
@@ -74,31 +91,5 @@ class StupidAlentoBot:
             self.bot.run(self.storage.config.discord_bot_token)
 
 
-# class DiscordBot:
-#     def __init__(self):
-#         self.storage: StorageManager = StorageManager()
-#         self.bot = commands.Bot(command_prefix=self.storage.config.discord_command_prefix, case_insensitive=True)
-#         setup_logging()
-#
-#     def add_cog(self, cog: commands.Cog):
-#         self.bot.add_cog(cog)
-#
-#     def save(self):
-#         self.storage.save()
-#
-#     def load(self):
-#         self.storage.load()
-#
-#     def run(self):
-#         passed_checks = True
-#         if not self.storage.config.discord_bot_token:
-#             logger.critical(text.MISSING_DISCORD_TOKEN)
-#             passed_checks = False
-#
-#         if self.storage.config.discord_command_prefix != ";":
-#             self.bot.command_prefix = self.storage.config.discord_command_prefix
-#             logger.debug(f"Command prefix \"{self.bot.command_prefix}\" set!")
-#
-#         if passed_checks:
-#             logger.info("Beginning bot loop.")
-#             self.bot.run(self.storage.config.discord_bot_token)
+class LegacyModule(BaseModule):
+    pass
