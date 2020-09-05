@@ -15,11 +15,11 @@ discord_bot = StupidAlentoBot()
 
 try:
     discord_bot.add_module(CoreModule)
-    # discord_bot.add_module(Misc2Module)
-    # discord_bot.add_module(EVEModule)
+    # discord_bot.add_module(ModeratorModule)
     # discord_bot.add_module(FAQModule)
     # discord_bot.add_module(SelfRoleModule)
-    # discord_bot.add_module(ModeratorModule)
+    # discord_bot.add_module(Misc2Module)
+    # discord_bot.add_module(EVEModule)
 
     discord_bot.init_modules()
     discord_bot.init_cogs()
