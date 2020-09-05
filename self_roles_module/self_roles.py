@@ -1,3 +1,4 @@
+from alento_bot import BaseModule
 from self_roles_module import role_cmds
 from self_roles_module import text
 from self_roles_module.storage import RoleSelfAssignData
@@ -12,15 +13,22 @@ import discord.errors
 logger = logging.getLogger("main_bot")
 
 
-class SelfRoleModule:
-    def __init__(self, discord_bot: DiscordBot):
-        self.discord_bot: DiscordBot = discord_bot
+# class SelfRoleModule:
+#     def __init__(self, discord_bot: DiscordBot):
+#         self.discord_bot: DiscordBot = discord_bot
+#
+#         self.discord_bot.storage.guilds.register_data_name("self_roles_data", RoleSelfAssignData)
+#
+#     def register_cogs(self):
+#         logger.info("Registering SelfRole cog.")
+#         self.discord_bot.add_cog(SelfRoleCog(self.discord_bot.storage))
 
-        self.discord_bot.storage.guilds.register_data_name("self_roles_data", RoleSelfAssignData)
 
-    def register_cogs(self):
-        logger.info("Registering SelfRole cog.")
-        self.discord_bot.add_cog(SelfRoleCog(self.discord_bot.storage))
+class SelfRoleModule(BaseModule):
+    def __init__(self, bot, storage):
+        BaseModule.__init__(self, bot, storage)
+        self.storage.guilds.register_data_name("self_roles_data", RoleSelfAssignData)
+        self.add_cog(SelfRoleCog(self.storage))
 
 
 class SelfRoleCog(commands.Cog, name="Self Roles"):
