@@ -1,0 +1,1 @@
+from self_roles_module.storage.role_data import RoleSelfAssignData

@@ -1,0 +1,1 @@
+from self_roles_module.self_roles import SelfRoleModule

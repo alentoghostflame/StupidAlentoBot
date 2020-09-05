@@ -1,0 +1,1 @@
+from eve_module.planetary_integration.planetary_integration import EVEPlanetaryIntegrationCog

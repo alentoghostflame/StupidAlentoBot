@@ -1,0 +1,1 @@
+from eve_module.industry_jobs.industry_jobs import EVEIndustryJobCog
