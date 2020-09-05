@@ -4,3 +4,5 @@ venv/
 logs/
 config.yaml
 data/
+sde/
+sde
