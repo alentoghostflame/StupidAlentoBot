@@ -1,7 +1,7 @@
 from faq_module.commands import faq_cmds, faq_on_message
 from faq_module.commands import text
 from faq_module.storage import FAQManager, FAQConfig
-from alento_bot import DiscordBot, StorageManager
+from alento_bot import BaseModule, StorageManager
 from discord.ext import commands
 from typing import Optional, Union
 import logging
@@ -15,15 +15,12 @@ class NotAllowedOrAdmin(Exception):
     pass
 
 
-class FAQModule:
-    def __init__(self, discord_bot: DiscordBot):
-        self.discord_bot: DiscordBot = discord_bot
-        self.discord_bot.storage.guilds.register_data_name("faq_config", FAQConfig)
-        self.faq_manager: FAQManager = FAQManager(self.discord_bot.storage)
-
-    def register_cogs(self):
-        logger.info("Registering cogs for FAQ.")
-        self.discord_bot.add_cog(FAQCog(self.discord_bot.storage, self.faq_manager, self.discord_bot.bot))
+class FAQModule(BaseModule):
+    def __init__(self, bot, storage):
+        BaseModule.__init__(self, bot, storage)
+        self.storage.guilds.register_data_name("faq_config", FAQConfig)
+        self.faq_manager: FAQManager = FAQManager(self.storage)
+        self.add_cog(FAQCog(self.storage, self.faq_manager, self.bot))
 
 
 class FAQCog(commands.Cog, name="FAQ"):
