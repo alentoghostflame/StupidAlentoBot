@@ -1,6 +1,8 @@
 .idea/
 __pycache__/
 venv/
+evelib/
+evelib
 logs/
 config.yaml
 data/
