@@ -30,7 +30,6 @@ class WordBanCog(commands.Cog, name="Word Ban"):
                 split_message = message.content.split()
                 for possible_word in split_message:
                     stripped_word = possible_word.strip("_`*~|\\").lower()
-                    # if possible_word.lower() in ban_config.banned_words:
                     if stripped_word in ban_config.banned_words:
                         punish_config = self.storage.guilds.get(message.guild.id, "punishment_config")
                         await delete_message_and_warn(self.punish_manager, punish_config, message, possible_word)
