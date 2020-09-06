@@ -1,4 +1,5 @@
 from alento_bot import StupidAlentoBot, CoreModule
+from example_module import ExampleModule
 # from moderation_module import ModeratorModule
 # from eve_module import EVEModule
 # from faq_module import FAQModule
@@ -18,6 +19,7 @@ discord_bot = StupidAlentoBot()
 
 try:
     discord_bot.add_module(CoreModule)
+    discord_bot.add_module(ExampleModule)
     # discord_bot.add_module(ModeratorModule)
     # discord_bot.add_module(EVEModule)
     # discord_bot.add_module(FAQModule)
