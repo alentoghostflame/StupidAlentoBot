@@ -1,6 +1,7 @@
 from misc2_module.callouts.callout_data import CalloutGuildConfig
 from misc2_module.callouts import text
 from discord.ext import commands
+from datetime import datetime, timedelta
 import discord
 import random
 
@@ -42,7 +43,8 @@ async def toggle_off(callout_config: CalloutGuildConfig, context: commands.Conte
 
 
 async def check_audit_message_delete(message: discord.Message, user: discord.User):
-    audit_logs = message.guild.audit_logs(limit=1, action=discord.AuditLogAction.message_delete)
+    audit_logs = message.guild.audit_logs(limit=1, action=discord.AuditLogAction.message_delete,
+                                          after=message.created_at - timedelta(minutes=1))
     async for audit in audit_logs:
         if audit.target.id == user.id:
             return False
