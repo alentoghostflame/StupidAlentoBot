@@ -7,6 +7,7 @@ from example_module import ExampleModule
 # from misc2_module import MiscModule as Misc2Module
 # from self_roles_module import SelfRoleModule
 # from eval_module import EvalModule
+# from mmo_module import MMOModule
 
 
 import logging
@@ -27,6 +28,7 @@ try:
     # discord_bot.add_module(Misc2Module)
     # discord_bot.add_module(SelfRoleModule)
     # discord_bot.add_module(EvalModule)
+    # discord_bot.add_module(MMOModule)
 
     discord_bot.init_modules()
     discord_bot.init_cogs()
