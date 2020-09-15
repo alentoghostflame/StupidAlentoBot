@@ -18,7 +18,7 @@ class CacheManager:
     def __init__(self):
         self._caches: typing.Dict[str, BaseCache] = dict()
 
-    def register_cache(self, cache: BaseCache, cache_name: str):
+    def register_cache(self, cache_name: str, cache: BaseCache):
         if not issubclass(type(cache), BaseCache):
             raise TypeError("Attempted to register a class that doesn't subclass BaseCache.")
         elif cache_name in self._caches:
