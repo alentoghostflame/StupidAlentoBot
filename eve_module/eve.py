@@ -22,7 +22,7 @@ class EVEModule(BaseModule):
         self.session = aiohttp.ClientSession()
         # noinspection PyArgumentList
         self.eve_config: EVEConfig = EVEConfig(self.storage.config)
-        self.storage.caches.register_cache(self.eve_config, "eve_config")
+        self.storage.caches.register_cache("eve_config", self.eve_config)
         eve_manager_cache_location = f"{self.storage.config.data_folder_path}/cache"
         self.eve_manager = EVEManager(sde_path=self.eve_config.sde_location, cache_location=eve_manager_cache_location,
                                       use_aiohttp=True, session=self.session)

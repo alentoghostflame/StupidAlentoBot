@@ -14,7 +14,7 @@ class MiscModule(BaseModule):
         BaseModule.__init__(self, bot, storage)
         # noinspection PyArgumentList
         self.steam_cache = SteamAnnouncementCache(self.storage.config)
-        self.storage.caches.register_cache(self.steam_cache, "steam_announcement_cache")
+        self.storage.caches.register_cache("steam_announcement_cache", self.steam_cache)
         self.storage.guilds.register_data_name("welcome_config", WelcomeConfig)
         self.storage.guilds.register_data_name("steam_announcement_config", SteamAnnouncementConfig)
 

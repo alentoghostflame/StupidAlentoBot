@@ -16,7 +16,7 @@ class PunishmentManager:
         # noinspection PyArgumentList
         self.punish_cache = PunishmentCache(self.storage.config)
 
-        self.storage.caches.register_cache(self.punish_cache, "punishment_cache")
+        self.storage.caches.register_cache("punishment_cache", self.punish_cache)
         self.storage.guilds.register_data_name("punishment_storage", PunishmentStorage)
         self.storage.guilds.register_data_name("punishment_config", PunishmentConfig)
         self.storage.guilds.register_data_name("word_ban_config", WordBanConfig)
