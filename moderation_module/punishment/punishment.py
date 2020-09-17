@@ -125,6 +125,8 @@ class PunishmentCog(commands.Cog, name="Moderation"):
     async def missing_permissions_error(self, context, error: Exception):
         if isinstance(error, commands.MissingPermissions):
             await context.send(moderation_module.text.MISSING_PERMISSIONS)
+        elif isinstance(error, commands.CommandInvokeError):
+            await context.send(moderation_module.text.IM_MISSING_PERMISSIONS.format(error))
         elif isinstance(error, commands.BadArgument) or isinstance(error, commands.MissingRequiredArgument):
             await context.send_help(context.command)
         else:
