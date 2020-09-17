@@ -80,9 +80,10 @@ async def send_list_embed(punish_config: PunishmentConfig, context: commands.Con
     await context.send(embed=embed)
 
 
-async def add_role(punish_config: PunishmentConfig, context: commands.Context, arg1: str, mention_text: str):
-    mention_id = get_numbers(mention_text)
-    role = context.guild.get_role(mention_id)
+# async def add_role(punish_config: PunishmentConfig, context: commands.Context, arg1: str, mention_text: str):
+#     mention_id = get_numbers(mention_text)
+#     role = context.guild.get_role(mention_id)
+async def add_role(punish_config: PunishmentConfig, context: commands.Context, arg1: str, role: discord.Role):
     if role:
         if arg1 == "warn":
             # guild_data.config["warner_roles"].add(role.id)
@@ -99,9 +100,10 @@ async def add_role(punish_config: PunishmentConfig, context: commands.Context, a
         await context.send(moderation_module.text.INVALID_ROLE)
 
 
-async def remove_role(punish_config: PunishmentConfig, context: commands.Context, arg1: str, mention_text: str):
-    mention_id = get_numbers(mention_text)
-    role = context.guild.get_role(mention_id)
+# async def remove_role(punish_config: PunishmentConfig, context: commands.Context, arg1: str, mention_text: str):
+#     mention_id = get_numbers(mention_text)
+#     role = context.guild.get_role(mention_id)
+async def remove_role(punish_config: PunishmentConfig, context: commands.Context, arg1: str, role: discord.Role):
     if role:
         if arg1 == "warn":
             # if role.id in guild_data.config["warner_roles"]:
@@ -126,9 +128,10 @@ async def remove_role(punish_config: PunishmentConfig, context: commands.Context
         await context.send(moderation_module.text.INVALID_ROLE)
 
 
-async def set_role(punish_config: PunishmentConfig, context: commands.Context, arg1: str, mention_text: str):
-    mention_id = get_numbers(mention_text)
-    role = context.guild.get_role(mention_id)
+# async def set_role(punish_config: PunishmentConfig, context: commands.Context, arg1: str, mention_text: str):
+async def set_role(punish_config: PunishmentConfig, context: commands.Context, arg1: str, role: discord.Role):
+    # mention_id = get_numbers(mention_text)
+    # role = context.guild.get_role(mention_id)
     if role:
         if arg1 == "warn":
             # guild_data.config["warn_role_id"] = role.id

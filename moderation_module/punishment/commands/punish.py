@@ -12,9 +12,12 @@ import re
 logger = logging.getLogger("main_bot")
 
 
+# async def warn_cmd(punish_manager: PunishmentManager, punish_config: PunishmentConfig, context: commands.Context,
+#                    mention: str):
 async def warn_cmd(punish_manager: PunishmentManager, punish_config: PunishmentConfig, context: commands.Context,
-                   mention: str):
-    member: discord.Member = context.guild.get_member(get_numbers(mention))
+                   mention: discord.Member):
+    # member: discord.Member = context.guild.get_member(get_numbers(mention))
+    member = mention
     warn_role: discord.Role = context.guild.get_role(punish_config.warn_role_id)
 
     if not has_any_role(context.guild, punish_config.warner_roles, context.author) and not \
@@ -41,9 +44,12 @@ async def warn_cmd(punish_manager: PunishmentManager, punish_config: PunishmentC
         await context.send(text.PUNISH_WARN_SUCCESS)
 
 
+# async def mute_cmd(punish_manager: PunishmentManager, punish_config: PunishmentConfig, context: commands.Context,
+#                    mention: str):
 async def mute_cmd(punish_manager: PunishmentManager, punish_config: PunishmentConfig, context: commands.Context,
-                   mention: str):
-    member: discord.Member = context.guild.get_member(get_numbers(mention))
+                   mention: discord.Member):
+    # member: discord.Member = context.guild.get_member(get_numbers(mention))
+    member = mention
     mute_role: discord.Role = context.guild.get_role(punish_config.mute_role_id)
 
     if not has_any_role(context.guild, punish_config.muter_roles, context.author) and not \
