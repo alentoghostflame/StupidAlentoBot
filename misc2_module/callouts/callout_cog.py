@@ -20,8 +20,9 @@ class CalloutCog(commands.Cog, name="Misc Module"):
         if callout_config.enabled:
             await callout_delete.callout_delete(callout_config, message)
 
-    @commands.group(name="callout", brief=text.CALLOUT_BRIEF)
     @commands.guild_only()
+    @commands.has_permissions(administrator=True)
+    @commands.group(name="callout", brief=text.CALLOUT_BRIEF)
     async def callout_group(self, context: commands.Context):
         if context.invoked_subcommand is None:
             if context.message.content.strip() == f"{context.prefix}{context.command.name}":
@@ -46,6 +47,16 @@ class CalloutCog(commands.Cog, name="Misc Module"):
     async def callout_delete_disable(self, context: commands.Context):
         callout_config = self._storage.guilds.get(context.guild.id, "callout_guild_config")
         await callout_delete.toggle_off(callout_config, context)
+
+    @callout_group.error
+    async def missing_permissions_error(self, context, error: Exception):
+        if isinstance(error, commands.MissingPermissions):
+            await context.send(text.USER_MISSING_PERMISSIONS)
+        elif isinstance(error, commands.BadArgument) or isinstance(error, commands.MissingRequiredArgument):
+            await context.send_help(context.command)
+        else:
+            await context.send(f"ERROR:\nType: {type(error)}\n{error}")
+            raise error
 
 
 

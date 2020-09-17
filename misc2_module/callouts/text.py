@@ -1,3 +1,4 @@
+USER_MISSING_PERMISSIONS = "You don't have the permission to run this command."
 CALLOUT_COMMAND_NOT_FOUND = "Command not found, do `callout` to list all the commands."
 CALLOUT_DELETE_COMMAND_NOT_FOUND = "Command not found, do `callout delete` to list all commands."
 
