@@ -57,7 +57,3 @@ class CalloutCog(commands.Cog, name="Misc Module"):
         else:
             await context.send(f"ERROR:\nType: {type(error)}\n{error}")
             raise error
-
-
-
-
