@@ -9,21 +9,24 @@ import logging
 logger = logging.getLogger("main_bot")
 
 
-@user_data_transformer(name="mmo_char_save")
-class CharacterSaveData:
-    def __init__(self):
-        self.char_class: Optional[str] = None
-        self.health: Optional[float] = None
-        self.mana: Optional[float] = None
-        self.equipment: Dict[dict] = dict()
-
-
 class DefaultSaveData:
     def __init__(self):
         self.char_class: Optional[str] = None
         self.health: Optional[float] = None
         self.mana: Optional[float] = None
         self.equipment: Dict[dict] = dict()
+
+
+@user_data_transformer(name="mmo_char_save")
+class CharacterSaveData(DefaultSaveData):
+    def __init__(self):
+        DefaultSaveData.__init__(self)
+# class CharacterSaveData:
+#     def __init__(self):
+#         self.char_class: Optional[str] = None
+#         self.health: Optional[float] = None
+#         self.mana: Optional[float] = None
+#         self.equipment: Dict[dict] = dict()
 
 
 class BaseCharacter:
@@ -71,9 +74,9 @@ class BaseCharacter:
         self.physical_attack = self.base_physical_attack
         self.magical_attack = self.base_magical_attack
 
-        if not self._save_data.health:
+        if self._save_data.health is None:
             self._save_data.health = self.max_health
-        if not self._save_data.mana:
+        if self._save_data.mana is None:
             self._save_data.mana = self.max_mana
 
     def set_health(self, amount: float):
