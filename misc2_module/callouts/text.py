@@ -25,3 +25,13 @@ CALLOUT_DELETE_DISABLED = "Disabled calling out deletes."
 CALLOUT_DELETE_MISSING_AUDIT_PERMISSION = "I need permission to view the audit log to call out deletes. Disabling " \
                                           "calling out deletes."
 
+CALLOUT_FISTBUMP_BRIEF = "Calls out users when they fist bump each other."
+CALLOUT_FISTBUMP_MESSAGE = "{} :right_facing_fist: :left_facing_fist: and {} fist bumped!"
+CALLOUT_FISTBUMP_ENABLE_BRIEF = "Enables calling out fist bumps."
+CALLOUT_FISTBUMP_ENABLED = "Now calling out fist bumps."
+CALLOUT_FISTBUMP_ALREADY_ENABLED = "Already calling out fist bumps."
+CALLOUT_FISTBUMP_DISABLE_BRIEF = "Disables calling out fist bumps."
+CALLOUT_FISTBUMP_DISABLED = "No longer calling out fist bumps."
+CALLOUT_FISTBUMP_ALREADY_DISABLED = "Already not calling out fist bumps."
+
+

@@ -22,21 +22,21 @@ async def callout_delete(callout_config: CalloutGuildConfig, message: discord.Me
                                                                                                message.author.mention))
     except discord.errors.Forbidden as ex:
         if ex.code == 50013:
-            callout_config.enabled = False
+            callout_config.deletes = False
             await message.channel.send(text.CALLOUT_DELETE_MISSING_AUDIT_PERMISSION)
 
 
 async def toggle_on(callout_config: CalloutGuildConfig, context: commands.Context):
-    if callout_config.enabled:
+    if callout_config.deletes:
         await context.send(text.CALLOUT_DELETE_ALREADY_ENABLED)
     else:
-        callout_config.enabled = True
+        callout_config.deletes = True
         await context.send(text.CALLOUT_DELETE_ENABLED)
 
 
 async def toggle_off(callout_config: CalloutGuildConfig, context: commands.Context):
-    if callout_config.enabled:
-        callout_config.enabled = False
+    if callout_config.deletes:
+        callout_config.deletes = False
         await context.send(text.CALLOUT_DELETE_DISABLED)
     else:
         await context.send(text.CALLOUT_DELETE_ALREADY_DISABLED)
