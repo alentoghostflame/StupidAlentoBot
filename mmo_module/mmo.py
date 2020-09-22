@@ -29,7 +29,7 @@ class MMOUser(commands.Cog, name="MMO User"):
 
     @commands.group(name="mmo", brief=text.MMO_BRIEF, invoke_without_command=True)
     async def mmo_user(self, context: commands.Context):
-        if context.message.content.strip() == f"{context.prefix}{context.command.name}":
+        if context.message.content.strip().lower() == f"{context.prefix}{context.command.name}":
             await context.send_help(context.command)
         else:
             await context.send(text.INVALID_COMMAND)
