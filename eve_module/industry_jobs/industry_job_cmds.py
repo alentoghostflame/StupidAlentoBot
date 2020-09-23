@@ -87,7 +87,8 @@ async def send_industry_info_embed(industry_jobs: List[IndustryJob], context: co
 
 def get_industry_text(job: IndustryJob) -> str:
     output_string = ""
-
+    if not job.product_type.name:
+        output_string += "PRODUCT_NAME NOT FOUND, WHATS GOING ON?"
     output_string += f"{job.product_type.name}\n  Status: {job.status.capitalize()}\n"
     if job.status == "active" and job.end_date > datetime.utcnow():
         output_string += f"  Time Remaining: {get_time_remaining_text(job.end_date - datetime.utcnow())}\n"
