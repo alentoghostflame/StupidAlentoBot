@@ -143,7 +143,7 @@ class MMOBattleInstance:
                 self._task1.cancel()
             if self._task2.is_running():
                 self._task2.cancel()
-            self._player1.tick()
+            await self._player1.context_tick(self._original_context)
             self._player2.tick()
             logger.debug("End Battle Ended.")
 #

@@ -1,1 +1,1 @@
-LEVEL_UP_MESSAGE = "Congrats, you're now level {}!"
+LEVEL_UP_MESSAGE = "Congratulations {}, you are now level {}!"

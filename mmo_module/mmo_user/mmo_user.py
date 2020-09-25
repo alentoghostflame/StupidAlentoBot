@@ -23,7 +23,7 @@ async def status(mmo_server: MMOServer, context: commands.Context):
         char_data = mmo_server.user.get(context.author.id)
         char_data.tick()
 
-        embed = discord.Embed(title="Character Status")
+        embed = discord.Embed(title=f"{char_data.get_name()} Status")
         embed.add_field(name="Values", value=f"```{char_data.health.get_display(regen=True)}\n"
                                              f"{char_data.mana.get_display(2, regen=True)}\n"
                                              f"{char_data.xp.get_display(4)}```")

@@ -94,6 +94,7 @@ class XPHandler:
     def __init__(self, save_data: DefaultSaveData):
         self._save_data = save_data
         self._xp_to_next_level: Optional[int] = None
+        self.leveled_up: bool = False
 
     def calc_xp_to_next_level(self) -> int:
         self._xp_to_next_level = 100 + 20 * self._save_data.level
@@ -103,6 +104,7 @@ class XPHandler:
         if self._save_data.xp >= self._xp_to_next_level:
             self._save_data.xp -= self._xp_to_next_level
             self._save_data.level += 1
+            self.leveled_up = True
 
     def tick(self):
         while self._save_data.xp >= self.calc_xp_to_next_level():
@@ -194,6 +196,14 @@ class BaseCharacter:
         else:
             self._save_data.last_tick = datetime.utcnow()
 
+    async def context_tick(self, context: commands.Context, do_tick: bool = True):
+        if do_tick:
+            self.tick()
+
+        if self.xp.leveled_up:
+            await context.send(text.LEVEL_UP_MESSAGE.format(self._save_data.name, self.xp.get_level()))
+            self.xp.leveled_up = False
+
 
 def get_display_bar(value_name: str, current_value: float, max_value: float, adjustment: int = 0,
                     suffix: str = "") -> str:
@@ -203,6 +213,5 @@ def get_display_bar(value_name: str, current_value: float, max_value: float, adj
     else:
         value_offset = 0
     output = f"{value_name}: {' ' * adjustment}{string_value}{' ' * (4 - len(string_value))} " \
-             f"[{'░' * value_offset}{'-' * (10 - value_offset)}] {round(max_value, 1)}{suffix}"
-    return output  # "Health: 24.3 [░░--------] 100 at 10/m"
-
+             f"╓{'▄' * value_offset}{'─' * (10 - value_offset)}╖ {round(max_value, 1)}{suffix}"
+    return output  # "Health: 24.3 ╓▄▄────────╖ 100 at 10/m"

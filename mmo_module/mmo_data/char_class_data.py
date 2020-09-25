@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, List, Type
 
 
 class BaseCharClass:
@@ -15,6 +15,12 @@ class BaseCharClass:
         self.physical_damage_per_level: float = 1
         self.magical_damage: float = 4
         self.magical_damage_per_level: float = 1
+
+
+class CharacterClassManager:
+    def __init__(self):
+        self.level_thresholds: List[int] = [10, ]
+        self.classes: Dict[int, Dict[str, Type[BaseCharClass]]] = dict()
 
 
 class StarterClass(BaseCharClass):
