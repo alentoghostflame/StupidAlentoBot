@@ -1,6 +1,7 @@
 from alento_bot import StorageManager, guild_data_transformer, cache_transformer
 from discord.ext import commands
 from datetime import datetime
+import discord.errors
 import discord
 import logging
 import typing
@@ -54,10 +55,13 @@ async def if_time_remove_role(member_storage: typing.Dict[int, dict], guild: dis
         if member:
             # 2020-05-24 17:29:01.946074
             end_time = datetime.strptime(member_storage[user_id]["end"], "%Y-%m-%d %H:%M:%S.%f")
-            if end_time <= datetime.utcnow():
-                await member.remove_roles(role, reason="Time expired.")
-                member_storage.pop(user_id, None)
-                logger.debug(f"Removed user {member.display_name} from punishment storage.")
+            try:
+                if end_time <= datetime.utcnow():
+                    await member.remove_roles(role, reason="Time expired.")
+                    member_storage.pop(user_id, None)
+                    logger.debug(f"Removed user {member.display_name} from punishment storage.")
+            except discord.errors.Forbidden:
+                logger.debug("Couldn't remove role from user, forbidden?")
 
 
 @guild_data_transformer(name="punishment_storage")
