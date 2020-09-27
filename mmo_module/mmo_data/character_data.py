@@ -4,7 +4,7 @@ from mmo_module.mmo_data.equipment_data import BaseEquipment
 from mmo_module.mmo_data.small_data import BaseResists
 from mmo_module.mmo_data import text
 from typing import Optional, Dict
-from discord.ext import commands
+from discord.ext import commands, tasks
 from datetime import datetime
 import logging
 
@@ -105,6 +105,7 @@ class XPHandler:
             self._save_data.xp -= self._xp_to_next_level
             self._save_data.level += 1
             self.leveled_up = True
+            self.calc_xp_to_next_level()
 
     def tick(self):
         while self._save_data.xp >= self.calc_xp_to_next_level():
@@ -127,6 +128,16 @@ class XPHandler:
         return 50 + 10 * self.get_level()
 
 
+class CombatHandler:
+    def __init__(self):
+        self.active: bool = False
+        self.alive: bool = True
+        self.target: Optional[int] = None
+        self.task: Optional[tasks.Loop] = None
+        self.on_team1: Optional[bool] = None
+        self.attack: Optional[str] = None
+
+
 class BaseCharacter:
     def __init__(self, save_data: CharacterSaveData = None, load: bool = True):
         if save_data:
@@ -141,6 +152,7 @@ class BaseCharacter:
         self.xp: XPHandler = XPHandler(self._save_data)
         self.health: HealthHandler = HealthHandler(self._save_data)
         self.mana: ManaHandler = ManaHandler(self._save_data)
+        self.combat: CombatHandler = CombatHandler()
         self.attack_speed: Optional[float] = self.char_class.attack_speed
         self.physical_damage: Optional[float] = self.char_class.physical_damage
         self.magical_damage: Optional[float] = self.char_class.magical_damage

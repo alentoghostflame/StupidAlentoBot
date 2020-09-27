@@ -25,6 +25,8 @@ def get_enemy(level_range: Tuple[int, int]) -> BaseEnemy:
 class SlimeClass(BaseCharClass):
     def __init__(self):
         BaseCharClass.__init__(self)
+        # self.physical_damage = 0.5
+        # self.physical_damage_per_level = 0
         self.base_health = 10
         self.health_per_min = 0
         self.base_mana = 0
