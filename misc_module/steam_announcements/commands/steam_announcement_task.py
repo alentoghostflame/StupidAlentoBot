@@ -105,13 +105,14 @@ def meta_reader(given_text):
     return output
 
 
-def announcement_embed_creator(announcement_data: dict, webiste_url: str, image_url: str) -> discord.Embed:
+def announcement_embed_creator(announcement_data: dict, website_url: str, image_url: str) -> discord.Embed:
     embed = discord.Embed(title=announcement_data.get("title", "YOU SHOULD NOT ENCOUNTER THIS, YELL AT ALENTO"),
                           color=0xffff00)
 
-    embed.add_field(name="Preview", value=announcement_data.get("contents", "YOU SHOULD NOT SEE THIS, YELL AT ALENTO"),
+    embed.add_field(name="Preview", 
+                    value=announcement_data.get("contents", "YOU SHOULD NOT SEE THIS, YELL AT ALENTO")[:998],
                     inline=False)
-    embed.add_field(name="URL", value=webiste_url, inline=False)
+    embed.add_field(name="URL", value=website_url, inline=False)
     embed.set_image(url=image_url)
     embed.timestamp = datetime.utcfromtimestamp(announcement_data.get("date", 0))
 
