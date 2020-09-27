@@ -1,8 +1,8 @@
 BATTLE_ALREAY_IN = "You are already in a battle!"
-BATTLE_PERSON_WON = "{} won the battle against {}, earning {} XP!"
+BATTLE_TEAM_WON = "The {} won the battle against the {}, earning {} XP!"
 BATTLE_CANCELED = "The battle between {} and {} was canceled!"
+BATTLE_ATTACK_NOT_IN = "You can't change your attack outside of a battle."
 # BATTLE_PERSON_DEALT_DAMAGE = "{} used {}, dealing {} damage."
 BATTLE_DEALT_DAMAGE = "{} used {}, dealing {} damage to {}."
+BATTLE_PLAYER_DOWN = "{} is down!"
 PERSON_CHANGED_ATTACK = "Changed attack to {}."
-PERSON_LEVLED_UP = "Congratulations, you are now level {}!"
-

@@ -46,11 +46,11 @@ class MMOUser(commands.Cog, name="MMO User"):
     async def mmo_status(self, context: commands.Context):
         await mmo_user.status(self.mmo_server, context)
 
-    @mmo_user.command(name="battle")
+    @mmo_user.command(name="battle", brief=text.MMO_BATTLE_BRIEF)
     async def mmo_battle(self, context: commands.Context):
         await self.mmo_battle.create_battle(context)
 
-    @mmo_user.command("attack")
+    @mmo_user.command("attack", brief=text.MMO_ATTACK_BRIEF)
     async def mmo_attack(self, context: commands.Context, attack_name="Default Attack"):
         await self.mmo_battle.attack(context, attack_name)
 

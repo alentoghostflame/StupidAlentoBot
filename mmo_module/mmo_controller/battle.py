@@ -38,7 +38,7 @@ class MMOBattleManager:
             battle_instance = self._battle_instances[context.author.id]
             await battle_instance.change_attack(context, attack_name)
         else:
-            await context.send("NO BATTLES.")
+            await context.send(text.BATTLE_ATTACK_NOT_IN)
 
     def cleanup_battle(self):
         for user_id in list(self._battle_instances.keys()):
@@ -152,15 +152,16 @@ class MMOBattleInstance:
             await char.context_tick(self._original_context)
 
     async def battle_cleanup(self):
-        logger.debug("Battle cleanup called.")
         if team_dead(self._team2):
             xp_award = get_average_team_xp(self._team2)
             give_team_xp(self._team1, xp_award)
-            await self._original_context.send(f"[PH]Attackers won, here's {xp_award} XP or something.")
+            # await self._original_context.send(f"[PH]Attackers won, here's {xp_award} XP or something.")
+            await self._original_context.send(text.BATTLE_TEAM_WON.format("Attackers", "Defenders", xp_award))
         elif team_dead(self._team1):
             xp_award = get_average_team_xp(self._team1)
             give_team_xp(self._team2, xp_award)
-            await self._original_context.send(f"[PH]Defenders won, here's {xp_award} XP or something.")
+            # await self._original_context.send(f"[PH]Defenders won, here's {xp_award} XP or something.")
+            await self._original_context.send(text.BATTLE_TEAM_WON.format("Defenders", "Attackers", xp_award))
         else:
             await self._original_context.send("[PH]Something went wrong, neither team won? You aren't supposed to see "
                                               "this!")
@@ -177,7 +178,7 @@ async def perform_combat_tick(context: commands.Context, player: BaseCharacter, 
                                                        target.get_name()))
     if target.health.get() <= 0:
         target.combat.alive = False
-        await context.send(f"[PH]{target.get_name()} is down!")
+        await context.send(text.BATTLE_PLAYER_DOWN.format(target.get_name()))
 
 
 def team_dead(team: List[BaseCharacter]) -> bool:
