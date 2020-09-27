@@ -112,7 +112,7 @@ def announcement_embed_creator(announcement_data: dict, website_url: str, image_
     embed.add_field(name="Preview",
                     value=announcement_data.get("contents", "YOU SHOULD NOT SEE THIS, YELL AT ALENTO")[:998],
                     inline=False)
-    logger.debug(f"URL {website_url}")
+    logger.debug(f"URL {image_url}")
     embed.add_field(name="URL", value=website_url, inline=False)
     embed.set_image(url=image_url)
     embed.timestamp = datetime.utcfromtimestamp(announcement_data.get("date", 0))
