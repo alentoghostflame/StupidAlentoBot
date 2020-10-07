@@ -18,8 +18,15 @@ async def send_help_embed(context: commands.Context):
 async def callout_delete(callout_config: CalloutGuildConfig, message: discord.Message):
     try:
         if not message.author.bot and await check_audit_message_delete(message, message.author):
-            await message.channel.send(random.sample(text.CALLOUT_DELETE_PHRASES, 1)[0].format(message.content,
-                                                                                               message.author.mention))
+            index = message.content.find("http")
+            if index == -1:
+                await message.channel.send(random.sample(text.CALLOUT_DELETE_PHRASES, 1)[0].format(message.content, message.author.mention))
+            else:
+                await message.channel.send(
+                    random.sample(text.CALLOUT_DELETE_PHRASES, 1)[0].format(message.content.replace("http", "ht​tp"),
+                                                                            message.author.mention))
+            if message.attachments:
+                await message.channel.send(text.CALLOUT_DELETE_MESSAGE_ATTACHMENT)
     except discord.errors.Forbidden as ex:
         if ex.code == 50013:
             callout_config.deletes = False
