@@ -18,6 +18,7 @@ CALLOUT_DELETE_HELP_USAGE = f"`callout delete enable`: {CALLOUT_DELETE_ENABLE_BR
 CALLOUT_DELETE_PHRASES = {"Hey, I thought I remembered {1} saying \"{0}\"", "Hey {1}, didn't you say something like "
                                                                             "\"{0}\"?",
                           "> {0}\n - {1}"}
+CALLOUT_DELETE_MESSAGE_ATTACHMENT = "There was something attached too, but I ain't posting that."
 CALLOUT_DELETE_ALREADY_ENABLED = "Calling out deletes was already enabled."
 CALLOUT_DELETE_ENABLED = "Enabled calling out deletes."
 CALLOUT_DELETE_ALREADY_DISABLED = "Calling out deletes was already disabled."
