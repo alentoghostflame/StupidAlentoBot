@@ -114,7 +114,8 @@ def announcement_embed_creator(announcement_data: dict, website_url: str, image_
                     inline=False)
     logger.debug(f"URL {image_url}")
     embed.add_field(name="URL", value=website_url, inline=False)
-    embed.set_image(url=image_url)
+    if image_url:
+        embed.set_image(url=image_url)
     embed.timestamp = datetime.utcfromtimestamp(announcement_data.get("date", 0))
 
     return embed
