@@ -35,7 +35,7 @@ class GuildManager:
         if data_name not in self._guild_data_names:
             raise GuildNameNotRegistered("Attempted to use an unregistered data name")
 
-        if guild_id in self._guilds and data_name in self._guilds[guild_id]:
+        elif guild_id in self._guilds and data_name in self._guilds[guild_id]:
             return self._guilds[guild_id][data_name]
         else:
             guilds_folder_location = f"{self.config.data_folder_path}/guilds/{guild_id}"

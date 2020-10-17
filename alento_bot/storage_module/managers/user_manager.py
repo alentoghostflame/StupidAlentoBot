@@ -34,7 +34,7 @@ class UserManager:
         if data_name not in self._user_data_names:
             raise UserNameNotRegistered("Attempted to use an unregistered data name")
 
-        if user_id in self._users and data_name in self._users[user_id]:
+        elif user_id in self._users and data_name in self._users[user_id]:
             return self._users[user_id][data_name]
         else:
             users_folder_location = f"{self.config.data_folder_path}/users/{user_id}"
