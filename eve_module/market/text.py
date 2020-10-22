@@ -13,3 +13,5 @@ PRICECHECK_AUTOCOMPLETE_EMPTY = "Autocomplete message was triggered, but item ID
 # PRICECHECK_AUTOCOMPLETE_TOO_MANY = "Your query autocompleted to over {} items, perhaps be more specific?"
 PRICECHECK_AUTOCOMPLETE_TOO_MANY = "Your query hit the max amount of allowed autocompletions ({}), perhaps be more " \
                                    "specific?"
+PRICEHISTORY_BRIEF = "Command to quickly get historical prices in a region. POS's are not covered."
+PRICEHISTORY_USAGE = "region name here item name here"

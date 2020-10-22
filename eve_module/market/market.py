@@ -1,4 +1,4 @@
-from eve_module.market import text, pricecheck
+from eve_module.market import text, pricecheck, pricehistory
 from eve_module.storage import MarketManager
 from evelib import EVEManager
 from discord.ext import commands, tasks
@@ -33,6 +33,11 @@ class EVEMarketCog(commands.Cog, name="EVEMarket"):
     def cog_unload(self):
         self.market_refresh_structure_info.cancel()
         self.market_refresh_orders.cancel()
+
+    @commands.command(name="pricehistory", brief=text.PRICEHISTORY_BRIEF, aliases=["ph", ],
+                      usage=text.PRICEHISTORY_USAGE)
+    async def pricehistory(self, context: commands.Context, *args):
+        await pricehistory.pricehistory(self.eve_manager, self.auto_complete_cache, context, *args)
 
     @commands.Cog.listener()
     async def on_ready(self):

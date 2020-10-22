@@ -1,6 +1,6 @@
 from eve_module.storage import MarketManager
 from evelib import EVEManager, UniverseManager, RegionData, SolarSystemData, TypeData
-from typing import Dict, List, Tuple, Optional
+from typing import Dict, List, Tuple, Optional, Union
 from eve_module.market import text
 from discord.ext import commands
 import discord
@@ -93,9 +93,11 @@ def create_embed(buy_orders: List[dict], sell_orders: List[dict], item_data: Typ
 
     if len(sell_orders) > 0:
         if len(buy_orders) > 0 and sell_orders[0]["price"] * 0.9 <= buy_orders[0]["price"]:
-            suggestion_text = "Suggested sell price: {} ISK (highest buy price)".format(human_format(buy_orders[0]["price"]))
+            suggestion_text = "Suggested sell price: {} ISK (highest buy price)".format(human_format(
+                buy_orders[0]["price"]))
         else:
-            suggestion_text = "Suggested sell price: {} ISK (90% of lowest sell)".format(human_format(sell_orders[0]["price"] * 0.9))
+            suggestion_text = "Suggested sell price: {} ISK (90% of lowest sell)".format(human_format(
+                sell_orders[0]["price"] * 0.9))
     else:
         suggestion_text = "Not enough data."
 
@@ -135,7 +137,7 @@ def get_autocomplete_items(auto_complete_cache: Dict[str, Optional[List[int]]], 
     return auto_complete_cache[item_name.lower()]
 
 
-def human_format(number: int, dec: int = 2, small_dec: int = 2):
+def human_format(number: Union[int, float], dec: int = 2, small_dec: int = 2):
     units = ["", "K", "M", "B", "T", "Q"]
     temp_num = number
     magnitude = 0
