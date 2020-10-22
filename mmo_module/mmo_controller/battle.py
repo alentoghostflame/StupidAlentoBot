@@ -147,9 +147,11 @@ class MMOBattleInstance:
 
     async def perform_context_ticks(self):
         for char in self._team1:
-            await char.context_tick(self._original_context)
+            if not char.char_class.is_monster:
+                await char.context_tick(self._original_context)
         for char in self._team2:
-            await char.context_tick(self._original_context)
+            if not char.char_class.is_monster:
+                await char.context_tick(self._original_context)
 
     async def battle_cleanup(self):
         if team_dead(self._team2):

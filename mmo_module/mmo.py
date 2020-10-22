@@ -3,6 +3,8 @@ from alento_bot import BaseModule, StorageManager
 from mmo_module import mmo_admin, mmo_user, text
 from mmo_module.mmo_controller import MMOServer, MMOBattleManager
 from discord.ext import commands
+from datetime import datetime
+from typing import Dict
 
 
 class MMOModule(BaseModule):
@@ -20,12 +22,15 @@ class MMOModule(BaseModule):
         self.add_cog(MMOUser(self.bot, self.storage, self.mmo_server))
 
 
+
+
 class MMOUser(commands.Cog, name="MMO User"):
     def __init__(self, bot: commands.Bot, storage: StorageManager, mmo_server: MMOServer):
         self.bot: commands.Bot = bot
         self.storage: StorageManager = storage
         self.mmo_server: MMOServer = mmo_server
         self.mmo_battle: MMOBattleManager = MMOBattleManager(self.mmo_server)
+        self._change_class_cooldowns: Dict[int, datetime] = dict()
 
     @commands.group(name="mmo", brief=text.MMO_BRIEF, invoke_without_command=True)
     async def mmo_user(self, context: commands.Context):
@@ -53,6 +58,24 @@ class MMOUser(commands.Cog, name="MMO User"):
     @mmo_user.command("attack", brief=text.MMO_ATTACK_BRIEF)
     async def mmo_attack(self, context: commands.Context, attack_name="Default Attack"):
         await self.mmo_battle.attack(context, attack_name)
+
+    @mmo_user.group("char", brief=text.MMO_CHAR_BRIEF, invoke_without_command=True)
+    async def mmo_char(self, context: commands.Context):
+        if context.message.content.strip().lower() == f"{context.prefix}mmo char":
+            await context.send_help(context.command)
+        else:
+            await context.send(text.INVALID_COMMAND)
+
+    @mmo_char.group("class", brief=text.MMO_CHAR_CLASS_BRIEF, invoke_without_command=True)
+    async def mmo_char_class(self, context: commands.Context, class_name: str):
+        if context.message.content.strip().lower() == f"{context.prefix}mmo char class":
+            await context.send_help(context.command)
+        else:
+            await mmo_user.set_class(self.mmo_server, self._change_class_cooldowns, context, class_name)
+
+    @mmo_char_class.command("list", brief=text.MMO_CHAR_CLASS_LIST_BRIEF)
+    async def mmo_char_class_list(self, context: commands.Context):
+        await mmo_user.send_class_display(self.mmo_server, context)
 
 
 class MMOAdmin(commands.Cog, name="MMO Admin"):

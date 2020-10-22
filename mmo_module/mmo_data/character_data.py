@@ -1,5 +1,5 @@
 from alento_bot import user_data_transformer
-from mmo_module.mmo_data.char_class_data import BaseCharClass, StarterClass, get_character_class
+from mmo_module.mmo_data.char_class_data import BaseCharClass, StarterClass, get_character_class, get_class_levels
 from mmo_module.mmo_data.equipment_data import BaseEquipment
 from mmo_module.mmo_data.small_data import BaseResists
 from mmo_module.mmo_data import text
@@ -170,6 +170,10 @@ class BaseCharacter:
     def get_name(self) -> str:
         return self._save_data.name
 
+    def set_class(self, char_class: BaseCharClass):
+        self._save_data.char_class = char_class.name
+        self.char_class = char_class
+
     def load_from_save_data(self):
         # self.char_class = CHARACTER_CLASSES.get(self._save_data.char_class, StarterClass)()
         if self._save_data.char_class:
@@ -215,6 +219,13 @@ class BaseCharacter:
         if self.xp.leveled_up:
             await context.send(text.LEVEL_UP_MESSAGE.format(self._save_data.name, self.xp.get_level()))
             self.xp.leveled_up = False
+
+        level_thresholds, class_levels = get_class_levels()
+        for level_threshold in level_thresholds:
+            if self.char_class.min_level < level_threshold <= self.xp.get_level():
+                logger.debug(f"{self.char_class.min_level} {level_threshold} {self.xp.get_level()} {type(self.char_class)} {self.char_class.name}")
+                await context.send(text.CLASSES_AVAILABLE_MESSAGE)
+                break
 
 
 def get_display_bar(value_name: str, current_value: float, max_value: float, adjustment: int = 0,
