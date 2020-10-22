@@ -3,6 +3,7 @@ from alento_bot.external_objects import BaseModule
 import warnings
 from alento_bot.core_bot import text
 from discord.ext import commands
+from discord import Intents
 from typing import Set, Type
 import logging
 import sys
@@ -39,7 +40,9 @@ class StupidAlentoBot:
         self._modules: Set[BaseModule] = set()
 
         self.storage: StorageManager = StorageManager()
-        self.bot = commands.Bot(command_prefix=self.storage.config.discord_command_prefix, case_insensitive=True)
+        intents = Intents.all()
+        self.bot = commands.Bot(command_prefix=self.storage.config.discord_command_prefix, case_insensitive=True,
+                                intents=intents)
         setup_logging()
         self._legacy_module = LegacyModule(self.bot, self.storage)
         self._modules.add(self._legacy_module)
