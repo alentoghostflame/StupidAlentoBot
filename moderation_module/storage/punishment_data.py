@@ -61,7 +61,7 @@ async def if_time_remove_role(member_storage: typing.Dict[int, dict], guild: dis
                     member_storage.pop(user_id, None)
                     logger.debug(f"Removed user {member.display_name} from punishment storage.")
             except discord.errors.Forbidden:
-                logger.debug("Couldn't remove role from user, forbidden?")
+                logger.debug(f"Couldn't remove role from user {user_id} on guild {guild.name}, forbidden?")
 
 
 @guild_data_transformer(name="punishment_storage")
