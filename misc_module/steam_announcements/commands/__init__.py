@@ -1,2 +1,2 @@
-from misc_module.steam_announcements.commands.steam_announcement_control import steam_announcement_control
+from misc_module.steam_announcements.commands.steam_commands import steam_announcement_control
 from misc_module.steam_announcements.commands.steam_announcement_task import announcement_checker

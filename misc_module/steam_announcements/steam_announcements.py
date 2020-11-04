@@ -1,9 +1,11 @@
-from misc_module.steam_announcements.commands import steam_announcement_control, announcement_checker
+from misc_module.steam_announcements.commands import announcement_checker
+from misc_module.steam_announcements.commands import steam_commands
 from misc_module.storage import SteamAnnouncementConfig, SteamAnnouncementCache
+from misc_module.steam_announcements import text
 from discord.ext import commands, tasks
+from discord.ext.commands.errors import MissingRequiredArgument, BadArgument
 from alento_bot import StorageManager
 import logging
-import discord
 
 
 logger = logging.getLogger("main_bot")
@@ -22,16 +24,97 @@ class SteamAnnouncementCog(commands.Cog, name="Steam Announcements"):
     def cog_unload(self):
         self.announcement_checker_loop.stop()
 
+    # @commands.has_permissions(administrator=True)
+    # @commands.command(name="steam_announcement_control", aliases=["sa_control", "steam"])
+    # async def steam_announcment_control_command(self, context: commands.Context, arg1=None, arg2=None):
+    #     self.cache.tracked_guilds.add(context.guild.id)
+    #     steam_config: SteamAnnouncementConfig = self.storage.guilds.get(context.guild.id, "steam_announcement_config")
+    #     await steam_announcement_control(steam_config, context, arg1, arg2)
+    #
+    @commands.guild_only()
     @commands.has_permissions(administrator=True)
-    @commands.command(name="steam_announcement_control", aliases=["sa_control", "steam"])
-    async def steam_announcment_control_command(self, context: commands.Context, arg1=None, arg2=None):
-        self.cache.tracked_guilds.add(context.guild.id)
+    @commands.group(name="steam", brief=text.STEAM_BRIEF, invoke_without_command=True)
+    async def steam(self, context: commands.Context, *args):
+        # if context.message.content.strip() == f"{context.prefix}{context.command.name}":
+        #     await context.send_help(context.command)
+        # else:
+        #     await context.send(text.INVALID_COMMAND)
+        if args:
+            await context.send(text.INVALID_COMMAND)
+        else:
+            await context.send_help(context.command)
+
+    @commands.guild_only()
+    @commands.has_permissions(administrator=True)
+    @steam.command(name="info", brief=text.STEAM_INFO_BRIEF)
+    async def steam_info(self, context: commands.Context):
         steam_config: SteamAnnouncementConfig = self.storage.guilds.get(context.guild.id, "steam_announcement_config")
-        await steam_announcement_control(steam_config, context, arg1, arg2)
+        await steam_commands.send_list_embed(steam_config, context)
+
+    @commands.guild_only()
+    @commands.has_permissions(administrator=True)
+    @steam.command(name="enable", brief=text.STEAM_ENABLE_BRIEF)
+    async def steam_enable(self, context: commands.Context):
+        steam_config: SteamAnnouncementConfig = self.storage.guilds.get(context.guild.id, "steam_announcement_config")
+        if steam_config.enabled:
+            await context.send(text.STEAM_ENABLED_ALREADY)
+        else:
+            steam_config.enabled = True
+            await context.send(text.STEAM_ENABLED)
+
+    @commands.guild_only()
+    @commands.has_permissions(administrator=True)
+    @steam.command(name="disable", brief=text.STEAM_ENABLE_BRIEF)
+    async def steam_disable(self, context: commands.Context):
+        steam_config: SteamAnnouncementConfig = self.storage.guilds.get(context.guild.id, "steam_announcement_config")
+        if steam_config.enabled:
+            steam_config.enabled = False
+            await context.send(text.STEAM_DISABLED)
+        else:
+            await context.send(text.STEAM_DISABLED_ALREADY)
+
+    @commands.guild_only()
+    @commands.has_permissions(administrator=True)
+    @steam.command(name="set", brief=text.STEAM_SET_BRIEF)
+    async def steam_set(self, context: commands.Context):
+        steam_config: SteamAnnouncementConfig = self.storage.guilds.get(context.guild.id, "steam_announcement_config")
+        steam_config.announcement_channel_id = context.channel.id
+        await context.send(text.STEAM_SET_CHANNEL)
+
+    @commands.guild_only()
+    @commands.has_permissions(administrator=True)
+    @steam.command(name="add", brief=text.STEAM_ADD_BRIEF)
+    async def steam_add(self, context: commands.Context, game_id: int):
+        steam_config: SteamAnnouncementConfig = self.storage.guilds.get(context.guild.id, "steam_announcement_config")
+        if game_id in steam_config.tracked_game_ids:
+            await context.send(text.STEAM_ADDED_DUPLICATE)
+        else:
+            steam_config.tracked_game_ids.add(game_id)
+            await context.send(text.STEAM_ADDED.format(game_id))
+
+    @commands.guild_only()
+    @commands.has_permissions(administrator=True)
+    @steam.command(name="remove", brief=text.STEAM_REMOVE_BRIEF, aliases=["rm", ])
+    async def steam_remove(self, context: commands.Context, game_id: int):
+        steam_config: SteamAnnouncementConfig = self.storage.guilds.get(context.guild.id, "steam_announcement_config")
+        if game_id in steam_config.tracked_game_ids:
+            steam_config.tracked_game_ids.remove(game_id)
+            await context.send(text.STEAM_REMOVED.format(game_id))
+        else:
+            await context.send(text.STEAM_REMOVED_NOTHING)
 
     @tasks.loop(minutes=10)
     async def announcement_checker_loop(self):
-        # logger.info("RUNNING TOP LEVEL CHECKER.")
         await announcement_checker(self.bot, self.storage, self.cache)
 
-
+    @steam_add.error
+    @steam_remove.error
+    async def exception_handler(self, context: commands.Context, exception: Exception):
+        if isinstance(exception, MissingRequiredArgument):
+            await context.send_help(context.command)
+        if isinstance(exception, BadArgument):
+            await context.send(text.BAD_ARGUMENT)
+        else:
+            await context.send(f"a critical error has occurred. send this message to alento ghostflame.\n"
+                               f"{type(exception)}\n{exception}")
+            raise exception
