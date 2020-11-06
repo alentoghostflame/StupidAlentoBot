@@ -18,4 +18,3 @@ class ExampleCog(commands.Cog):
             await context.send(f"You gave: {', '.join(args)}.")
         else:
             await context.send("Hi there!")
-

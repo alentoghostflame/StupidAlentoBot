@@ -1,4 +1,5 @@
 from alento_bot.storage_module import StorageManager
+from alento_bot.core_bot.custom_help import AlentoHelpCommand
 from alento_bot.external_objects import BaseModule
 import warnings
 from alento_bot.core_bot import text
@@ -42,7 +43,7 @@ class StupidAlentoBot:
         self.storage: StorageManager = StorageManager()
         intents = Intents.all()
         self.bot = commands.Bot(command_prefix=self.storage.config.discord_command_prefix, case_insensitive=True,
-                                intents=intents)
+                                intents=intents, help_command=AlentoHelpCommand())
         setup_logging()
         self._legacy_module = LegacyModule(self.bot, self.storage)
         self._modules.add(self._legacy_module)
