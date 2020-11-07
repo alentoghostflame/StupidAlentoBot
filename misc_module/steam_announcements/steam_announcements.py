@@ -24,22 +24,11 @@ class SteamAnnouncementCog(commands.Cog, name="Steam Announcements"):
     def cog_unload(self):
         self.announcement_checker_loop.stop()
 
-    # @commands.has_permissions(administrator=True)
-    # @commands.command(name="steam_announcement_control", aliases=["sa_control", "steam"])
-    # async def steam_announcment_control_command(self, context: commands.Context, arg1=None, arg2=None):
-    #     self.cache.tracked_guilds.add(context.guild.id)
-    #     steam_config: SteamAnnouncementConfig = self.storage.guilds.get(context.guild.id, "steam_announcement_config")
-    #     await steam_announcement_control(steam_config, context, arg1, arg2)
-    #
     @commands.guild_only()
     @commands.has_permissions(administrator=True)
     @commands.group(name="steam", brief=text.STEAM_BRIEF, invoke_without_command=True)
-    async def steam(self, context: commands.Context, *args):
-        # if context.message.content.strip() == f"{context.prefix}{context.command.name}":
-        #     await context.send_help(context.command)
-        # else:
-        #     await context.send(text.INVALID_COMMAND)
-        if args:
+    async def steam(self, context: commands.Context, *subcommand):
+        if subcommand:
             await context.send(text.INVALID_COMMAND)
         else:
             await context.send_help(context.command)
@@ -112,7 +101,7 @@ class SteamAnnouncementCog(commands.Cog, name="Steam Announcements"):
     async def exception_handler(self, context: commands.Context, exception: Exception):
         if isinstance(exception, MissingRequiredArgument):
             await context.send_help(context.command)
-        if isinstance(exception, BadArgument):
+        elif isinstance(exception, BadArgument):
             await context.send(text.BAD_ARGUMENT)
         else:
             await context.send(f"a critical error has occurred. send this message to alento ghostflame.\n"
