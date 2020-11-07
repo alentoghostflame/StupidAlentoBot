@@ -36,6 +36,14 @@ class CoreCog(commands.Cog, name="Core"):
         patreon_link = "https://www.patreon.com/AlentoGhostflame"
         await context.send(random.sample(text.PATREON_MESSAGES, 1)[0].format(patreon_link))
 
+    @commands.command(name="invite", brief="Posts the bot invite link.")
+    async def invite(self, context: commands.Context):
+        config = self.storage.config
+        if config.bot_invite_link:
+            await context.send(config.bot_invite_link)
+        else:
+            await context.send("Bot owner hasn't set the `bot_invite_link` in the config. Go bug them, not me.")
+
     @tasks.loop(hours=1)
     async def auto_save(self):
         if self._first_save:

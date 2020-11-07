@@ -22,8 +22,15 @@ class AlentoHelpCommand(HelpCommand):
             command_str = ""
             width = 0
             for cmd in cmds:
-
-                string_addon = f"`{cmd.name}`: {cmd.short_doc if cmd.short_doc else 'No description'}\n"
+                # cmd_name = " ".join(cmd.parents) if cmd.parents else cmd.name
+                if cmd.parents:
+                    cmd_name = ""
+                    for parent in cmd.parents:
+                        cmd_name += f"{parent.name} "
+                    cmd_name += cmd.name
+                else:
+                    cmd_name = cmd.name
+                string_addon = f"`{cmd_name}`: {cmd.short_doc if cmd.short_doc else 'No description'}\n"
                 command_str += string_addon
                 if len(string_addon) > width:
                     width = len(string_addon)
@@ -96,8 +103,10 @@ class AlentoHelpCommand(HelpCommand):
             title = group.name.capitalize()
         # title = f"{group.parent.name}: {group.name}" if group.parent else f"{group.name.capitalize()}"
         help_embed = discord.Embed(title=title, color=randint(0, 0xffffff))
+        if (desc_text := group.description) or (desc_text := group.brief):
+            help_embed.add_field(name="Description", value=desc_text, inline=False)
         filtered = await self.filter_commands(group.commands, sort=True)
-        self.add_indented_commands(help_embed, filtered, heading="Subcommands")
+        self.add_indented_commands(help_embed, filtered, "Subcommands")
 
         await destination.send(embed=help_embed)
 

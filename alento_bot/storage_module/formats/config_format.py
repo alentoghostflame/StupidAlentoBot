@@ -3,3 +3,4 @@ class ConfigData:
         self.discord_command_prefix = ";"
         self.discord_bot_token = ""
         self.data_folder_path = "data"
+        self.bot_invite_link = ""
