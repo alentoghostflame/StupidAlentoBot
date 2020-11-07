@@ -19,4 +19,3 @@ class GuildMMOConfig:
 class UserMMOConfig:
     def __init__(self):
         self.enabled: bool = False
-

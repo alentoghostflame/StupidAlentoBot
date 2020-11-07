@@ -22,8 +22,6 @@ class MMOModule(BaseModule):
         self.add_cog(MMOUser(self.bot, self.storage, self.mmo_server))
 
 
-
-
 class MMOUser(commands.Cog, name="MMO User"):
     def __init__(self, bot: commands.Bot, storage: StorageManager, mmo_server: MMOServer):
         self.bot: commands.Bot = bot
@@ -53,7 +51,10 @@ class MMOUser(commands.Cog, name="MMO User"):
 
     @mmo_user.command(name="battle", brief=text.MMO_BATTLE_BRIEF)
     async def mmo_battle(self, context: commands.Context):
-        await self.mmo_battle.create_battle(context)
+        if self.mmo_server.user.enabled(context.author.id):
+            await self.mmo_battle.create_battle(context)
+        else:
+            await context.send(mmo_user.text.MMO_CURRENTLY_DISABLED)
 
     @mmo_user.command("attack", brief=text.MMO_ATTACK_BRIEF)
     async def mmo_attack(self, context: commands.Context, attack_name="Default Attack"):
@@ -67,7 +68,7 @@ class MMOUser(commands.Cog, name="MMO User"):
             await context.send(text.INVALID_COMMAND)
 
     @mmo_char.group("class", brief=text.MMO_CHAR_CLASS_BRIEF, invoke_without_command=True)
-    async def mmo_char_class(self, context: commands.Context, class_name: str):
+    async def mmo_char_class(self, context: commands.Context, class_name: str = None):
         if context.message.content.strip().lower() == f"{context.prefix}mmo char class":
             await context.send_help(context.command)
         else:
@@ -76,6 +77,18 @@ class MMOUser(commands.Cog, name="MMO User"):
     @mmo_char_class.command("list", brief=text.MMO_CHAR_CLASS_LIST_BRIEF)
     async def mmo_char_class_list(self, context: commands.Context):
         await mmo_user.send_class_display(self.mmo_server, context)
+
+    @mmo_char.command("name", brief=text.MMO_CHAR_NAME_BRIEF)
+    async def mmo_char_name(self, context: commands.Context, new_name: str):
+        await mmo_user.set_character_name(self.mmo_server, context, new_name)
+
+    @mmo_char.command("attack", brief=text.MMO_CHAR_ATTACK_BRIEF)
+    async def mmo_char_attack(self, context: commands.Context, new_attack: str):
+        await mmo_user.set_default_attack(self.mmo_server, context, new_attack)
+
+    @mmo_user.command("spells", brief=text.MMO_SPELLS_BRIEF)
+    async def mmo_spells(self, context: commands.Context):
+        await mmo_user.send_ability_display(self.mmo_server, context)
 
 
 class MMOAdmin(commands.Cog, name="MMO Admin"):

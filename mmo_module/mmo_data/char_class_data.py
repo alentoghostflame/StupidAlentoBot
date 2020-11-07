@@ -1,30 +1,15 @@
 from typing import Dict, List, Type, Tuple
+from mmo_module.mmo_data import spell_data
 
 
 class BaseCharClass:
     def __init__(self):
-        self.name: str = "base"
+        self.name: str = "Base Class"
         self.min_level: int = 0
         self.is_monster: bool = False
 
-        self.base_health: int = 20
-        self.health_per_level: int = 4
-        self.health_per_min: float = 1
-        self.base_mana: int = 5
-        self.mana_per_level: int = 1
-        self.mana_per_min: float = 0.5
-
-        self.attack_speed: float = 1
-        self.physical_damage: float = 4
-        self.physical_damage_per_level: float = 1
-        self.magical_damage: float = 4
-        self.magical_damage_per_level: float = 1
-
-
-class CharacterClassManager:
-    def __init__(self):
-        # self.level_thresholds: List[int] = [10, ]
-        self.classes: Dict[int, Dict[str, Type[BaseCharClass]]] = dict()
+        self.default_attack: spell_data.BaseSpell = spell_data.BASIC_ATTACK
+        self.spells: List[spell_data.BaseSpell] = [spell_data.BASIC_ATTACK, spell_data.DOUBLE_ATTACK]
 
 
 class StarterClass(BaseCharClass):
@@ -32,46 +17,6 @@ class StarterClass(BaseCharClass):
         BaseCharClass.__init__(self)
         self.name = "starter"
         self.min_level = 0
-
-
-class MageClass(BaseCharClass):
-    def __init__(self):
-        BaseCharClass.__init__(self)
-        self.name = "mage"
-        self.min_level = 10
-
-        self.health_per_min = 2
-        self.base_mana = 10
-        self.mana_per_level = 5
-        self.mana_per_min = 5
-        self.magical_damage = 6
-        self.magical_damage_per_level = 2
-
-
-class WarriorClass(BaseCharClass):
-    def __init__(self):
-        BaseCharClass.__init__(self)
-        self.name = "warrior"
-        self.min_level = 10
-
-        self.health_per_level = 5
-        self.health_per_min = 5
-        self.mana_per_min = 2
-        self.physical_damage = 6
-        self.physical_damage_per_level = 2
-
-
-class RogueClass(BaseCharClass):
-    def __init__(self):
-        BaseCharClass.__init__(self)
-        self.name = "rogue"
-        self.min_level = 10
-
-        self.health_per_min = 3
-        self.mana_per_min = 3
-        self.mana_per_level = 2
-
-        self.attack_speed = 0.75
 
 
 CHARACTER_CLASSES: Dict[str, Type[BaseCharClass]] = dict()
