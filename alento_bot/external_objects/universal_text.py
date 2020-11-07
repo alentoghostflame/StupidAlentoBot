@@ -1,0 +1,6 @@
+INVALID_COMMAND = "Invalid command given."
+INVALID_SUBCOMMAND = "Invalid subcommand."
+ERROR_GUILD_ONLY = "This command is only usable in servers."
+ERROR_MISSING_PERMISSION = "You do not have the required permission(s) for this command."
+ERROR_MISSING_PERMISSION_FORMAT = "You are missing the following permission(s): {}."
+ERROR_BAD_ARUGMENT_NUMBERS = "Invalid argument given, perhaps try numbers?"
