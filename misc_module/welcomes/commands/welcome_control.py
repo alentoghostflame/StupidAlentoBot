@@ -75,16 +75,16 @@ async def add_welcome(welcome_config: WelcomeConfig, context: commands.Context, 
         await context.send(text.WELCOME_CONTROL_ADD_MISSING_ARG)
 
 
-async def remove_welcome(welcome_config: WelcomeConfig, context: commands.Context, index_string: str):
-    if index_string.isdecimal():
-        index = int(index_string) - 1
-        if index < len(welcome_config.messages):
-            welcome_config.messages.pop(index)
-            await context.send(text.WELCOME_CONTROL_REMOVE_SUCCESS)
-        else:
-            await context.send(text.WELCOME_CONTROL_REMOVE_INDEX_OOB)
+async def remove_welcome(welcome_config: WelcomeConfig, context: commands.Context, index: int):
+    # if index_string.isdecimal():
+    #     index = int(index_string) - 1
+    if index < len(welcome_config.messages):
+        welcome_config.messages.pop(index)
+        await context.send(text.WELCOME_CONTROL_REMOVE_SUCCESS)
     else:
-        await context.send(text.WELCOME_CONTROL_REMOVE_MISSING_ARG)
+        await context.send(text.WELCOME_CONTROL_REMOVE_INDEX_OOB)
+    # else:
+    #     await context.send(text.WELCOME_CONTROL_REMOVE_MISSING_ARG)
 
 
 async def set_welcome_channel(welcome_config: WelcomeConfig, context: commands.Context, channel_id_string: str):
