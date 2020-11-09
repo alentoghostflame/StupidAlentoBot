@@ -16,16 +16,16 @@ async def callout_fistbump(message: discord.Message):
 
 async def enable(callout_config: CalloutGuildConfig, context: commands.Context):
     if callout_config.fistbumps:
-        await context.send(text.CALLOUT_DELETE_ALREADY_ENABLED)
+        await context.send(text.CALLOUT_FISTBUMP_ALREADY_ENABLED)
     else:
         callout_config.fistbumps = True
-        await context.send(text.CALLOUT_DELETE_ENABLED)
+        await context.send(text.CALLOUT_FISTBUMP_ENABLED)
 
 
 async def disable(callout_config: CalloutGuildConfig, context: commands.Context):
     if callout_config.fistbumps:
         callout_config.fistbumps = False
-        await context.send(text.CALLOUT_DELETE_DISABLED)
+        await context.send(text.CALLOUT_FISTBUMP_DISABLED)
     else:
-        await context.send(text.CALLOUT_DELETE_ALREADY_DISABLED)
+        await context.send(text.CALLOUT_FISTBUMP_ALREADY_ENABLED)
 
