@@ -11,28 +11,28 @@ import discord
 logger = logging.getLogger("main_bot")
 
 
-async def send_help_embed(context: commands.Context):
-    embed = discord.Embed(title="Industry Jobs", color=0x43464B)
-
-    embed.add_field(name="Description", value=text.INDUSTRY_JOBS_HELP_DESCRIPTION, inline=False)
-    embed.add_field(name="Permissions", value=text.INDUSTRY_JOBS_HELP_PERMISSIONS, inline=False)
-    embed.add_field(name="Information", value=text.INDUSTRY_JOBS_HELP_INFORMATION, inline=False)
-
-    await context.send(embed=embed)
+# async def send_help_embed(context: commands.Context):
+#     embed = discord.Embed(title="Industry Jobs", color=0x43464B)
+#
+#     embed.add_field(name="Description", value=text.INDUSTRY_JOBS_HELP_DESCRIPTION, inline=False)
+#     embed.add_field(name="Permissions", value=text.INDUSTRY_JOBS_HELP_PERMISSIONS, inline=False)
+#     embed.add_field(name="Information", value=text.INDUSTRY_JOBS_HELP_INFORMATION, inline=False)
+#
+#     await context.send(embed=embed)
 
 
 async def enable_industry(user_auth: EVEUserAuthManager, context: commands.Context):
     if user_auth.set_selected_desired_scope(context.author.id, "esi-industry.read_character_jobs.v1", True):
-        await context.send(text.INDUSTRY_JOBS_ENABLED)
+        await context.send(text.INDUSTRY_ENABLED)
     else:
-        await context.send(text.INDUSTRY_JOBS_TOGGLE_FAIL)
+        await context.send(text.INDUSTRY_TOGGLE_FAIL)
 
 
 async def disable_industry(user_auth: EVEUserAuthManager, context: commands.Context):
     if user_auth.set_selected_desired_scope(context.author.id, "esi-industry.read_character_jobs.v1", False):
-        await context.send(text.INDUSTRY_JOBS_DISABLED)
+        await context.send(text.INDUSTRY_DISABLED)
     else:
-        await context.send(text.INDUSTRY_JOBS_TOGGLE_FAIL)
+        await context.send(text.INDUSTRY_TOGGLE_FAIL)
 
 
 async def send_industry_info(eve_manager: EVEManager, user_auth: EVEUserAuthManager, context: commands.Context):
@@ -41,7 +41,7 @@ async def send_industry_info(eve_manager: EVEManager, user_auth: EVEUserAuthMana
     if industry_jobs:
         await send_industry_info_embed(industry_jobs, context)
     else:
-        await context.send(text.INDUSTRY_JOBS_INFO_EMPTY)
+        await context.send(text.INDUSTRY_INFO_EMPTY)
 
 
 async def send_industry_info_embed(industry_jobs: List[IndustryJob], context: commands.Context):

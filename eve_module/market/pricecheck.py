@@ -37,7 +37,7 @@ async def pricecheck(eve_manager: EVEManager, market: MarketManager,
     if auto_complete_failed_flag:
         pass
     elif not args:
-        await context.send(text.PRICECHECK_HELP)
+        await context.send(text.PRICECHECK_DESCRIPTION)
     elif not location_data:
         await context.send("Location not found in universe.")
     elif not args[args_in_name:]:

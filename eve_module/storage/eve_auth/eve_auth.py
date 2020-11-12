@@ -10,6 +10,10 @@ import base64
 logger = logging.getLogger("main_bot")
 
 
+class AuthorizationNotSetup(Exception):
+    pass
+
+
 """
 PROBLEM WITH ALL OF THIS: NAMING IS INCONSISTENT.
 AUTH CODE IS WHAT YOU GET FROM THE OAUTH WEBSITES RETURN URL
@@ -22,6 +26,7 @@ class EVEAuthManager:
     def __init__(self, storage: StorageManager):
         self.storage: StorageManager = storage
         self.eve_config: EVEConfig = self.storage.caches.get_cache("eve_config")
+        self.set_up: bool = False
 
     def load(self):
         if not self.eve_config.loaded() or not self.eve_config.refresh_token:
@@ -52,6 +57,8 @@ class EVEAuthManager:
 
         if not passed_checks:
             logger.error("Cannot create EVE App authorization URL, missing components.")
+        else:
+            self.set_up = True
         return passed_checks
 
     def create_eve_auth_url(self):

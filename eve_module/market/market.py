@@ -19,8 +19,9 @@ class EVEMarketCog(commands.Cog, name="EVEMarket"):
 
         self.auto_complete_cache: Dict[str, Optional[List[int]]] = dict()
 
-    @commands.command(name="pricecheck", brief=text.PRICECHECK_BRIEF, aliases=["pc", ], usage=text.PRICECHECK_USAGE)
-    async def pricecheck_command(self, context: commands.Context, *args):
+    @commands.command(name="pricecheck", description=text.PRICECHECK_DESCRIPTION, brief=text.PRICECHECK_BRIEF,
+                      aliases=["pc", ], usage=text.PRICECHECK_USAGE, require_var_positional=True)
+    async def pricecheck(self, context: commands.Context, *args):
         await pricecheck.pricecheck(self.eve_manager, self.market, self.auto_complete_cache, context, *args)
 
     async def start_tasks(self):
@@ -35,7 +36,7 @@ class EVEMarketCog(commands.Cog, name="EVEMarket"):
         self.market_refresh_orders.cancel()
 
     @commands.command(name="pricehistory", brief=text.PRICEHISTORY_BRIEF, aliases=["ph", ],
-                      usage=text.PRICEHISTORY_USAGE)
+                      usage=text.PRICEHISTORY_USAGE, require_var_positional=True)
     async def pricehistory(self, context: commands.Context, *args):
         await pricehistory.pricehistory(self.eve_manager, self.auto_complete_cache, context, *args)
 
@@ -52,7 +53,11 @@ class EVEMarketCog(commands.Cog, name="EVEMarket"):
     async def market_refresh_orders(self):
         await self.market.refresh_structure_market_orders()
 
-    @pricecheck_command.error
-    async def on_pricecheck_error(self, context: commands.Context, error: Exception):
-        await context.send(f"AN ERROR HAS OCCURRED: {type(error)}, {error}")
-        raise error
+    @pricecheck.error
+    @pricehistory.error
+    async def on_error(self, context: commands.Context, error: Exception):
+        if isinstance(error, commands.MissingRequiredArgument):
+            await context.send_help(context.command)
+        else:
+            await context.send(f"AN ERROR HAS OCCURRED: {type(error)}, {error}")
+            raise error

@@ -16,9 +16,10 @@ class LootHistoryCog(commands.Cog, name="EVELH"):
         self.market: MarketManager = market
 
     @commands.command(name="loot_history", aliases=["lh", ])
-    async def loot_history_command(self, context: commands.Context, arg1=None, arg2=None, arg3="jita", arg4=1.0,
-                                   arg5=1.0):
-        await lh.loot_history(self.eve_manager, self.market, context, arg1, arg2, arg3, arg4, arg5)
+    async def loot_history_command(self, context: commands.Context, filter_mode=None, display_mode=None,
+                                   location="jita", payout_percent=1.0, quantity_percent=1.0):
+        await lh.loot_history(self.eve_manager, self.market, context, filter_mode, display_mode, location,
+                              payout_percent, quantity_percent)
 
     @loot_history_command.error
     async def on_error(self, context: commands.Context, error: CommandInvokeError):

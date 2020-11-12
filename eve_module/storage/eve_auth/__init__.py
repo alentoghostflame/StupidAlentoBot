@@ -1,2 +1,2 @@
-from eve_module.storage.eve_auth.eve_auth import EVEAuthManager
+from eve_module.storage.eve_auth.eve_auth import EVEAuthManager, AuthorizationNotSetup
 
