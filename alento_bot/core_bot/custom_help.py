@@ -24,8 +24,10 @@ class AlentoHelpCommand(HelpCommand):
             for cmd in cmds:
                 # cmd_name = " ".join(cmd.parents) if cmd.parents else cmd.name
                 if cmd.parents:
+                    cmd_parents = cmd.parents.copy()
+                    cmd_parents.reverse()
                     cmd_name = ""
-                    for parent in cmd.parents:
+                    for parent in cmd_parents:
                         cmd_name += f"{parent.name} "
                     cmd_name += cmd.name
                 else:
