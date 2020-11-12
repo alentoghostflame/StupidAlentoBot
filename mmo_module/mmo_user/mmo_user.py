@@ -28,11 +28,16 @@ async def status(mmo_server: MMOServer, context: commands.Context):
 
         embed = discord.Embed(title=f"{char_data.name}'s Status")
 
-        embed.add_field(name="Values", value=f"```{char_data.stats.hp.get_display(regen=True)}\n"
-                                             f"{char_data.stats.mp.get_display(2, regen=True)}\n"
-                                             f"{char_data.stats.xp.get_display(4)}```", inline=False)
-        embed.add_field(name="Attack", value=f"Physical: {char_data.stats.attack.physical} "
-                                             f"Magical: {char_data.stats.attack.magical}")
+        # embed.add_field(name="Values", value=f"```{char_data.stats.hp.get_display(regen=True)}\n"
+        #                                      f"{char_data.stats.mp.get_display(2, regen=True)}\n"
+        #                                      f"{char_data.stats.xp.get_display(4)}```", inline=False)
+        # embed.add_field(name="Attack", value=f"Physical: {char_data.stats.attack.physical} "
+        #                                      f"Magical: {char_data.stats.attack.magical}")
+        embed.add_field(name="Values", value=f"```{char_data.get_health_display(regen=True)}\n"
+                                             f"{char_data.get_mana_display(2, regen=True)}\n"
+                                             f"{char_data.get_xp_display(4)}```", inline=False)
+        embed.add_field(name="Attack", value=f"Physical: {char_data.stats.physical_attack} "
+                                             f"Magical: {char_data.stats.magical_attack}")
         embed.add_field(name="Class", value=char_data.char_class.name.capitalize())
 
         await context.send(embed=embed)
@@ -56,7 +61,7 @@ async def set_class(mmo_server: MMOServer, cooldowns: Dict[int, datetime], conte
             char_class = char_class()
         if char_class is None:
             await context.send(text.MMO_CLASS_NOT_FOUND)
-        elif char_class.min_level > char_data.stats.xp.level:
+        elif char_class.min_level > char_data.level:
             await context.send(text.MMO_CLASS_DONT_MEET_LEVEL)
         elif context.author.id in cooldowns and datetime.utcnow() < cooldowns[context.author.id]:
             await context.send(text.MMO_CLASS_ON_COOLDOWN.format(datetime.utcnow() - cooldowns[context.author.id]))
@@ -77,7 +82,7 @@ async def send_class_display(mmo_server: MMOServer, context: commands.Context):
         available_classes = ""
         unavailable_classes = ""
         for level_threshold in level_thresholds:
-            if char_data.stats.xp.level < level_threshold:
+            if char_data.level < level_threshold:
                 unavailable_classes += f"{level_threshold}: {', '.join(char_class_dict[level_threshold])}\n"
                 pass
             else:

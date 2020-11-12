@@ -27,8 +27,8 @@ class MMOBattleManager:
             await context.send(text.BATTLE_ALREAY_IN)
         else:
             player_character = self._mmo_server.user.get(context.author.id)
-            enemy_character = get_enemy((max(0, player_character.stats.xp.level - 3),
-                                         player_character.stats.xp.level + 1))
+            enemy_character = get_enemy((max(0, player_character.level - 3),
+                                         player_character.level + 1))
             battle_instance = MMOBattleInstance(self._mmo_server, context, [player_character], [enemy_character])
             self._battle_instances[context.author.id] = battle_instance
             await battle_instance.start()
@@ -70,7 +70,7 @@ class MMOBattleInstance:
             char.combat.on_team1 = True
         char.combat.target = 0
         char.combat.alive = True
-        char.combat.task = tasks.Loop(self.combat_tick, 2 * char.stats.attack.speed, 0, 0, None, True, None)
+        char.combat.task = tasks.Loop(self.combat_tick, 2 * char.stats.speed, 0, 0, None, True, None)
 
     def cleanup_teams(self):
         for char in self._team1:
@@ -118,7 +118,7 @@ class MMOBattleInstance:
             char.combat.task.stop()
 
         elif char.combat.alive:
-            if char.stats.hp.current > 0:
+            if char.stats.health > 0:
                 char.tick()
                 if char.combat.on_team1:
                     if not self._team2[char.combat.target].combat.alive:
@@ -175,15 +175,15 @@ class MMOBattleInstance:
 async def perform_combat_tick(context: commands.Context, player: BaseCharacter, target: BaseCharacter):
     player.tick()
     target.tick()
-    if target.stats.mp.current < target.combat.attack.mana_cost:
+    if target.mana < target.combat.attack.mana_cost:
         target.combat.attack = target.char_class.default_attack
     else:
-        target.stats.mp.current -= target.combat.attack.mana_cost
+        target.stats.mana -= target.combat.attack.mana_cost
     damage = player.get_damage()
-    target.stats.hp.current -= damage
+    target.stats.health -= damage
 
     await context.send(text.BATTLE_DEALT_DAMAGE.format(player.name, player.combat.attack.name, damage, target.name))
-    if target.stats.hp.current <= 0:
+    if target.health <= 0:
         target.combat.alive = False
         await context.send(text.BATTLE_PLAYER_DOWN.format(target.name))
 
@@ -207,13 +207,13 @@ def get_lowest_target(team: List[BaseCharacter]) -> int:
 def get_average_team_xp(team: List[BaseCharacter]) -> int:
     xp_sum = 0
     for char in team:
-        xp_sum += char.stats.xp.worth
+        xp_sum += char.xp_worth
     return xp_sum // len(team)
 
 
 def give_team_xp(team: List[BaseCharacter], xp: int):
     for char in team:
-        char.stats.xp.current += xp
+        char.xp += xp
 
 
 def get_team_status_string(team: List[BaseCharacter]) -> str:
@@ -225,4 +225,4 @@ def get_team_status_string(team: List[BaseCharacter]) -> str:
 
 
 def get_battle_status_string(player: BaseCharacter) -> str:
-    return f"```{player.stats.hp.get_display()}\n{player.stats.mp.get_display(2)}```"
+    return f"```{player.get_health_display()}\n{player.get_mana_display(2)}```"
