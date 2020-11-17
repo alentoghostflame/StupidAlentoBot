@@ -15,7 +15,7 @@ class ExampleModule(BaseModule):
         self.add_cog(ExampleCog(storage))
 
 
-class ExampleCog(commands.Cog):
+class ExampleCog(commands.Cog, name="Example"):
     def __init__(self, storage: StorageManager):
         self.storage = storage
 
