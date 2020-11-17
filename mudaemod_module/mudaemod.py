@@ -343,7 +343,7 @@ class MudaeModCog(commands.Cog, name="MudaeMod"):
         if isinstance(exception, MissingRequiredArgument):
             await context.send_help(context.command)
         elif isinstance(exception, BadArgument):
-            await context.send(universal_text.ERROR_BAD_ARUGMENT_NUMBERS)
+            await context.send(universal_text.ERROR_BAD_ARGUMENT_NUMBERS)
         else:
             await context.send("an error has occured, check console.")
             raise exception

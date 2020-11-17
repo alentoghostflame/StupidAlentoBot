@@ -98,7 +98,7 @@ class WelcomeCog(commands.Cog, name="Welcome"):
         elif isinstance(exception, commands.MissingRequiredArgument):
             await context.send_help(context.command)
         elif isinstance(exception, commands.BadArgument):
-            await context.send(universal_text.ERROR_BAD_ARUGMENT_NUMBERS)
+            await context.send(universal_text.ERROR_BAD_ARGUMENT_NUMBERS)
         else:
             await context.send(f"a critical error has occurred. send this message to alento ghostflame.\n"
                                f"{type(exception)}\n{exception}")
