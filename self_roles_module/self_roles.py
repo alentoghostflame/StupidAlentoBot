@@ -167,6 +167,8 @@ class SelfRoleCog(commands.Cog, name="Self Roles"):
             await context.send(text.BOT_CANT_ADD_OR_REMOVE_ROLE)
         elif isinstance(error, commands.MissingPermissions):
             await context.send(text.USER_MISSING_ADMIN_PERMISSION)
+        elif isinstance(error, commands.RoleNotFound):
+            await context.send("Role not found.")
         else:
             await context.send(f"A CRITICAL ERROR OCCURED:\n\n {type(error)}\n\n {error}\n\n"
                                f"REPORT THIS TO SOMBRA/ALENTO GHOSTFLAME!")
