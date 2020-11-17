@@ -6,3 +6,5 @@ import typing
 class RoleSelfAssignData:
     def __init__(self):
         self.roles: typing.Dict[str, int] = dict()
+        self.auto_enabled: bool = False
+        self.auto_role: int = 0

@@ -12,6 +12,12 @@ ROLE_GROUP_BRIEF = "Allows users to self-assign roles securely."
 ROLE_INFO_BRIEF = "Shows keywords and the roles they are assigned to."
 ROLE_ADD_BRIEF = "Assigns a keyword with a role for users to use."
 ROLE_REMOVE_BRIEF = "Removes a keyword from being used."
+ROLE_AUTO_BRIEF = "Controls auto-roles."
+ROLE_AUTO_ENABLE_BRIEF = "Enables auto-roles for this server."
+ROLE_AUTO_DISABLE_BRIEF = "Disables auto-roles for this server."
+ROLE_AUTO_SET_BRIEF = "Sets the role to automatically give users."
+ROLE_AUTO_SYNC_BRIEF = "Gives all users the set auto-role."
+ROLE_AUTO_INFO_BRIEF = "Gives information about the auto-role setup."
 
 
 ROLE_HELP_DESCRIPTION = "Allows users to give themselves roles without giving them risky permissions. Do `role` to " \
@@ -31,4 +37,9 @@ ROLE_ADD_SUCCESS = "Role keyword `{}` added, now assigned to role `{}`."
 
 ROLE_REMOVE_MISSING_ARGS = "`role remove role_keyword` or `role rm role_keyword` Do `role` for more information."
 ROLE_REMOVE_SUCCESS = "Role keyword `{}` removed."
+
+ROLE_AUTO_SET = "Auto-role set."
+NO_AUTO_ROLE_SET = "No auto-role has been set yet, do that first."
+AUTO_ROLE_INVALID = "Auto-role invalid? Did it get deleted?"
+ROLE_AUTO_SYNC = "Added the auto-role to {} members."
 
