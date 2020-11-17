@@ -1,0 +1,1 @@
+from mudaemod_module.mudaemod import MudaeModModule

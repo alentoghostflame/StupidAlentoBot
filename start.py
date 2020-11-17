@@ -8,6 +8,7 @@ from example_module import ExampleModule
 # from self_roles_module import SelfRoleModule
 # from eval_module import EvalModule
 # from mmo_module import MMOModule
+# from mudaemod_module import MudaeModModule
 
 
 import logging
@@ -29,6 +30,7 @@ try:
     # discord_bot.add_module(SelfRoleModule)
     # discord_bot.add_module(EvalModule)
     # discord_bot.add_module(MMOModule)
+    # discord_bot.add_module(MudaeModModule)
 
     discord_bot.init_modules()
     discord_bot.init_cogs()
