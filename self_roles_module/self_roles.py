@@ -31,7 +31,6 @@ class SelfRoleCog(commands.Cog, name="Self Roles"):
             await member.add_roles(role, reason="Auto-role")
 
     @commands.guild_only()
-    @commands.bot_has_guild_permissions(manage_roles=True)
     @commands.group(name="role", invoke_without_command=True, brief=text.ROLE_GROUP_BRIEF)
     async def role(self, context: commands.Context, role_keyword: Optional[str]):
         if context.invoked_subcommand is None:
