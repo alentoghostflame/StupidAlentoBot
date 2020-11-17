@@ -309,7 +309,7 @@ class BaseCharacter:
 
     @xp.setter
     def xp(self, amount: int):
-        self._base_stats.xp.current += amount
+        self._base_stats.xp.current = amount
 
     @property
     def char_class(self) -> BaseCharClass:
