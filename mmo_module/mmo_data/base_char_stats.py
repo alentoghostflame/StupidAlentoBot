@@ -173,7 +173,7 @@ class BaseNumberStats:
 
     @property
     def max_health(self) -> float:
-        return BASE_HEALTH * self.xp.level
+        return BASE_HEALTH * (self.xp.level + 1)
 
     @property
     def mana_per_min(self) -> float:
@@ -181,7 +181,7 @@ class BaseNumberStats:
 
     @property
     def max_mana(self) -> float:
-        return BASE_MANA * self.xp.level
+        return BASE_MANA * (self.xp.level + 1)
 
     @property
     def speed(self) -> float:
@@ -189,7 +189,7 @@ class BaseNumberStats:
 
     @property
     def physical_attack(self) -> float:
-        return BASE_PHYSICAL_ATTACK * self.xp.level
+        return BASE_PHYSICAL_ATTACK * (self.xp.level + 1)
 
     @property
     def physical_resist(self) -> float:
@@ -197,7 +197,7 @@ class BaseNumberStats:
 
     @property
     def magical_attack(self) -> float:
-        return BASE_MAGICAL_ATTACK * self.xp.level
+        return BASE_MAGICAL_ATTACK * (self.xp.level + 1)
 
     @property
     def magical_resist(self) -> float:
