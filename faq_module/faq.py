@@ -1,7 +1,7 @@
 from faq_module.commands import faq_cmds, faq_on_message
 from faq_module.commands import text
 from faq_module.storage import FAQManager, FAQConfig
-from alento_bot import BaseModule, StorageManager
+from alento_bot import BaseModule, StorageManager, universal_text
 from discord.ext import commands
 from typing import Optional, Union
 import logging
@@ -47,12 +47,13 @@ class FAQCog(commands.Cog, name="FAQ"):
                     await faq_on_message(self.faq_manager, message)
 
     @commands.guild_only()
-    @commands.group(name="faq", brief=text.FAQ_GROUP_BRIEF, invoke_without_command=True)
-    async def faq_group(self, context: commands.Context):
-        if context.message.content.strip() == f"{context.prefix}{context.command.name}":
-            await faq_cmds.send_faq_help_embed(context)
+    @commands.group(name="faq", description=text.FAQ_GROUP_DESCRIPTION, brief=text.FAQ_GROUP_BRIEF,
+                    invoke_without_command=True)
+    async def faq_group(self, context: commands.Context, *subcommand):
+        if subcommand:
+            await context.send(universal_text.INVALID_SUBCOMMAND)
         else:
-            await context.send(text.FAQ_INVALID_SUBCOMMAND)
+            await context.send_help(context.command)
 
     @commands.guild_only()
     @faq_group.command(name="info", brief=text.FAQ_INFO_BRIEF)

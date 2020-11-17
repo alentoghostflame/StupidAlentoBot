@@ -30,6 +30,7 @@ FAQ_ROLE_INVALID_SUBCOMMAND = "Subcommand not found. To see available subcommand
 FAQ_KEYWORD_NOT_FOUND = "Keyword `{}` not found."
 
 
+FAQ_GROUP_DESCRIPTION = "Allows users to get information from keywords wrapped in curly braces. For example, `{policy}`"
 FAQ_GROUP_BRIEF = "Allows users to get information from a single keyword."
 FAQ_INFO_BRIEF = "Gives info about FAQ keywords, editing roles, and if FAQ is enabled."
 FAQ_ADD_BRIEF = "Adds a keyword to show a phrase when wrapped in braces."
