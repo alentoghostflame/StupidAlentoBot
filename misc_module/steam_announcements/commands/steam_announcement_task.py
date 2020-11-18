@@ -6,6 +6,7 @@ from datetime import datetime
 import logging
 import discord
 import requests
+from json.decoder import JSONDecodeError
 # import typing
 # import re
 
@@ -53,7 +54,10 @@ async def process_server_game(steam_config: SteamAnnouncementConfig, channel: di
     # url = urllib.request.urlopen(BASE_STEAM_GET_NEWS_FOR_APP.format(game_id))
     request = requests.get(BASE_STEAM_GET_NEWS_FOR_APP.format(game_id))
     # full_data = json.loads(url.read().decode())
-    raw_json_data = request.json()
+    try:
+        raw_json_data = request.json()
+    except JSONDecodeError:
+        raw_json_data = None
     request.close()
     # if full_data and full_data.get("appnews", None) and full_data["appnews"].get("newsitems", None) and \
     #         len(full_data["appnews"]["newsitems"]) > 0:
@@ -73,6 +77,8 @@ async def process_server_game(steam_config: SteamAnnouncementConfig, channel: di
             # logger.debug("Added!")
             # await channel.send(embed=data_embed_creator(data))
             await channel.send(embed=data_embed_creator(data))
+    else:
+        await channel.send(f"Couldn't get announcement data for ID `{game_id}`, does it actually exist?")
 
 
 def data_embed_creator(data: dict) -> discord.Embed:
