@@ -80,7 +80,11 @@ class CalloutCog(commands.Cog, name="Misc Module"):
             if (im_index := message.content.lower().find("im ")) > -1 or (
                     im_index := message.content.lower().find("i'm ")) > -1:
                 found_name = re.match(RE_ALNUM, message.content[im_index + 3:])
-                if found_name:
+                if found_name and found_name.groups()[0].strip():
+                    await message.channel.send(f"Hi {found_name.groups()[0].strip()}, I'm dad!")
+            elif (im_index := message.content.lower().find("i am ")) > -1:
+                found_name = re.match(RE_ALNUM, message.content[im_index + 5:])
+                if found_name and found_name.groups()[0].strip():
                     await message.channel.send(f"Hi {found_name.groups()[0].strip()}, I'm dad!")
 
     @commands.guild_only()
@@ -130,7 +134,6 @@ class CalloutCog(commands.Cog, name="Misc Module"):
         else:
             await context.send(f"ERROR:\nType: {type(error)}\n{error}")
             raise error
-
 
 
 
