@@ -1,9 +1,12 @@
-from alento_bot import StorageManager
+from alento_bot import StorageManager, universal_text
 from misc2_module.callouts.callout_data import CalloutGuildConfig
 from misc2_module.callouts import text, callout_func, callout_delete, callout_fistbump
 from discord.ext import commands
 import logging
 import discord
+import re
+
+RE_ALNUM = re.compile("^([\\w\\s\\']+)")
 
 
 logger = logging.getLogger("main_bot")
@@ -70,6 +73,54 @@ class CalloutCog(commands.Cog, name="Misc Module"):
         callout_config = self._storage.guilds.get(context.guild.id, "callout_guild_config")
         await callout_fistbump.disable(callout_config, context)
 
+    @commands.Cog.listener()
+    async def on_message(self, message: discord.Message):
+        callout_config = self._storage.guilds.get(message.guild.id, "callout_guild_config")
+        if callout_config.imdad and not message.author.bot:
+            if (im_index := message.content.lower().find("im ")) > -1 or (
+                    im_index := message.content.lower().find("i'm ")) > -1:
+                found_name = re.match(RE_ALNUM, message.content[im_index + 3:])
+                if found_name:
+                    await message.channel.send(f"Hi {found_name.groups()[0].strip()}, I'm dad!")
+
+    @commands.guild_only()
+    @commands.has_permissions(administrator=True)
+
+    @callout_group.group(name="imdad", invoke_without_command=True)
+    async def callout_imdad(self,context:commands.Context, *subcommand):
+        if subcommand:
+            await context.send(universal_text.INVALID_SUBCOMMAND)
+        else:
+            await context.send_help(context.command)
+
+    @commands.guild_only()
+    @commands.has_permissions(administrator=True)
+
+    @callout_imdad.command(name="enable", brief="")
+    async def callout_imdad_enable(self, context: commands.Context):
+        callout_config = self._storage.guilds.get(context.guild.id, "callout_guild_config")
+        if callout_config.imdad:
+            await context.send(universal_text.FEATURE_ALREADY_ENABLED_FORMAT.format("I'm Dad"))
+        else:
+            callout_config.imdad = True
+            await context.send(universal_text.FEATURE_ENABLED_FORMAT.format("I'm Dad"))
+
+    @commands.guild_only()
+    @commands.has_permissions(administrator=True)
+    @callout_imdad.command(name="disable", brief="")
+    async def callout_imdad_disable(self, context: commands.Context):
+        callout_config = self._storage.guilds.get(context.guild.id, "callout_guild_config")
+        if callout_config.imdad:
+            callout_config.imdad = False
+            await context.send(universal_text.FEATURE_DISABLED_FORMAT.format("I'm Dad"))
+        else:
+            await context.send(universal_text.FEATURE_ALREADY_DISABLED_FORMAT.format("I'm Dad"))
+
+
+
+    @callout_imdad.error
+    @callout_imdad_enable.error
+    @callout_imdad_disable.error
     @callout_group.error
     async def missing_permissions_error(self, context, error: Exception):
         if isinstance(error, commands.MissingPermissions):
@@ -79,3 +130,8 @@ class CalloutCog(commands.Cog, name="Misc Module"):
         else:
             await context.send(f"ERROR:\nType: {type(error)}\n{error}")
             raise error
+
+
+
+
+

@@ -6,3 +6,4 @@ class CalloutGuildConfig:
     def __init__(self):
         self.deletes: bool = False
         self.fistbumps: bool = True
+        self.imdad: bool = False
