@@ -1,12 +1,13 @@
 from alento_bot import StorageManager, universal_text
 from misc2_module.callouts.callout_data import CalloutGuildConfig
-from misc2_module.callouts import text, callout_func, callout_delete, callout_fistbump
+from misc2_module.callouts import text, callout_delete, callout_fistbump
 from discord.ext import commands
 import logging
 import discord
 import re
 
-RE_ALNUM = re.compile("^([\\w\\s\\']+)")
+RE_ALNUM = re.compile("^([\\w\\s\\'|*_`~]+)")
+RE_FIND_IM = re.compile("(?:[\\s\\W]|[_*`~|]|^)((?:i\\'?m)|(?:i am)|(?:imma))(?:[\\s\\W]|[_*`~|]|^)")
 
 
 logger = logging.getLogger("main_bot")
@@ -19,7 +20,12 @@ class CalloutCog(commands.Cog, name="Misc Module"):
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
+        callout_config = self._storage.guilds.get(message.guild.id, "callout_guild_config")
         await callout_fistbump.callout_fistbump(message)
+        if callout_config.imdad and not message.author.bot:
+            if im_match := re.match(RE_FIND_IM, message.content.lower()):
+                if found_name := re.match(RE_ALNUM, message.content.lower()[im_match.end(0):]):
+                    await message.channel.send(f"Hi {found_name.groups()[0].strip()}, {im_match[0].strip()} dad!")
 
     @commands.Cog.listener()
     async def on_message_delete(self, message: discord.Message):
@@ -73,25 +79,11 @@ class CalloutCog(commands.Cog, name="Misc Module"):
         callout_config = self._storage.guilds.get(context.guild.id, "callout_guild_config")
         await callout_fistbump.disable(callout_config, context)
 
-    @commands.Cog.listener()
-    async def on_message(self, message: discord.Message):
-        callout_config = self._storage.guilds.get(message.guild.id, "callout_guild_config")
-        if callout_config.imdad and not message.author.bot:
-            if (im_index := message.content.lower().find("im ")) > -1 or (
-                    im_index := message.content.lower().find("i'm ")) > -1:
-                found_name = re.match(RE_ALNUM, message.content[im_index + 3:])
-                if found_name and found_name.groups()[0].strip():
-                    await message.channel.send(f"Hi {found_name.groups()[0].strip()}, I'm dad!")
-            elif (im_index := message.content.lower().find("i am ")) > -1:
-                found_name = re.match(RE_ALNUM, message.content[im_index + 5:])
-                if found_name and found_name.groups()[0].strip():
-                    await message.channel.send(f"Hi {found_name.groups()[0].strip()}, I'm dad!")
 
     @commands.guild_only()
     @commands.has_permissions(administrator=True)
-
     @callout_group.group(name="imdad", invoke_without_command=True)
-    async def callout_imdad(self,context:commands.Context, *subcommand):
+    async def callout_imdad(self, context: commands.Context, *subcommand):
         if subcommand:
             await context.send(universal_text.INVALID_SUBCOMMAND)
         else:
@@ -99,7 +91,6 @@ class CalloutCog(commands.Cog, name="Misc Module"):
 
     @commands.guild_only()
     @commands.has_permissions(administrator=True)
-
     @callout_imdad.command(name="enable", brief="")
     async def callout_imdad_enable(self, context: commands.Context):
         callout_config = self._storage.guilds.get(context.guild.id, "callout_guild_config")
@@ -120,8 +111,6 @@ class CalloutCog(commands.Cog, name="Misc Module"):
         else:
             await context.send(universal_text.FEATURE_ALREADY_DISABLED_FORMAT.format("I'm Dad"))
 
-
-
     @callout_imdad.error
     @callout_imdad_enable.error
     @callout_imdad_disable.error
@@ -134,7 +123,3 @@ class CalloutCog(commands.Cog, name="Misc Module"):
         else:
             await context.send(f"ERROR:\nType: {type(error)}\n{error}")
             raise error
-
-
-
-
