@@ -39,6 +39,24 @@ Inside `config.yaml` you can change the bot prefix, where data is stored, and th
 
 # Development
 This section contains instructions on how to use the various helpers the bot gives you to aid in Discord bot development.
+## Order of Startup
+1) Alento Bot begins Initialization.
+    1) Storage begins Initialization.
+        1) Config is loaded.
+        2) Data directories are created. (if needed)
+        3) Cache, guild, and user storage are initialized.
+    2) Logging is configured.
+    3) Legacy Module is initialized and added to Alento Bot.
+2) Modules are added to Alento Bot.
+3) Modules added are initialized. Note, modules may not be initialized in the order they are added.
+    1) Caches are likely added and loaded here.
+    2) Guild and User data are likely added here.
+4) Cogs are initialized.
+5) Save method for all modules is called.
+6) Bot does final setup.
+    1) Checks for Discord token. If not found, aborts running the bot.
+    2) Changes prefix if changed in config.
+7) Begins the Discord.py bot loop.
 ## Modules
 Allows for easily adding and removing specific sections of a bot, but still allows for the flexibility of having a class controlling the cogs.
 
@@ -58,3 +76,10 @@ class ExampleCog(commands.Cog, name="Example"):
     async def example_command(self, context: commands.Context, *args):
         await context.send("Hello there!")
 ```
+Base module bits:
+* `BaseModule.add_cog()`: Used to add cogs to the module.
+* `BaseModule.load()`: Overwide with no arguments (other than self) to have code execute on bot startup.
+* `BaseModule.save()`: Override with no arguments (other than self) to have code execute on bot shutdown.
+* `BaseModule.bot`: Gives access to the `discord.ext.commands.Bot` object.
+* `BaseModule.storage`: Gives access to the `StorageManager` object.
+* `BaseModule.timer`: Gives access to the upcoming Timer object.
