@@ -1,5 +1,5 @@
 # StupidAlentoBot
-Discord bot that's stupid and made by me, Alento. Contains a modular framework relying on PyYAML and Discord.py, with 
+A Discord bot that's stupid and made by me, Alento. It contains a modular framework relying on PyYAML and Discord.py, with 
 multiple helpers for bot developers, and multiple modules for bot users.
 
 ## Requirements
@@ -7,12 +7,13 @@ multiple helpers for bot developers, and multiple modules for bot users.
 * discord.py
 * pyyaml
 
-As of this writing, several discord.py dependencies do not have 3.9 wheels built for Windows. You are better off 
+As of writing this, several discord.py dependencies do not have 3.9 wheels built for Windows. You are better off 
 specifically installing Python 3.8.x in that case
 
 ## Tested Environment
 * Ubuntu 20.04 with Python 3.8.6
 * Ubuntu 20.10 with Python 3.8.6
+* Mint 19.3 with Python 3.8.6
 
 # Setup and Running
 This section contains instructions on how to get the bot up and running.
@@ -44,7 +45,7 @@ Inside `config.yaml` you can change the bot prefix, where data is stored, and th
     2) Windows - `py start.py`
 
 # Development
-This section contains instructions on how to use the various helpers the bot gives you to aid in Discord bot development.
+This section contains instructions on how to use the various helpers that the bot gives you to aid in Discord bot development.
 ## Order of Startup
 1) Alento Bot begins Initialization.
     1) Storage begins Initialization.
@@ -64,7 +65,7 @@ This section contains instructions on how to use the various helpers the bot giv
     2) Changes prefix if changed in config.
 7) Begins the Discord.py bot loop.
 ## Modules
-Allows for easily adding and removing specific sections of a bot, but still allows for the flexibility of having a 
+This allows for easily adding and removing specific sections of a bot, but still allows for the flexibility of having a 
 class controlling the cogs.
 
 Example code for a module with a single cog:
@@ -93,7 +94,7 @@ Base module bits:
 
 
 ## Storage Manager
-Makes it trivial to store variables on disk as a central cache, per-guild data, or per-user data, all with autoloading
+This makes it trivial to store variables on disk as a central cache, per-guild data, or per-user data, all with autoloading
 and saving.
 
 Cache is aimed to be a single, cross-server/user storage class. Guilds is meant to be per-guild (AKA server), user is 
