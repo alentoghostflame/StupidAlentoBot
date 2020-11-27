@@ -39,7 +39,7 @@ You need to have both PRESENCE INTENT and SERVER MEMBERS INTENT enabled for your
 Inside `config.yaml` you can change the bot prefix, where data is stored, and the invite link for the `invite` command.
 
 ## Continued Setup and Running.
-1) If using existing modules, uncomment the ones you wish to use in `start.py`
+1) If you want to use existing modules, uncomment the ones you wish to use in `start.py`
 2) Run `start.py`
     1) Ubuntu (Linux) - `python3 start.py`
     2) Windows - `py start.py`
@@ -65,7 +65,7 @@ This section contains instructions on how to use the various helpers that the bo
     2) Changes prefix if changed in config.
 7) Begins the Discord.py bot loop.
 ## Modules
-This allows for easily adding and removing specific sections of a bot, but still allows for the flexibility of having a 
+This allows for easy adding and removing specific sections of the bot, but still allows for the flexibility of having a 
 class controlling the cogs.
 
 Example code for a module with a single cog:
@@ -94,7 +94,7 @@ Base module bits:
 
 
 ## Storage Manager
-This makes it trivial to store variables on disk as a central cache, per-guild data, or per-user data, all with autoloading
+This makes it trivial to store variables on your disk as a central cache, per-guild data, or per-user data, all with autoloading
 and saving.
 
 Cache is aimed to be a single, cross-server/user storage class. Guilds is meant to be per-guild (AKA server), user is 
