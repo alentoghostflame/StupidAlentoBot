@@ -7,7 +7,7 @@ logger = logging.getLogger("main_bot")
 
 
 class MiscModule(BaseModule):
-    def __init__(self, bot, storage):
-        BaseModule.__init__(self, bot, storage)
+    def __init__(self, *args):
+        BaseModule.__init__(self, *args)
         self.add_cog(ActivityCog(self.bot))
         self.add_cog(CalloutCog(self.storage))

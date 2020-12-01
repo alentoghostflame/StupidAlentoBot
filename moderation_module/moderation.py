@@ -9,8 +9,8 @@ logger = logging.getLogger("main_bot")
 
 
 class ModeratorModule(BaseModule):
-    def __init__(self, bot, storage):
-        BaseModule.__init__(self, bot, storage)
+    def __init__(self, *args):
+        BaseModule.__init__(self, *args)
         self.punish_manager: PunishmentManager = PunishmentManager(self.storage)
         self.add_cog(PunishmentCog(self.storage, self.punish_manager, self.bot))
         self.add_cog(WordBanCog(self.storage, self.punish_manager, self.bot))

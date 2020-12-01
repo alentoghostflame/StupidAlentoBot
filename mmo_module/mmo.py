@@ -8,8 +8,8 @@ from typing import Dict
 
 
 class MMOModule(BaseModule):
-    def __init__(self, bot, storage):
-        BaseModule.__init__(self, bot, storage)
+    def __init__(self, *args):
+        BaseModule.__init__(self, *args)
         # noinspection PyArgumentList
         self.storage.caches.register_cache("basic_mmo_data", BasicMMODataStorage(self.storage.config))
         self.storage.users.register_data_name("mmo_char_save", CharacterSaveData)

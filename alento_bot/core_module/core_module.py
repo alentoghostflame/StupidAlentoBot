@@ -3,6 +3,6 @@ from alento_bot.external_objects import BaseModule
 
 
 class CoreModule(BaseModule):
-    def __init__(self, bot, storage):
-        BaseModule.__init__(self, bot, storage)
-        self.add_cog(CoreCog(self.storage))
+    def __init__(self, *args):
+        BaseModule.__init__(self, *args)
+        self.add_cog(CoreCog(self.storage, self.timer))

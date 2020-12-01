@@ -1,4 +1,4 @@
-from alento_bot import BaseModule, StorageManager
+from alento_bot import BaseModule, StorageManager, TimerManager
 from contextlib import redirect_stdout
 from discord.ext import commands
 from eval_module import text
@@ -13,16 +13,17 @@ logger = logging.getLogger("main_bot")
 
 
 class EvalModule(BaseModule):
-    def __init__(self, bot, storage):
-        BaseModule.__init__(self, bot, storage)
-        self.add_cog(EvalCog(bot, storage))
+    def __init__(self, *args):
+        BaseModule.__init__(self, *args)
+        self.add_cog(EvalCog(self.bot, self.storage, self.timer))
 
 
 class EvalCog(commands.Cog, name="Eval Module"):
-    def __init__(self, bot: commands.Bot, storage: StorageManager):
+    def __init__(self, bot: commands.Bot, storage: StorageManager, timer: TimerManager):
         super().__init__()
         self.bot: commands.Bot = bot
         self.storage: StorageManager = storage
+        self.timer: TimerManager = timer
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -42,7 +43,8 @@ class EvalCog(commands.Cog, name="Eval Module"):
             'author': context.author,
             'guild': context.guild,
             'message': context.message,
-            "storage": self.storage
+            "storage": self.storage,
+            "timer": self.timer
         }
         error_raised = False
 

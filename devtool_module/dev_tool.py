@@ -13,16 +13,17 @@ logger = logging.getLogger("main_bot")
 
 
 class DevToolModule(BaseModule):
-    def __init__(self, bot, storage):
-        BaseModule.__init__(self, bot, storage)
+    def __init__(self, *args):
+        BaseModule.__init__(self, *args)
         # self.storage.users.register_data_name("example_user_data", ExampleUserData)
-        self.add_cog(DevToolCog(storage))
+        self.add_cog(DevToolCog(self.storage))
 
 
 class DevToolCog(commands.Cog, name="Dev Tools"):
     def __init__(self, storage: StorageManager):
         self.storage = storage
 
+    @commands.is_owner()
     @commands.group(name="dev", invoke_without_command=True, brief="devtools")
     async def dev(self, context: commands.Context, *subcommand):
         if subcommand:
@@ -30,6 +31,7 @@ class DevToolCog(commands.Cog, name="Dev Tools"):
         else:
             await context.send_help(context.command)
 
+    @commands.is_owner()
     @dev.command(name="msg", brief="Says real text of message and logs it.")
     async def dev_msg(self, context: commands.Context, message_id: int):
         if message := await context.fetch_message(message_id):

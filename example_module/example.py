@@ -9,17 +9,17 @@ class ExampleUserData:
 
 
 class ExampleModule(BaseModule):
-    def __init__(self, bot, storage):
-        BaseModule.__init__(self, bot, storage)
+    def __init__(self, *args):
+        BaseModule.__init__(self, *args)
         self.storage.users.register_data_name("example_user_data", ExampleUserData)
-        self.add_cog(ExampleCog(storage))
+        self.add_cog(ExampleCog(self.storage))
 
 
 class ExampleCog(commands.Cog, name="Example"):
     def __init__(self, storage: StorageManager):
         self.storage = storage
 
-    @commands.command(name="example")
+    @commands.command(name="example", description="Example description text.", brief="Example brief text.")
     async def example_command(self, context: commands.Context, *args):
         user_data: ExampleUserData = self.storage.users.get(context.author.id, "example_user_data")
         if args:

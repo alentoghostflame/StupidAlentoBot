@@ -16,8 +16,8 @@ class NotAllowedOrAdmin(Exception):
 
 
 class FAQModule(BaseModule):
-    def __init__(self, bot, storage):
-        BaseModule.__init__(self, bot, storage)
+    def __init__(self, *args):
+        BaseModule.__init__(self, *args)
         self.storage.guilds.register_data_name("faq_config", FAQConfig)
         self.faq_manager: FAQManager = FAQManager(self.storage)
         self.add_cog(FAQCog(self.storage, self.faq_manager, self.bot))

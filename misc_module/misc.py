@@ -10,8 +10,8 @@ logger = logging.getLogger("main_bot")
 
 
 class MiscModule(BaseModule):
-    def __init__(self, bot, storage):
-        BaseModule.__init__(self, bot, storage)
+    def __init__(self, *args):
+        BaseModule.__init__(self, *args)
         # noinspection PyArgumentList
         self.steam_cache = SteamAnnouncementCache(self.storage.config)
         self.storage.caches.register_cache("steam_announcement_cache", self.steam_cache)

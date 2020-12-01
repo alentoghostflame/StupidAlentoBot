@@ -17,8 +17,8 @@ logger = logging.getLogger("main_bot")
 
 
 class EVEModule(BaseModule):
-    def __init__(self, bot, storage):
-        BaseModule.__init__(self, bot, storage)
+    def __init__(self, *args):
+        BaseModule.__init__(self, *args)
         self.session = aiohttp.ClientSession()
         # noinspection PyArgumentList
         self.eve_config: EVEConfig = EVEConfig(self.storage.config)

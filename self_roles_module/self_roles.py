@@ -14,8 +14,8 @@ logger = logging.getLogger("main_bot")
 
 
 class SelfRoleModule(BaseModule):
-    def __init__(self, bot, storage):
-        BaseModule.__init__(self, bot, storage)
+    def __init__(self, *args):
+        BaseModule.__init__(self, *args)
         self.storage.guilds.register_data_name("self_roles_data", RoleSelfAssignData)
         self.add_cog(SelfRoleCog(self.storage))
 

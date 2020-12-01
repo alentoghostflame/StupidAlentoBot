@@ -59,12 +59,12 @@ class MudaeTrade:
 
 
 class MudaeModModule(BaseModule):
-    def __init__(self, bot, storage):
-        BaseModule.__init__(self, bot, storage)
+    def __init__(self, *args):
+        BaseModule.__init__(self, *args)
         self.storage.users.register_data_name("mudae_data", MudaeUserData)
         # noinspection PyArgumentList
-        self.storage.caches.register_cache("mudae_data", MudaeCacheData(storage.config))
-        self.add_cog(MudaeModCog(bot, storage))
+        self.storage.caches.register_cache("mudae_data", MudaeCacheData(self.storage.config))
+        self.add_cog(MudaeModCog(self.bot, self.storage))
 
 
 class MudaeModCog(commands.Cog, name="MudaeMod"):
