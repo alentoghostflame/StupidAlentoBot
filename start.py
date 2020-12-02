@@ -1,16 +1,16 @@
 from alento_bot import StupidAlentoBot, CoreModule
 from devtool_module import DevToolModule
 from example_module import ExampleModule
-from timekeeper_module import TimekeeperModule
-from moderation_module import ModeratorModule
-from eve_module import EVEModule
-from faq_module import FAQModule
-from misc_module import MiscModule
-from misc2_module import MiscModule as Misc2Module
-from self_roles_module import SelfRoleModule
-from eval_module import EvalModule
-from mmo_module import MMOModule
-from mudaemod_module import MudaeModModule
+# from timekeeper_module import TimekeeperModule
+# from moderation_module import ModeratorModule
+# from eve_module import EVEModule
+# from faq_module import FAQModule
+# from misc_module import MiscModule
+# from misc2_module import MiscModule as Misc2Module
+# from self_roles_module import SelfRoleModule
+# from eval_module import EvalModule
+# from mmo_module import MMOModule
+# from mudaemod_module import MudaeModModule
 
 
 import logging
