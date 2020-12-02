@@ -17,7 +17,7 @@ class CoreCog(commands.Cog, name="Core"):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        logger.debug("Starting core background taasdfsks.")
+        logger.debug("Starting core background.")
         if not self.auto_save.is_running():
             self.auto_save.start()
         if not self.timer_tick.is_running():
