@@ -1,7 +1,7 @@
-from alento_bot.storage_module.formats import BaseCache
+from alento_bot.storage_module.formats import BaseCache, ConfigData
+from inspect import isclass
 import logging
-import typing
-
+from typing import Dict, Union, Optional, Type
 
 logger = logging.getLogger("main_bot")
 
@@ -15,19 +15,26 @@ class CacheNameNotRegistered(Exception):
 
 
 class CacheManager:
-    def __init__(self):
-        self._caches: typing.Dict[str, BaseCache] = dict()
+    def __init__(self, config: ConfigData):
+        self._caches: Dict[str, BaseCache] = dict()
+        self._config: ConfigData = config
 
-    def register_cache(self, cache_name: str, cache: BaseCache):
-        if not issubclass(type(cache), BaseCache):
-            raise TypeError("Attempted to register a class that doesn't subclass BaseCache.")
-        elif cache_name in self._caches:
+    def register_cache(self, cache_name: str, cache: Union[Type[BaseCache], BaseCache]) -> Optional[BaseCache]:
+        if cache_name in self._caches:
             raise AlreadyRegisteredName("\"{}\" already registered.".format(cache_name))
-        else:
+        elif isclass(cache) and issubclass(cache, BaseCache):
+            logger.debug("Doing init of cache for you!")
+            logger.debug("Cache \"{}\" registered".format(cache_name))
+            self._caches[cache_name] = cache(self._config)
+            return self._caches[cache_name]
+        elif issubclass(type(cache), BaseCache):
             logger.debug("Cache \"{}\" registered".format(cache_name))
             self._caches[cache_name] = cache
+            return self._caches[cache_name]
+        else:
+            raise TypeError("Attempted to register a class that doesn't subclass BaseCache.")
 
-    def get_cache(self, cache_name: str) -> typing.Optional[BaseCache]:
+    def get_cache(self, cache_name: str) -> Optional[BaseCache]:
         return self._caches.get(cache_name, None)
 
     def save(self):

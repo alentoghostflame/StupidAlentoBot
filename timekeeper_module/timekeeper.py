@@ -37,9 +37,7 @@ class TimerUserData:
 class TimekeeperModule(BaseModule):
     def __init__(self, *args):
         BaseModule.__init__(self, *args)
-        # noinspection PyArgumentList
-        self.cache = TimeKeeperCache(self.storage.config)
-        self.storage.caches.register_cache("timekeeper_cache", self.cache)
+        self.cache: TimeKeeperCache = self.storage.caches.register_cache("timekeeper_cache", TimeKeeperCache)
         self.storage.users.register_data_name("timekeeper_data", TimerUserData)
         self.add_cog(TimekeeperCog(self.bot, self.storage, self.timer, self.cache))
 

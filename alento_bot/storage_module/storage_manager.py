@@ -13,7 +13,7 @@ class StorageManager:
         self._config_manager: ConfigManager = ConfigManager()
         self.config: ConfigData = self._config_manager.get_config()
         self.create_folder_structure()
-        self.caches = CacheManager()
+        self.caches = CacheManager(self.config)
         self.guilds: GuildManager = GuildManager(self.config)
         self.users: UserManager = UserManager(self.config)
 
