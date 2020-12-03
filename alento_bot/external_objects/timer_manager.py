@@ -33,4 +33,7 @@ class TimerManager:
         for key, value in self._timer_storage.copy().items():
             if value.time < time_now:
                 self._timer_storage.pop(key)
-                await value.coroutine
+                try:
+                    await value.coroutine
+                except Exception as e:
+                    logger.error(f"Error occurred while processing timer with ID {key}: {type(e)} | {e}")
