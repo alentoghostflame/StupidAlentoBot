@@ -59,7 +59,9 @@ This section contains instructions on how to use the various helpers that the bo
     1) Caches are likely added and loaded here.
     2) Guild and User data are likely added here.
 4) Cogs are initialized.
-5) Save method for all modules is called.
+    1) Autosave loop is started but does not save on the first run.
+    2) Timer loop is started.
+5) Load method for all modules is called.
 6) Bot does final setup.
     1) Checks for Discord token. If not found, aborts running the bot.
     2) Changes prefix if changed in config.
@@ -146,4 +148,28 @@ class ExampleCog(commands.Cog, name="Example"):
         user_data.user_uses += 1
         await context.send(f"Example: Global uses `{self.cache.global_uses}`, Server uses {guild_data.guild_uses}, "
                            f"User uses: {user_data.user_uses}")
+```
+## Timers
+This is used to easily add not-very-accurate timed events to the bot. Roughly once a minute, the bot will loop through all the given timer events and check if they should be executed, so expect up to 1 minute of inaccuracy. No timer data is saved to disk.
+
+To make a timer, you must provide a unique identifier string (could be your module name + datetime the timer goes off), the datetime the coroutine should be run at, and a coroutine to execute.
+
+Example timer:
+
+```py
+from datetime import datetime, timedelta
+
+
+class TimerTestCog(commands.Cog):
+    def __init__(self, timer: TimerManager):
+        self.timer = timer
+
+    @commands.command(name="fivemintimer")
+    async def fivemintimer(self, context):
+        time_now = datetime.utcnow()
+        self.timer.add_timer(f"fivemintimer_{time_now}", time_now + timedelta(minutes=5),
+                             self.on_five_minute_timer(context))
+
+    async def on_five_minute_timer(self, context):
+        await context.send("It's been roughly 5 minutes!")
 ```
