@@ -7,7 +7,8 @@ import discord
 import re
 
 RE_ALNUM = re.compile("^([\\w\\s\\'|*_`~]+)")
-RE_FIND_IM = re.compile("(?:[\\s\\W]|[_*`~|]|^)((?:i\\'?m)|(?:i am)|(?:imma))(?:[\\s\\W]|[_*`~|]|^)")
+# RE_FIND_IM = re.compile("(?:[\\s\\W]|[_*`~|]|^)((?:i\\'?m)|(?:i am)|(?:imma))(?:[\\s\\W]|[_*`~|]|^)")
+RE_FIND_IM = re.compile("(?:[\\s\\W]|[_*`~|]|^)((?:i'?m)|(?:i am)|(?:imma))(?:[\\s\\W]|[_*`~|])")
 
 
 logger = logging.getLogger("main_bot")
@@ -23,7 +24,7 @@ class CalloutCog(commands.Cog, name="Misc Module"):
         callout_config = self._storage.guilds.get(message.guild.id, "callout_guild_config")
         await callout_fistbump.callout_fistbump(message)
         if callout_config.imdad and not message.author.bot:
-            if im_match := re.match(RE_FIND_IM, message.content.lower()):
+            if im_match := re.search(RE_FIND_IM, message.content.lower()):
                 if found_name := re.match(RE_ALNUM, message.content.lower()[im_match.end(0):]):
                     await message.channel.send(f"Hi {found_name.groups()[0].strip()}, {im_match[0].strip()} dad!")
 
