@@ -125,8 +125,7 @@ class ExampleGuildData:
 class ExampleModule(BaseModule):
     def __init__(self, *args):
         BaseModule.__init__(self, *args)
-        self.cache = ExampleCacheData(self.storage.config)
-        self.storage.caches.register_cache("example_cache_data", self.cache)
+        self.cache = self.storage.caches.register_cache("example_cache_data", self.cache)
         self.storage.guilds.register_data_name("example_guid_data", ExampleGuildData)
         self.storage.users.register_data_name("example_user_data", ExampleUserData)
         
