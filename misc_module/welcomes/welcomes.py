@@ -73,7 +73,11 @@ class WelcomeCog(commands.Cog, name="Welcome"):
                      brief=text.WELCOME_REMOVE_BRIEF)
     async def welcome_remove(self, context: commands.Context, index: int):
         welcome_config: WelcomeConfig = self.storage.guilds.get(context.guild.id, "welcome_config")
-        await welcome_control.remove_welcome(welcome_config, context, index)
+        if index > 0:
+            modified_index = index - 1
+        else:
+            modified_index = index
+        await welcome_control.remove_welcome(welcome_config, context, modified_index)
 
     @commands.guild_only()
     @commands.has_permissions(administrator=True)
