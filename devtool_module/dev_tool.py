@@ -42,7 +42,7 @@ class DevToolCog(commands.Cog, name="Dev Tools"):
     async def dev_msg(self, context: commands.Context, message_id: int):
         if message := await context.fetch_message(message_id):
             logger.info(message.content)
-            await context.send(f"```{message.content}```")
+            await context.send(f"```{message.content.replace('```', '``​`​')}```")
 
     @commands.is_owner()
     @dev.command(name="say", brief="Repeats the message you give.")
