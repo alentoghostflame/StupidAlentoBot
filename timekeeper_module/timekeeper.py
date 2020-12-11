@@ -1,7 +1,7 @@
 from alento_bot import StorageManager, BaseModule, TimerManager, error_handler, user_data_transformer, cache_transformer
 from discord.ext import commands
 from datetime import datetime, timedelta
-from typing import Dict, Optional, Set, List
+from typing import Optional, Set, List
 import logging
 import discord
 import re
@@ -10,7 +10,7 @@ import re
 RE_PROPER_TIME = re.compile("^[:\\d]+$")
 TIMERKEEPER_UUID = "TimerKeeper_"
 LARGE_TIME_FORMAT = "%a %b %-d %Y, %I:%M:%S %p %Z"
-COMPACT_TIME_FORMAT = "%d/%M/%Y %H:%M:S"
+COMPACT_TIME_FORMAT = "%d/%M/%Y %H:%M:%S"
 
 
 logger = logging.getLogger("main_bot")
@@ -25,13 +25,14 @@ class TimeKeeperCache:
 @user_data_transformer(name="timekeeper_data")
 class TimerUserData:
     def __init__(self):
-        self.timers: Dict[datetime, str] = dict()
+        self.timers: List[dict] = list()
 
-    def get_timestrfmt_list(self, time_format: str = None) -> List[str]:
-        if time_format:
-            return [timer_time.strftime(time_format) for timer_time in self.timers]
+    def get_time_list(self, messages: bool = True) -> List[str]:
+        if messages:
+            return [f"`{index + 1}. {timer['time'].strftime(COMPACT_TIME_FORMAT)}`: "
+                    f"{timer['message'][:16]}" for index, timer in enumerate(self.timers)]
         else:
-            return list(str(timer_time) for timer_time in self.timers)
+            return [f"`{index + 1}. {timer['time'].strftime(COMPACT_TIME_FORMAT)}`" for index, timer in self.timers]
 
 
 class TimekeeperModule(BaseModule):
@@ -56,9 +57,16 @@ class TimekeeperCog(commands.Cog, name="Timekeeper"):
             self.first_on_ready = False
             for user_id in self.cache.tracked_users:
                 user_data: TimerUserData = self.storage.users.get(user_id, "timekeeper_data")
-                for timer_time in user_data.timers:
-                    self.timer.add_timer(TIMERKEEPER_UUID + str(timer_time), timer_time,
-                                         self.on_timer_finish(user_id, timer_time))
+
+                # if isinstance(user_data.timers, dict):
+                #     dict_timers = user_data.timers.copy()
+                #     user_data.timers = list()
+                #     for timer_time, msg in dict_timers.items():
+                #         user_data.timers.append({"time": timer_time, "message": msg})
+
+                for timer in user_data.timers:
+                    self.timer.add_timer(TIMERKEEPER_UUID + str(timer["time"]), timer["time"],
+                                         self.on_timer_finish(user_id, timer))
 
     @commands.command(name="time", brief="Gives current time in the bot time.")
     async def time(self, context: commands.Context):
@@ -80,11 +88,11 @@ class TimekeeperCog(commands.Cog, name="Timekeeper"):
 
             self.cache.tracked_users.add(context.author.id)
             user_data: TimerUserData = self.storage.users.get(context.author.id, "timekeeper_data")
-            user_data.timers[timer_time] = message_text
+            user_data.timers.append({"time": timer_time, "message": message_text})
             self.timer.add_timer(TIMERKEEPER_UUID + str(timer_time), timer_time,
-                                 self.on_timer_finish(context.author.id, timer_time))
+                                 self.on_timer_finish(context.author.id, {"time": timer_time, "message": message_text}))
 
-            await context.send(f"Timer set for {timer_time.strftime(LARGE_TIME_FORMAT)} with message "
+            await context.send(f"Timer set for {timer_time.strftime(LARGE_TIME_FORMAT)}UTC with message "
                                f"\"{message_text}\"")
         else:
             await context.send("Invalid time format, should be `days:hours:minutes` but with numbers.")
@@ -95,30 +103,56 @@ class TimekeeperCog(commands.Cog, name="Timekeeper"):
                               description="Keep in mind that all times listed are in UTC.")
         user_data: TimerUserData = self.storage.users.get(context.author.id, "timekeeper_data")
 
-        if timer_times := user_data.get_timestrfmt_list(COMPACT_TIME_FORMAT):
+        if timer_times := user_data.get_time_list():
             embed.add_field(name="Timers", value="\n".join(timer_times))
         else:
             embed.add_field(name="Timers", value="None")
 
         await context.send(embed=embed)
 
+    @timer.command("cancel", aliases=["rm"], brief="Cancels the timer at the given index.")
+    async def timer_cancel(self, context: commands.Context, index: int):
+        user_data: TimerUserData = self.storage.users.get(context.author.id, "timekeeper_data")
+        if user_data.timers:
+            if -len(user_data.timers) <= index <= len(user_data.timers):
+                if index > 0:
+                    index -= 1
+                timer = user_data.timers.pop(index)
+                self.timer.rm_timer(TIMERKEEPER_UUID + str(timer["time"]))
+                await context.send(f"Removed timer `{timer['time'].strftime(COMPACT_TIME_FORMAT)}`: "
+                                   f"{timer['message'][:16]}")
+            else:
+                await context.send("Given index is out of bounds.")
+        else:
+            await context.send("You have no timers to cancel.")
+
     @timer.error
+    @time.error
+    @timeutc.error
+    @timer_info.error
     async def on_error(self, context: commands.Context, exception: Exception):
         await error_handler(context, exception)
 
-    async def on_timer_finish(self, user_id: int, timer_time: datetime):
-        user_data: TimerUserData = self.storage.users.get(user_id, "timekeeper_data")
-        if (timer_message := user_data.timers.pop(timer_time, None)) is None:
-            logger.warning(f"Desync, user {user_id} had a timer start for them, but it isn't in their data? "
-                           f"What's going on?")
+    @timer_cancel.error
+    async def on_number_error(self, context: commands.Context, exception: Exception):
+        if isinstance(exception, commands.BadArgument):
+            await context.send("You need to specify a number.")
         else:
-            if user := self.bot.get_user(user_id):
-                if not (channel := user.dm_channel):
-                    channel = await user.create_dm()
-                await channel.send(f"Timer Expired: {timer_message}")
+            await error_handler(context, exception)
 
+    async def on_timer_finish(self, user_id: int, timer: dict):
+        user_data: TimerUserData = self.storage.users.get(user_id, "timekeeper_data")
+        if timer in user_data.timers:
+            user_data.timers.remove(timer)
+            if user := self.bot.get_user(user_id):
+                if not user.dm_channel:
+                    await user.create_dm()
+                await user.dm_channel.send(f"Timer Expired: {timer['message']}")
             else:
                 logger.debug(f"Timer for user ID {user_id} finished, but couldn't get user.")
+        else:
+            logger.warning(f"Desync, user {user_id} had a timer start for them, but it isn't in their data? "
+                           f"What's going on?")
         if not user_data.timers:
             if user_id in self.cache.tracked_users:
                 self.cache.tracked_users.remove(user_id)
