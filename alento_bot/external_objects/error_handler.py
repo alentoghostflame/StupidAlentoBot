@@ -16,8 +16,8 @@ async def error_handler(context: commands.Context, exception: Exception, raise_e
     elif isinstance(exception, commands.NotOwner):
         await context.send("You are not the owner.")
     elif raise_exception:
-        await context.send(f"Critical error occurred, {type(exception)} {exception}")
-        logger.error(f"Critical error occurred, {type(exception)} {exception}")
+        await context.send(f"Unhandled error occurred, {type(exception)} {exception}")
+        logger.error(f"Unhandled error occurred, {type(exception)} {exception}")
         raise exception
     else:
         return False
