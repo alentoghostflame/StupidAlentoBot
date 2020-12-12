@@ -32,7 +32,8 @@ class TimerUserData:
             return [f"`{index + 1}. {timer['time'].strftime(COMPACT_TIME_FORMAT)}`: "
                     f"{timer['message'][:16]}" for index, timer in enumerate(self.timers)]
         else:
-            return [f"`{index + 1}. {timer['time'].strftime(COMPACT_TIME_FORMAT)}`" for index, timer in self.timers]
+            return [f"`{index + 1}. {timer['time'].strftime(COMPACT_TIME_FORMAT)}`"
+                    for index, timer in enumerate(self.timers)]
 
 
 class TimekeeperModule(BaseModule):
@@ -58,11 +59,11 @@ class TimekeeperCog(commands.Cog, name="Timekeeper"):
             for user_id in self.cache.tracked_users:
                 user_data: TimerUserData = self.storage.users.get(user_id, "timekeeper_data")
 
-                # if isinstance(user_data.timers, dict):
-                #     dict_timers = user_data.timers.copy()
-                #     user_data.timers = list()
-                #     for timer_time, msg in dict_timers.items():
-                #         user_data.timers.append({"time": timer_time, "message": msg})
+                if isinstance(user_data.timers, dict):
+                    dict_timers = user_data.timers.copy()
+                    user_data.timers = list()
+                    for timer_time, msg in dict_timers.items():
+                        user_data.timers.append({"time": timer_time, "message": msg})
 
                 for timer in user_data.timers:
                     self.timer.add_timer(TIMERKEEPER_UUID + str(timer["time"]), timer["time"],
