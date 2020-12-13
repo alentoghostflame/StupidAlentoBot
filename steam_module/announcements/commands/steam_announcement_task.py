@@ -1,4 +1,4 @@
-from misc_module.storage import SteamAnnouncementConfig, SteamAnnouncementCache
+from steam_module.announcements.steam_announcement_data import SteamAnnouncementConfig, SteamAnnouncementCache
 # from misc_module.steam_announcements.commands import text
 from alento_bot import StorageManager
 from discord.ext import commands

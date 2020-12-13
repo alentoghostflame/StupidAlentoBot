@@ -1,5 +1,5 @@
-from misc_module.steam_announcements.commands import text
-from misc_module.storage import SteamAnnouncementConfig
+from steam_module.announcements.commands import text
+from steam_module.announcements.steam_announcement_data import SteamAnnouncementConfig
 from discord.ext import commands
 import logging
 import discord

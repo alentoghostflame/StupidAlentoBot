@@ -1,2 +1,1 @@
-from misc_module.storage.steam_announcement_data import SteamAnnouncementConfig, SteamAnnouncementCache
 from misc_module.storage.welcome_data import WelcomeConfig

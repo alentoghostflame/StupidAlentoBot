@@ -1,7 +1,6 @@
-from misc_module.steam_announcements.commands import announcement_checker
-from misc_module.steam_announcements.commands import steam_commands
-from misc_module.storage import SteamAnnouncementConfig, SteamAnnouncementCache
-from misc_module.steam_announcements import text
+from steam_module.announcements.commands import announcement_checker, steam_commands
+from steam_module.announcements.steam_announcement_data import SteamAnnouncementConfig, SteamAnnouncementCache
+from steam_module.announcements import text
 from discord.ext import commands, tasks
 from discord.ext.commands.errors import MissingRequiredArgument, BadArgument
 from alento_bot import StorageManager
