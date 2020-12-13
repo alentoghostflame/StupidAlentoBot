@@ -26,7 +26,7 @@ class MiscModule(BaseModule):
         self.add_cog(MiscCog())
 
 
-class MiscCog(commands.Cog, name="Misc", brief="Miscellaneous commands."):
+class MiscCog(commands.Cog, name="Misc"):
     def __init__(self):
         pass
 
