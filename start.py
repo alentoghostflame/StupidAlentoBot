@@ -10,6 +10,7 @@ from example_module import ExampleModule
 # from self_roles_module import SelfRoleModule
 # from mmo_module import MMOModule
 # from mudaemod_module import MudaeModModule
+# from steam_module import SteamModule
 
 
 import logging
@@ -24,15 +25,16 @@ try:
     discord_bot.add_module(CoreModule)
     discord_bot.add_module(DevToolModule)
     discord_bot.add_module(ExampleModule)
+    # discord_bot.add_module(TimekeeperModule)
     # discord_bot.add_module(ModeratorModule)
     # discord_bot.add_module(EVEModule)
-    # discord_bot.add_module(FAQModule)
+    # iscord_bot.add_module(FAQModule)
     # discord_bot.add_module(MiscModule)
     # discord_bot.add_module(Misc2Module)
     # discord_bot.add_module(SelfRoleModule)
     # discord_bot.add_module(MMOModule)
     # discord_bot.add_module(MudaeModModule)
-    # discord_bot.add_module(TimekeeperModule)
+    # discord_bot.add_module(SteamModule)
 
     discord_bot.init_modules()
     discord_bot.init_cogs()
