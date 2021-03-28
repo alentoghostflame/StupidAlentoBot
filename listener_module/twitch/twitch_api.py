@@ -201,7 +201,7 @@ class TwitchAPI:
                 for user_data in new_data:
                     self._apply_user_data(user_data)
                 ret.extend(new_data)
-                return ret
+            return ret
         else:
             ret = await self._fetch_user_data(names, ids)
             for user_data in ret:
