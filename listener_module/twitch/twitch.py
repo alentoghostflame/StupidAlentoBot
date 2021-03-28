@@ -8,6 +8,10 @@ import discord
 import logging
 
 
+# TODO: Unhandled error occurred, <class 'discord.ext.commands.errors.CommandInvokeError'> Command raised an exception: AttributeError: 'NoneType' object has no attribute 'get_user_data'
+# Without the config filled out, certain commands are getting through.
+
+
 TOKEN_URL = "https://id.twitch.tv/oauth2/token"
 
 
@@ -78,6 +82,7 @@ class TwitchCog(commands.Cog, name="Listeners"):
     @commands.Cog.listener()
     async def on_ready(self):
         if self.config.client_id and self.config.client_secret:
+            # TODO: Actually make errors related to this appear when trying to activate twitch.
             self.api = TwitchAPI(self.session, self.config.client_id, self.config.client_secret)
             self.twitch_checker.start()
         else:

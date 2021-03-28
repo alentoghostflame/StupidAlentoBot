@@ -111,7 +111,9 @@ class TwitchAPI:
         return self._app_token
 
     async def get_stream_data(self, streamer_ids: List[int]) -> List[TwitchStreamData]:
-        if len(streamer_ids) <= 100:
+        if not streamer_ids:
+            return list()
+        elif len(streamer_ids) <= 100:
             url = HELIX_STREAMS_URL
             headers = {"Authorization": f"Bearer {await self.get_app_token()}", "Client-Id": self._id}
             params = [("user_id", user_id) for user_id in streamer_ids]
