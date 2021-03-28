@@ -11,6 +11,9 @@ import discord
 logger = logging.getLogger("main_bot")
 
 
+# TODO: Update logging to latest standards, have feature parity of Sx4.
+
+
 class GuildLoggingCog(commands.Cog, name="Logging"):
     def __init__(self, storage: StorageManager):
         self.storage: StorageManager = storage

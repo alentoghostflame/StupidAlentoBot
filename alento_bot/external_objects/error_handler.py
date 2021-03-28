@@ -15,6 +15,10 @@ async def error_handler(context: commands.Context, exception: Exception, raise_e
         return True
     elif isinstance(exception, commands.NotOwner):
         await context.send("You are not the owner.")
+    elif isinstance(exception, commands.RoleNotFound):
+        await context.send("Role not found.")
+    elif isinstance(exception, commands.MissingRequiredArgument):
+        await context.send_help(context.command)
     elif raise_exception:
         await context.send(f"Unhandled error occurred, {type(exception)} {exception}")
         logger.error(f"Unhandled error occurred, {type(exception)} {exception}")

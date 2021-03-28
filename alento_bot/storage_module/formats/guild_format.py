@@ -9,11 +9,6 @@ logger = logging.getLogger("main_bot")
 
 
 class GuildClass:
-    # def __init__(self, config: ConfigData, data_name: str, guild_id: int):
-    #     self._config: ConfigData = config
-    #     self._data_name: str = data_name
-    #     self._guild_id: int = guild_id
-    #     self._loaded: bool = False
     def __init__(self, config: ConfigData, guild_id: int):
         self._config: ConfigData = config
         self._guild_id: int = guild_id

@@ -27,7 +27,7 @@ class AlentoHelpCommand(HelpCommand):
                 command_str += string_addon
                 if len(string_addon) > width:
                     width = len(string_addon)
-            if width > 40:
+            if width > 60:
                 embed.add_field(name=heading, value=command_str, inline=False)
             else:
                 embed.add_field(name=heading, value=command_str, inline=True)

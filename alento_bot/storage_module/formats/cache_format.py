@@ -9,11 +9,6 @@ logger = logging.getLogger("main_bot")
 
 
 class BaseCache:
-    # def __init__(self, config: ConfigData, data_name: str, save_on_exit: bool = True):
-    #     self._config: ConfigData = config
-    #     self._data_name: str = data_name
-    #     self._save_on_exit: bool = save_on_exit
-    #     self._loaded: bool = False
     def __init__(self, config: ConfigData):
         self._config: ConfigData = config
         self._from_disk: bool = False
@@ -33,23 +28,16 @@ class BaseCache:
 
     def save(self, exiting: bool = False):
         if not exiting or (exiting and self._save_on_exit):
-            # logger.debug("Saving cache {}".format(self._file_name))
-
-            # cache_location = "{}/cache/{}.yaml".format(self._config.data_folder_path, self._file_name)
             cache_location = f"{self._config.data_folder_path}/cache/{self._data_name}.yaml"
             logger.debug(f"Saving cache data for {cache_location}...")
             file = open(cache_location, "w")
             yaml.safe_dump(self.to_dict(), file)
             file.close()
-            # logger.debug("Saved {}".format(self._file_name))
             logger.debug("Saved.")
         else:
-            # logger.debug("Cache {} disabled save on exit, ignoring.".format(self._file_name))
             logger.debug(f"Cache {self._data_name} disabled saving on exit, ignoring.")
 
     def load(self):
-        # logger.debug("Loading cache {}".format(self._data_name))
-        # cache_location = "{}/cache/{}".format(self._config.data_folder_path, self._data_name)
         cache_location = f"{self._config.data_folder_path}/cache/{self._data_name}.yaml"
         if Path(cache_location).is_file():
             logger.debug(f"Found \"{cache_location}\" on disk, loading...")
@@ -58,10 +46,8 @@ class BaseCache:
             file.close()
             self.from_dict(state)
             self._from_disk = True
-            # logger.debug("Loaded {}".format(self._data_name))
             logger.debug("Loaded.")
         else:
-            # logger.debug("{} not on disk yet.".format(self._data_name))
             logger.debug(f"\"{cache_location}\" not on disk yet.")
 
     def from_dict(self, state: dict):
@@ -81,7 +67,6 @@ def cache_transformer(name: str = "default_cache_name", save_on_exit: bool = Tru
     def decorator(cls):
         class CacheWrapperClass(cls, BaseCache, name=name, save_on_exit=save_on_exit):
             def __init__(self, config: ConfigData, **kwargs):
-                # BaseCache.__init__(self, config, name, save_on_exit=save_on_exit)
                 BaseCache.__init__(self, config)
                 cls.__init__(self, **kwargs)
         return CacheWrapperClass

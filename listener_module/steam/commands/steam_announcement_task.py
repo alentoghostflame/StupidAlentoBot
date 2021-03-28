@@ -1,12 +1,14 @@
-from steam_module.announcements.steam_announcement_data import SteamAnnouncementConfig, SteamAnnouncementCache
+from listener_module.steam.steam_announcement_data import SteamAnnouncementConfig, SteamAnnouncementCache
 # from misc_module.steam_announcements.commands import text
 from alento_bot import StorageManager
 from discord.ext import commands
 from datetime import datetime
+from aiohttp import ClientSession
 import logging
 import discord
-import requests
+# import requests
 from json.decoder import JSONDecodeError
+
 # import typing
 # import re
 
@@ -21,7 +23,8 @@ logger = logging.getLogger("main_bot")
 BASE_STEAM_GET_NEWS_FOR_APP = "http://api.steampowered.com/ISteamNews/GetNewsForApp/v2/?appid={}&count=1&maxlength=200&format=json"
 
 
-async def announcement_checker(bot: commands.Bot, storage: StorageManager, steam_cache: SteamAnnouncementCache):
+async def announcement_checker(bot: commands.Bot, storage: StorageManager, steam_cache: SteamAnnouncementCache,
+                               session: ClientSession):
     # guild_ids = disk_storage.get_guild_ids()
     # for guild_id in guild_ids:
     #     guild_data = disk_storage.get_server(guild_id)
@@ -45,20 +48,24 @@ async def announcement_checker(bot: commands.Bot, storage: StorageManager, steam
                     if not steam_config.previous_announcement_ids.get(game_id, None):
                         # logger.warning("Previous announcement IDs didn't exist, creating.")
                         steam_config.previous_announcement_ids[game_id] = set()
-                    await process_server_game(steam_config, channel, game_id)
+                    await process_server_game(steam_config, session, channel, game_id)
 
 
 # async def process_server_game(guild_data: DiskServerData, channel: discord.TextChannel, game_id: int):
-async def process_server_game(steam_config: SteamAnnouncementConfig, channel: discord.TextChannel, game_id: int):
+async def process_server_game(steam_config: SteamAnnouncementConfig, session: ClientSession,
+                              channel: discord.TextChannel, game_id: int):
     # logger.info("RUNNING PROCESS SERVER GAME")
     # url = urllib.request.urlopen(BASE_STEAM_GET_NEWS_FOR_APP.format(game_id))
-    request = requests.get(BASE_STEAM_GET_NEWS_FOR_APP.format(game_id))
+    # request = requests.get(BASE_STEAM_GET_NEWS_FOR_APP.format(game_id))
+    response = await session.get(BASE_STEAM_GET_NEWS_FOR_APP.format(game_id))
     # full_data = json.loads(url.read().decode())
     try:
-        raw_json_data = request.json()
+        # raw_json_data = request.json()
+        raw_json_data = await response.json()
     except JSONDecodeError:
         raw_json_data = None
-    request.close()
+    # request.close()
+    response.close()
     # if full_data and full_data.get("appnews", None) and full_data["appnews"].get("newsitems", None) and \
     #         len(full_data["appnews"]["newsitems"]) > 0:
     if raw_json_data and len(raw_json_data.get("appnews", dict()).get("newsitems", list())) > 0:
@@ -76,17 +83,19 @@ async def process_server_game(steam_config: SteamAnnouncementConfig, channel: di
             # past_announce_ids.add(int(data["gid"]))
             # logger.debug("Added!")
             # await channel.send(embed=data_embed_creator(data))
-            await channel.send(embed=data_embed_creator(data))
+            await channel.send(embed=await data_embed_creator(session, data))
     else:
         await channel.send(f"Couldn't get announcement data for ID `{game_id}`, does it actually exist?")
 
 
-def data_embed_creator(data: dict) -> discord.Embed:
+async def data_embed_creator(session: ClientSession, data: dict) -> discord.Embed:
     # announcement_url = urllib.request.urlopen(data["url"])
-    announcement_url = requests.get(data["url"])
+    # announcement_url = requests.get(data["url"])
+    response = await session.get(data["url"])
     # announcement_data = announcement_url.read().decode()\
-    announcement_data = announcement_url.text
 
+    # announcement_data = announcement_url.text
+    announcement_data = await response.text()
     found_image = None
     for stuff in announcement_data.split("\n"):
         stripped_text = stuff.strip()
@@ -95,7 +104,8 @@ def data_embed_creator(data: dict) -> discord.Embed:
             if meta_tag.get("property", None) == "og:image":
                 found_image = meta_reader(stripped_text).get("content", None)
                 # logger.debug("Found image for game.")
-    return announcement_embed_creator(data, announcement_url.url, found_image)
+    # return announcement_embed_creator(data, announcement_url.url, found_image)
+    return announcement_embed_creator(data, str(response.url), found_image)
 
 
 def meta_reader(given_text):

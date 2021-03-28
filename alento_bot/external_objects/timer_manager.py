@@ -19,6 +19,8 @@ class TimerManager:
     def add_timer(self, uuid: Hashable, time: datetime, coroutine: Coroutine):
         if uuid in self._timer_storage:
             raise ValueError(f"Tried to add a timer, but UUID {uuid} was already there!")
+        elif not isinstance(time, datetime):
+            raise ValueError("Given value isn't datetime!")
         else:
             self._timer_storage[uuid] = TimerData(time, coroutine)
 

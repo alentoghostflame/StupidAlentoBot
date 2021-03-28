@@ -8,7 +8,7 @@ import re
 
 RE_ALNUM = re.compile("^([\\w\\s\\'|*_`~]+)")
 # RE_FIND_IM = re.compile("(?:[\\s\\W]|[_*`~|]|^)((?:i\\'?m)|(?:i am)|(?:imma))(?:[\\s\\W]|[_*`~|]|^)")
-RE_FIND_IM = re.compile("(?:[\\s\\W]|[_*`~|]|^)((?:i'?m)|(?:i am)|(?:imma))(?:[\\s\\W]|[_*`~|])")
+RE_FIND_IM = re.compile("(?:[\\s\\W]|[_*`~|]|^)((?:i'?m)|(?:i am)|(?:imma)|(?:i’m))(?:[\\s\\W]|[_*`~|])")
 
 
 logger = logging.getLogger("main_bot")
@@ -93,7 +93,7 @@ class CalloutCog(commands.Cog, name="Misc Module"):
 
     @commands.guild_only()
     @commands.has_permissions(administrator=True)
-    @callout_imdad.command(name="enable", brief="")
+    @callout_imdad.command(name="enable", brief="Enables replying to \"I'm\"")
     async def callout_imdad_enable(self, context: commands.Context):
         callout_config = self._storage.guilds.get(context.guild.id, "callout_guild_config")
         if callout_config.imdad:
@@ -104,7 +104,7 @@ class CalloutCog(commands.Cog, name="Misc Module"):
 
     @commands.guild_only()
     @commands.has_permissions(administrator=True)
-    @callout_imdad.command(name="disable", brief="")
+    @callout_imdad.command(name="disable", brief="Disables replying to \"I'm\"")
     async def callout_imdad_disable(self, context: commands.Context):
         callout_config = self._storage.guilds.get(context.guild.id, "callout_guild_config")
         if callout_config.imdad:

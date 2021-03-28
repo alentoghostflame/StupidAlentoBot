@@ -2,7 +2,7 @@ from alento_bot import StupidAlentoBot, CoreModule
 from devtool_module import DevToolModule
 from example_module import ExampleModule
 # from timekeeper_module import TimekeeperModule
-# from moderation_module import ModeratorModule
+# from moderation_module import ModerationModule
 # from eve_module import EVEModule
 # from faq_module import FAQModule
 # from misc_module import MiscModule
@@ -10,7 +10,8 @@ from example_module import ExampleModule
 # from self_roles_module import SelfRoleModule
 # from mmo_module import MMOModule
 # from mudaemod_module import MudaeModModule
-# from steam_module import SteamModule
+# from battle_module import BattleModule
+# from listener_module import ListenerModule
 
 
 import logging
@@ -20,21 +21,23 @@ logger = logging.getLogger("main_bot")
 
 
 discord_bot = StupidAlentoBot()
+logger.setLevel(logging.DEBUG)
 
 try:
     discord_bot.add_module(CoreModule)
     discord_bot.add_module(DevToolModule)
     discord_bot.add_module(ExampleModule)
     # discord_bot.add_module(TimekeeperModule)
-    # discord_bot.add_module(ModeratorModule)
+    # discord_bot.add_module(ModerationModule)
     # discord_bot.add_module(EVEModule)
-    # iscord_bot.add_module(FAQModule)
+    # discord_bot.add_module(FAQModule)
     # discord_bot.add_module(MiscModule)
     # discord_bot.add_module(Misc2Module)
     # discord_bot.add_module(SelfRoleModule)
     # discord_bot.add_module(MMOModule)
     # discord_bot.add_module(MudaeModModule)
-    # discord_bot.add_module(SteamModule)
+    # discord_bot.add_module(BattleModule)
+    # discord_bot.add_module(ListenerModule)
 
     discord_bot.init_modules()
     discord_bot.init_cogs()

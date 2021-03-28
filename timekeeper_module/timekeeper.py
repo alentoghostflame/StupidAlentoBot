@@ -10,7 +10,7 @@ import re
 RE_PROPER_TIME = re.compile("^[:\\d]+$")
 TIMERKEEPER_UUID = "TimerKeeper_"
 LARGE_TIME_FORMAT = "%a %b %-d %Y, %I:%M:%S %p %Z"
-COMPACT_TIME_FORMAT = "%d/%M/%Y %H:%M:%S"
+COMPACT_TIME_FORMAT = "%d/%-m/%Y %H:%M:%S"
 
 
 logger = logging.getLogger("main_bot")

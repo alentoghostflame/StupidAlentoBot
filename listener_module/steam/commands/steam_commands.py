@@ -1,5 +1,5 @@
-from steam_module.announcements.commands import text
-from steam_module.announcements.steam_announcement_data import SteamAnnouncementConfig
+from listener_module.steam.commands import text
+from listener_module.steam.steam_announcement_data import SteamAnnouncementConfig
 from discord.ext import commands
 import logging
 import discord
@@ -46,8 +46,8 @@ async def send_list_embed(steam_config: SteamAnnouncementConfig, context: comman
     if steam_config.tracked_game_ids:
         output_ids = ""
         for game_id in steam_config.tracked_game_ids:
-            output_ids += f"`{game_id}` \n"
-        embed.add_field(name="Tracked Game IDs", value=output_ids)
+            output_ids += f"`{game_id}`, "
+        embed.add_field(name="Tracked Game IDs", value=output_ids, inline=False)
     else:
         embed.add_field(name="Tracked Game IDs", value="None")
 

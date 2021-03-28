@@ -11,26 +11,6 @@ import re
 logger = logging.getLogger("main_bot")
 
 
-async def mod_control(guild_data: PunishmentConfig, context: commands.Context, arg1, arg2, arg3):
-    if arg1 not in ("warn", "mute", "list"):
-        await context.send(text.MOD_CONTROL_MISSING_ARG_1)
-    elif arg1 == "list":
-        await send_list_embed(guild_data, context)
-    elif arg2 not in ("add", "remove", "rm", "set"):
-        await context.send(text.MOD_CONTROL_MISSING_ARG_2.format(arg1))
-    elif not get_numbers(arg3):
-        await context.send(text.MOD_CONTROL_MISSING_ARG_3.format(arg1, arg2))
-    elif arg2 == "add":
-        await add_role(guild_data, context, arg1, arg3)
-    elif arg2 in ("remove", "rm"):
-        await remove_role(guild_data, context, arg1, arg3)
-    elif arg2 == "set":
-        await set_role(guild_data, context, arg1, arg3)
-    else:
-        await context.send(f"MOD_CONTROL: ALL ELIFS PASSED, YOU HAVE A HOLE SOMEWHERE! \"{arg1}\", "
-                           f"\"{arg2}\", \"{arg3}\". SEND THIS TO ALENTO GHOSTFLAME!")
-
-
 async def send_list_embed(punish_config: PunishmentConfig, context: commands.Context):
     embed = discord.Embed(title="Info")
     guild: discord.Guild = context.guild

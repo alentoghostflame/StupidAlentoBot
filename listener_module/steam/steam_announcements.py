@@ -1,17 +1,20 @@
-from steam_module.announcements.commands import announcement_checker, steam_commands
-from steam_module.announcements.steam_announcement_data import SteamAnnouncementConfig, SteamAnnouncementCache
-from steam_module.announcements import text
+from listener_module.steam.commands import announcement_checker, steam_commands
+from listener_module.steam.steam_announcement_data import SteamAnnouncementConfig, SteamAnnouncementCache
+from listener_module.steam import text
 from discord.ext import commands, tasks
 from discord.ext.commands.errors import MissingRequiredArgument, BadArgument
 from alento_bot import StorageManager
+from aiohttp import ClientSession
 import logging
 
 
 logger = logging.getLogger("main_bot")
 
 
-class SteamAnnouncementCog(commands.Cog, name="Steam Announcements"):
-    def __init__(self, bot: commands.Bot, storage: StorageManager, cache: SteamAnnouncementCache):
+class SteamAnnouncementCog(commands.Cog, name="Listeners"):
+    def __init__(self, bot: commands.Bot, storage: StorageManager, cache: SteamAnnouncementCache,
+                 session: ClientSession):
+        self.session = session
         self.storage: StorageManager = storage
         self.cache: SteamAnnouncementCache = cache
         self.bot: commands.Bot = bot
@@ -49,6 +52,7 @@ class SteamAnnouncementCog(commands.Cog, name="Steam Announcements"):
         else:
             steam_config.enabled = True
             await context.send(text.STEAM_ENABLED)
+        self.cache.tracked_guilds.add(context.guild.id)
 
     @commands.guild_only()
     @commands.has_permissions(administrator=True)
@@ -60,6 +64,7 @@ class SteamAnnouncementCog(commands.Cog, name="Steam Announcements"):
             await context.send(text.STEAM_DISABLED)
         else:
             await context.send(text.STEAM_DISABLED_ALREADY)
+        self.cache.tracked_guilds.discard(context.guild.id)
 
     @commands.guild_only()
     @commands.has_permissions(administrator=True)
@@ -91,9 +96,16 @@ class SteamAnnouncementCog(commands.Cog, name="Steam Announcements"):
         else:
             await context.send(text.STEAM_REMOVED_NOTHING)
 
+    @commands.guild_only()
+    @commands.has_permissions(administrator=True)
+    @steam.command(name="trigger", brief="Force an announcement immediately.")
+    async def steam_trigger(self, context: commands.Context):
+        await announcement_checker(self.bot, self.storage, self.cache, self.session)
+        await context.send("Triggered the Steam Announcement checker.")
+
     @tasks.loop(minutes=10)
     async def announcement_checker_loop(self):
-        await announcement_checker(self.bot, self.storage, self.cache)
+        await announcement_checker(self.bot, self.storage, self.cache, self.session)
 
     @steam_add.error
     @steam_remove.error
