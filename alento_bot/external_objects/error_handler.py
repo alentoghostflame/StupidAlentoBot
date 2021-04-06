@@ -9,10 +9,8 @@ logger = logging.getLogger("main_bot")
 async def error_handler(context: commands.Context, exception: Exception, raise_exception: bool = True) -> bool:
     if isinstance(exception, commands.MissingPermissions):
         await context.send(universal_text.ERROR_MISSING_PERMISSION)
-        return True
     elif isinstance(exception, commands.MissingRequiredArgument):
         await context.send_help(context.command)
-        return True
     elif isinstance(exception, commands.NotOwner):
         await context.send("You are not the owner.")
     elif isinstance(exception, commands.RoleNotFound):
@@ -25,4 +23,5 @@ async def error_handler(context: commands.Context, exception: Exception, raise_e
         raise exception
     else:
         return False
+    return True
 
