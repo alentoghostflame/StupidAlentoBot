@@ -1,7 +1,7 @@
 from faq_module.commands import faq_cmds, faq_on_message
 from faq_module.commands import text
 from faq_module.storage import FAQManager, FAQConfig
-from alento_bot import BaseModule, StorageManager, universal_text
+from alento_bot import BaseModule, StorageManager, universal_text, error_handler
 from discord.ext import commands
 from typing import Optional, Union
 import logging
@@ -35,7 +35,7 @@ class FAQCog(commands.Cog, name="FAQ"):
                                                                                    context.author):
             return True
         else:
-            raise NotAllowedOrAdmin
+            raise commands.MissingPermissions([])
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
@@ -122,18 +122,7 @@ class FAQCog(commands.Cog, name="FAQ"):
     @faq_role_add.error
     @faq_role_remove.error
     async def faq_error_handler(self, context: commands.Context, error: Exception):
-        if isinstance(error, commands.MissingRequiredArgument):
-            await context.send(text.MISSING_REQUIRED_ARGUMENT.format(error))
-        elif isinstance(error, commands.BadArgument):
-            await context.send(str(error))
-        elif isinstance(error, commands.NoPrivateMessage):
-            await context.send(text.NO_PRIVATE_MESSAGE)
-        elif isinstance(error, commands.MissingPermissions):
-            await context.send(text.USER_MISSING_ADMIN_PERMISSION)
-        else:
-            await context.send(f"A CRITICAL ERROR OCCURED:\n\n {type(error)}\n\n {error}\n\n"
-                               f"REPORT THIS TO SOMBRA/ALENTO GHOSTFLAME!")
-            raise error
+        await error_handler(context, error)
 
 
 
