@@ -12,7 +12,6 @@ class StorageManager:
         self._loaded: bool = False
         self._config_manager: ConfigManager = ConfigManager()
         self.config: ConfigData = self._config_manager.get_config()
-        self.create_folder_structure()
         self.caches = CacheManager(self.config)
         self.guilds: GuildManager = GuildManager(self.config)
         self.users: UserManager = UserManager(self.config)
@@ -27,6 +26,7 @@ class StorageManager:
     def load(self):
         logger.debug("Loading storage...")
         self._config_manager.load()
+        self.create_folder_structure()
         self.caches.load()
         self._loaded = True
         logger.debug("Storage loaded.")
