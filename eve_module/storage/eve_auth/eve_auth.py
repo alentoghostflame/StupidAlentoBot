@@ -29,7 +29,7 @@ class EVEAuthManager:
         self.set_up: bool = False
 
     def load(self):
-        if not self.eve_config.loaded() or not self.eve_config.refresh_token:
+        if not self.eve_config.from_disk or not self.eve_config.refresh_token:
             self.create_refresh_token_guide()
 
     def create_refresh_token_guide(self):
