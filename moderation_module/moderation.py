@@ -595,6 +595,7 @@ class NewPunishmentCog(commands.Cog, name="Moderation"):
             await context.send(universal_text.INVALID_SUBCOMMAND)
 
     @warn.error
+    @mute.error
     @mod.error
     @mod_info.error
     @mod_clear.error
