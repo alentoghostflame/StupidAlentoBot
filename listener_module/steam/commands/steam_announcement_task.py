@@ -44,7 +44,7 @@ async def announcement_checker(bot: commands.Bot, storage: StorageManager, steam
             channel = guild.get_channel(steam_config.announcement_channel_id)
             if channel:
                 # logger.info("Channel exists!")
-                for game_id in steam_config.tracked_game_ids.copy():
+                for game_id in set(steam_config.tracked_game_ids):
                     if not steam_config.previous_announcement_ids.get(game_id, None):
                         # logger.warning("Previous announcement IDs didn't exist, creating.")
                         steam_config.previous_announcement_ids[game_id] = set()

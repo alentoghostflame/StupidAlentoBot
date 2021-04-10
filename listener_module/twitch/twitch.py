@@ -188,7 +188,7 @@ class TwitchCog(commands.Cog, name="Listeners"):
         for guild_id in self.cache.tracked_servers:
             guild_config: TwitchGuildConfig = self.storage.guilds.get(guild_id, "twitch_config")
             guild: discord.Guild = self.bot.get_guild(guild_id)
-            if guild_config.enabled and guild_config.channel_id and \
+            if guild_config.enabled and guild_config.channel_id and guild and \
                     (channel := guild.get_channel(guild_config.channel_id)):
                 for streamer_id in guild_config.streamers:
                     if streamer_id not in send_streamer_to:

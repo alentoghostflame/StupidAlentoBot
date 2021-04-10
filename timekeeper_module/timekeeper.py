@@ -19,6 +19,7 @@ logger = logging.getLogger("main_bot")
 @cache_transformer(name="timekeeper_cache")
 class TimeKeeperCache:
     def __init__(self):
+        self._c_tracked_users = "Used to have the bot easily check which users to check timers for."
         self.tracked_users: Set[int] = set()
 
 
