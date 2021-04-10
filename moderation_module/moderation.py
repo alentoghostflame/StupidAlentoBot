@@ -215,13 +215,13 @@ class ModerationGuildData:
                         unwarned_users.add(user_id)
             elif mode == WARN_TIMER_MODE_RESET:
                 warn_end = self.get_warn_end_time_reset_mode(user_id)
-                if warn_end < time_now:
+                if warn_end and warn_end < time_now:
                     logger.debug(f"Removing warns")
                     self.warns[user_id].clear()
                     unwarned_users.add(user_id)
             elif mode == WARN_TIMER_MODE_ADD:
                 warn_end = self.get_warn_end_time_add_mode(user_id)
-                if warn_end < time_now:
+                if warn_end and warn_end < time_now:
                     self.warns[user_id].clear()
                     logger.debug(f"Removing warns.")
                     unwarned_users.add(user_id)
