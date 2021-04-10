@@ -72,7 +72,7 @@ class SaveLoadConfig:
         cur_index = index
         for key in source_dict:
             if isinstance(key, int):
-                logger.warning(f"Key {key} is int and not string?")
+                logger.warning(f"Key {key} is int and not string? Value is {source_dict[key]}")
             elif not key.startswith("_"):
                 if isinstance(source_dict[key], dict):
                     new_map = CommentedMap()
