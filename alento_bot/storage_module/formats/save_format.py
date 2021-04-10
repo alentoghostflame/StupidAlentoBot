@@ -3,6 +3,12 @@ from ruamel.yaml import YAML
 from ruamel.yaml.comments import CommentedMap
 
 
+import logging
+
+
+logger = logging.getLogger("main_bot")
+
+
 class SaveLoadConfig:
     """
     A class that will automatically take any non-protected variables and allow them to be saved to and loaded from disk.
@@ -65,7 +71,9 @@ class SaveLoadConfig:
         # my guest.
         cur_index = index
         for key in source_dict:
-            if not key.startswith("_"):
+            if isinstance(key, int):
+                logger.warning(f"Key {key} is int and not string?")
+            elif not key.startswith("_"):
                 if isinstance(source_dict[key], dict):
                     new_map = CommentedMap()
                     comment_map.insert(cur_index, key, new_map)
