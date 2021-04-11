@@ -74,13 +74,13 @@ class TwitchCog(commands.Cog, name="Listeners"):
         self.bot: commands.Bot = bot
         self.session = session
         self.api: Optional[TwitchAPI] = None
+
+    @commands.Cog.listener()
+    async def on_ready(self):
         if not self.config.client_id:
             logger.warning("client_id in twitch_config is empty, make an application and fill it out!")
         if not self.config.client_secret:
             logger.warning("client_secret in twitch_config is empty, make an application and fill it out!")
-
-    @commands.Cog.listener()
-    async def on_ready(self):
         if self.config.client_id and self.config.client_secret:
             # TODO: Actually make errors related to this appear when trying to activate twitch.
             self.api = TwitchAPI(self.session, self.config.client_id, self.config.client_secret)
