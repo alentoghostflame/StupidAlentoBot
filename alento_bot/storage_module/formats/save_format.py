@@ -32,6 +32,7 @@ class SaveLoadConfig:
 
     def save(self):
         self.pre_save()
+        logger.debug(f"Saving {self._data_path} to disk.")
         file = open(self._data_path, "w")
         self._yaml.dump(self._build_ruamel_map(), file)
         file.close()
@@ -41,6 +42,7 @@ class SaveLoadConfig:
         self.pre_load()
         file_location = self._data_path
         if Path(file_location).is_file():
+            logger.debug(f"Loading {self._data_path} from disk.")
             file = open(file_location, "r")
             state = self._yaml.load(file)
             file.close()
@@ -71,9 +73,7 @@ class SaveLoadConfig:
         # my guest.
         cur_index = index
         for key in source_dict:
-            if isinstance(key, int):
-                logger.warning(f"Key {key} is int and not string? Value is {source_dict[key]}")
-            elif not key.startswith("_"):
+            if not isinstance(key, str) or not key.startswith("_"):
                 if isinstance(source_dict[key], dict):
                     new_map = CommentedMap()
                     comment_map.insert(cur_index, key, new_map)
