@@ -5,7 +5,7 @@ multiple helpers for bot developers, and multiple modules for bot users.
 ## Requirements
 * Python 3.8+
 * discord.py
-* pyyaml
+* ruamel.yaml
 
 As of writing this, several discord.py dependencies do not have 3.9 wheels built for Windows. You are better off 
 specifically installing Python 3.8.x in that case
