@@ -54,7 +54,10 @@ class SaveLoadConfig:
     def _from_dict(self, state: dict):
         for key in state:
             if key in self.__dict__:
-                self.__dict__[key] = state[key]
+                if isinstance(state[key], CommentedMap):
+                    self.__dict__[key] = dict(state[key])
+                else:
+                    self.__dict__[key] = state[key]
 
     def to_dict(self) -> dict:
         output_dict = dict()
