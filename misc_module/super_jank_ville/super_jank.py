@@ -1,6 +1,7 @@
 from alento_bot import DiscordBot, StorageManager
 from discord.ext import commands, tasks
-import requests
+from aiohttp import ClientSession, ClientError
+# import requests
 import logging
 import discord
 
@@ -14,9 +15,10 @@ CURRENT_USERS_URL: str = "http://api.steampowered.com/ISteamUserStats/GetNumberO
 
 
 class SidebarStatusCog(commands.Cog, name="Sidebar Status Module"):
-    def __init__(self, bot: commands.Bot):
+    def __init__(self, bot: commands.Bot, session: ClientSession):
         self.bot: commands.Bot = bot
         self.last_player_count = 0
+        self.session = session
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -38,15 +40,17 @@ class SidebarStatusCog(commands.Cog, name="Sidebar Status Module"):
             current_user_category = get_category(guild, CURRENT_USERS_ID)
             try:
                 # url = urllib.request.urlopen(CURRENT_USERS_URL)
-                request = requests.get(CURRENT_USERS_URL)
+                # request = requests.get(CURRENT_USERS_URL)
+                request = await self.session.get(CURRENT_USERS_URL)
                 # data: dict = json.loads(url.read().decode())
-                data: dict = request.json()
+                data: dict = await request.json()
                 response: dict = data.get("response", dict())
                 player_count = response.get("player_count")
                 # url.close()
                 request.close()
             # except urllib.error.HTTPError:
-            except requests.exceptions.HTTPError:
+            # except requests.exceptions.HTTPError:
+            except ClientError:
                 player_count = None
 
             if player_count != self.last_player_count:
