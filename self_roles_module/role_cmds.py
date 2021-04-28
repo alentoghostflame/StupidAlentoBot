@@ -151,9 +151,9 @@ async def group_add(storage: StorageManager, context: commands.Context, keyword:
     if group_name not in guild_data.groups:
         await context.send(f"`{group_name}` is not a group.")
     elif keyword.lower() not in guild_data.roles:
-        await context.send(f"{keyword.lower()}` is not a keyword.")
+        await context.send(f"`{keyword.lower()}` is not a keyword.")
     elif keyword.lower() in guild_data.groups[group_name]:
-        await context.send(f"{keyword.lower()}` is already in that group!")
+        await context.send(f"`{keyword.lower()}` is already in that group!")
     else:
         guild_data.groups[group_name].append(keyword.lower())
         guild_data.groups[group_name].sort()
@@ -165,7 +165,7 @@ async def group_rm(storage: StorageManager, context: commands.Context, keyword: 
     if group_name not in guild_data.groups:
         await context.send(f"`{group_name}` is not a group.")
     elif keyword.lower() not in guild_data.groups[group_name]:
-        await context.send(f"{keyword.lower()}` is already not in that group!")
+        await context.send(f"`{keyword.lower()}` is already not in that group!")
     else:
         guild_data.groups[group_name].remove(keyword.lower())
         guild_data.groups[group_name].sort()
