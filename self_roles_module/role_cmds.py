@@ -1,4 +1,5 @@
 from self_roles_module.storage import RoleSelfAssignData
+from alento_bot import StorageManager
 from self_roles_module import text
 from discord.ext import commands
 import logging
@@ -98,6 +99,77 @@ async def remove_self_role(guild_data: RoleSelfAssignData, context: commands, ro
     else:
         guild_data.roles.pop(role_keyword.lower())
         await context.send(text.ROLE_REMOVE_SUCCESS.format(role_keyword.lower()))
+
+
+async def group_info(storage: StorageManager, context: commands.Context):
+    guild_data: RoleSelfAssignData = storage.guilds.get(context.guild.id, "self_roles_data")
+    if guild_data.groups:
+        for group_name in guild_data.groups:
+            embed = discord.Embed(title=f"{group_name}")
+            if guild_data.groups[group_name]:
+                # Is this dumb? Yes. Should it be in a for loop with an if elif else? Yes. Is this funny? Yes!
+                # temp_str = "\n".join([f"{keyword} | {'Removed?' if not (role_id := guild_data.roles.get(keyword, None)) else role.mention if (role := context.guild.get_role(guild_data.roles[keyword])) else role_id}"
+                #                       for keyword in guild_data.groups[group_name]])
+                # Fine, I'll not do that and instead do something sane-ish.
+                temp_list = list()
+                for keyword in guild_data.groups[group_name]:
+                    if not (role_id := guild_data.roles.get(keyword, None)):
+                        temp_list.append(f"{keyword} | Removed?")
+                    elif role := context.guild.get_role(role_id):
+                        temp_list.append(f"{keyword} | {role.mention}")
+                    else:
+                        temp_list.append(f"{keyword} | {role_id}")
+                temp_str = "\n".join(temp_list)
+            else:
+                temp_str = "None | None"
+            embed.add_field(name="Keyword | Role", value=temp_str, inline=False)
+            await context.send(embed=embed)
+    else:
+        await context.send("There are no groups to show info for.")
+
+
+async def group_create(storage: StorageManager, context: commands.Context, group_name: str):
+    guild_data: RoleSelfAssignData = storage.guilds.get(context.guild.id, "self_roles_data")
+    if group_name in guild_data.groups:
+        await context.send("There's already a group with that name!")
+    else:
+        guild_data.groups[group_name] = list()
+        await context.send(f"Group `{group_name}` created.")
+
+
+async def group_del(storage: StorageManager, context: commands.Context, group_name: str):
+    guild_data: RoleSelfAssignData = storage.guilds.get(context.guild.id, "self_roles_data")
+    if group_name not in guild_data.groups:
+        await context.send("There's not a group with that name!")
+    else:
+        guild_data.groups.pop(group_name)
+        await context.send(f"Group {group_name} deleted.")
+
+
+async def group_add(storage: StorageManager, context: commands.Context, keyword: str, group_name: str):
+    guild_data: RoleSelfAssignData = storage.guilds.get(context.guild.id, "self_roles_data")
+    if group_name not in guild_data.groups:
+        await context.send(f"`{group_name}` is not a group.")
+    elif keyword.lower() not in guild_data.roles:
+        await context.send(f"{keyword.lower()}` is not a keyword.")
+    elif keyword.lower() in guild_data.groups[group_name]:
+        await context.send(f"{keyword.lower()}` is already in that group!")
+    else:
+        guild_data.groups[group_name].append(keyword.lower())
+        guild_data.groups[group_name].sort()
+        await context.send(f"Keyword `{keyword.lower()}` added to group `{group_name}`.")
+
+
+async def group_rm(storage: StorageManager, context: commands.Context, keyword: str, group_name: str):
+    guild_data: RoleSelfAssignData = storage.guilds.get(context.guild.id, "self_roles_data")
+    if group_name not in guild_data.groups:
+        await context.send(f"`{group_name}` is not a group.")
+    elif keyword.lower() not in guild_data.groups[group_name]:
+        await context.send(f"{keyword.lower()}` is already not in that group!")
+    else:
+        guild_data.groups[group_name].remove(keyword.lower())
+        guild_data.groups[group_name].sort()
+        await context.send(f"Keyword `{keyword.lower()}` removed from group `{group_name}`.")
 
 
 def get_numbers(string: str) -> typing.Optional[int]:

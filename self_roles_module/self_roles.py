@@ -51,6 +51,43 @@ class SelfRoleCog(commands.Cog, name="Self Roles"):
         await role_cmds.send_list_embed(guild_data, context, role_keyword)
 
     @commands.guild_only()
+    @role.group(name="group", brief="Allows grouping of roles. Visual only.", invoke_without_command=True)
+    async def role_group(self, context: commands.Context, *subcommand):
+        if subcommand:
+            await context.send(universal_text.INVALID_SUBCOMMAND)
+        else:
+            await context.send_help(context.command)
+
+    @commands.guild_only()
+    @role_group.command(name="info", brief="Gives separate embeds for different groups of keywords.")
+    async def role_group_info(self, context: commands.Context):
+        await role_cmds.group_info(self.storage, context)
+
+    @commands.guild_only()
+    @commands.has_permissions(administrator=True)
+    @role_group.command(name="create", brief="Creates a new role group.")
+    async def role_group_create(self, context: commands.Context, group_name: str):
+        await role_cmds.group_create(self.storage, context, group_name)
+
+    @commands.guild_only()
+    @commands.has_permissions(administrator=True)
+    @role_group.command(name="del", brief="Deletes a role group.")
+    async def role_group_del(self, context: commands.Context, group_name: str):
+        await role_cmds.group_del(self.storage, context, group_name)
+
+    @commands.guild_only()
+    @commands.has_permissions(administrator=True)
+    @role_group.command(name="add", brief="Adds a keyword to an existing role group")
+    async def role_group_add(self, context: commands.Context, keyword: str, group_name: str):
+        await role_cmds.group_add(self.storage, context, keyword, group_name)
+
+    @commands.guild_only()
+    @commands.has_permissions(administrator=True)
+    @role_group.command(name="rm", brief="Removes a keyword from an existing role group.")
+    async def role_group_rm(self, context: commands.Context, keyword: str, group_name: str):
+        await role_cmds.group_rm(self.storage, context, keyword, group_name)
+
+    @commands.guild_only()
     @commands.has_permissions(administrator=True)
     @role.command(name="add", brief=text.ROLE_ADD_BRIEF)
     async def role_add(self, context: commands.Context, role_keyword: Optional[str],
@@ -150,6 +187,12 @@ class SelfRoleCog(commands.Cog, name="Self Roles"):
     @role_info.error
     @role_add.error
     @role_remove.error
+    @role_group.error
+    @role_group_info.error
+    @role_group_create.error
+    @role_group_del.error
+    @role_group_add.error
+    @role_group_rm.error
     @role_auto.error
     @role_auto_enable.error
     @role_auto_disable.error
