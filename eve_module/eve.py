@@ -26,20 +26,20 @@ class EVEModule(BaseModule):
         eve_manager_cache_location = f"{self.storage.config.data_folder_path}/cache"
         self.eve_manager = EVEManager(sde_path=self.eve_config.sde_location, cache_location=eve_manager_cache_location,
                                       use_aiohttp=True, session=self.session)
-        self.auth: EVEAuthManager = EVEAuthManager(self.storage)
+        self.auth: EVEAuthManager = EVEAuthManager(self.storage, self.session)
         self.user_auth: EVEUserAuthManager = EVEUserAuthManager(self.storage, self.session)
-        self.market = MarketManager(self.eve_config, self.auth, self.eve_manager)
+        self.market = MarketManager(self.eve_config, self.auth, self.eve_manager, self.session)
         self.planet_int = PlanetIntManager(self.storage, self.eve_config, self.user_auth, self.eve_manager,
                                            self.session)
-        self.add_cog(EVEMiscCog())
+        self.add_cog(EVEMiscCog(self.session))
         self.add_cog(EVEMarketCog(self.storage, self.eve_manager, self.market))
-        self.add_cog(EVEAuthCog(self.storage, self.user_auth))
+        self.add_cog(EVEAuthCog(self.storage, self.user_auth, self.auth))
         self.add_cog(EVEPlanetaryIntegrationCog(self.user_auth, self.eve_manager, self.planet_int))
         self.add_cog(EVEIndustryJobCog(self.user_auth, self.eve_manager))
         self.add_cog(LootHistoryCog(self.eve_manager, self.market))
 
     def load(self):
-        self.auth.load()
+        # self.auth.load()
         self.eve_manager.load()
         self.planet_int.load()
 

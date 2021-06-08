@@ -35,10 +35,10 @@ class EVEMarketCog(commands.Cog, name="EVEMarket"):
         self.market_refresh_structure_info.cancel()
         self.market_refresh_orders.cancel()
 
-    @commands.command(name="pricehistory", brief=text.PRICEHISTORY_BRIEF, aliases=["ph", ],
-                      usage=text.PRICEHISTORY_USAGE, require_var_positional=True)
-    async def pricehistory(self, context: commands.Context, *args):
-        await pricehistory.pricehistory(self.eve_manager, self.auto_complete_cache, context, *args)
+    @commands.command(name="ph", brief=text.PRICEHISTORY_BRIEF, usage=text.PRICEHISTORY_USAGE,
+                      require_var_positional=True)
+    async def price_history(self, context: commands.Context, *args):
+        await pricehistory.price_history(self.eve_manager, self.auto_complete_cache, context, *args)
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -54,7 +54,7 @@ class EVEMarketCog(commands.Cog, name="EVEMarket"):
         await self.market.refresh_structure_market_orders()
 
     @pricecheck.error
-    @pricehistory.error
+    @price_history.error
     async def on_error(self, context: commands.Context, error: Exception):
         if isinstance(error, commands.MissingRequiredArgument):
             await context.send_help(context.command)

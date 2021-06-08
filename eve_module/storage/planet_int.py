@@ -7,7 +7,7 @@ from datetime import datetime
 import logging
 import aiohttp
 import typing
-import yaml
+from ruamel.yaml import YAML
 
 
 logger = logging.getLogger("main_bot")
@@ -43,7 +43,7 @@ class SchematicManager:
         logger.debug("Loading EVE schematics from disk...")
         schematic_file_location = f"{self.eve_config.sde_location}/bsd/planetSchematics.yaml"
         schematic_file = open(schematic_file_location, "r")
-        raw_data = yaml.safe_load(schematic_file)
+        raw_data = YAML(typ="rt").load(schematic_file)
         schematic_file.close()
 
         for item in raw_data:

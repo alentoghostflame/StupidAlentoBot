@@ -1,6 +1,6 @@
 from eve_module.user_auth import text
 from alento_bot import StorageManager
-from eve_module.storage import EVEUserAuthManager
+from eve_module.storage import EVEUserAuthManager, EVEAuthManager
 from eve_module.user_auth import eve_auth
 from discord.ext import commands
 import logging
@@ -18,9 +18,14 @@ async def not_in_guild(context: commands.Context):
 
 
 class EVEAuthCog(commands.Cog, name="EVE Auth"):
-    def __init__(self, storage: StorageManager, user_auth: EVEUserAuthManager):
+    def __init__(self, storage: StorageManager, user_auth: EVEUserAuthManager, auth: EVEAuthManager):
         self.storage: StorageManager = storage
         self.user_auth: EVEUserAuthManager = user_auth
+        self.auth = auth
+
+    @commands.Cog.listener()
+    async def on_ready(self):
+        await self.auth.load()
 
     @commands.group(name="auth", brief=text.EVE_AUTH_CONTROL_BRIEF)
     @commands.check(not_in_guild)

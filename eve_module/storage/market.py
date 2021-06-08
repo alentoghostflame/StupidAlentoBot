@@ -1,7 +1,7 @@
 from evelib import EVEManager
 from eve_module.storage.eve_config import EVEConfig
 from eve_module.storage.eve_auth import EVEAuthManager
-import requests
+import aiohttp
 import logging
 import typing
 
@@ -10,10 +10,12 @@ logger = logging.getLogger("main_bot")
 
 
 class MarketManager:
-    def __init__(self, eve_config: EVEConfig, auth: EVEAuthManager, eve_manager: EVEManager):
+    def __init__(self, eve_config: EVEConfig, auth: EVEAuthManager, eve_manager: EVEManager,
+                 session: aiohttp.ClientSession):
         self.eve_config: EVEConfig = eve_config
         self.auth: EVEAuthManager = auth
         self.eve_manager = eve_manager
+        self.session = session
 
         self.tracked_structure_data: typing.Dict[int, dict] = dict()
         self.structure_market_data: typing.Dict[int, typing.List[dict]] = dict()
@@ -54,11 +56,11 @@ class MarketManager:
             self.tracked_structure_data[structure_id] = {"solar_system_id": raw_data.get("solar_system_id", 0),
                                                          "name": raw_data.get("name", "ERROR FORBIDDEN.")}
 
-    def get_structure_info(self, structure_id: int) -> dict:
-        base_url = "https://esi.evetech.net/latest/universe/structures/{}/"
-        token = self.auth.get_access_token()
-        raw_data = requests.get(url=base_url.format(structure_id), params={"token": token})
-        return raw_data.json()
+    # async def get_structure_info(self, structure_id: int) -> dict:
+    #     base_url = "https://esi.evetech.net/latest/universe/structures/{}/"
+    #     token = self.auth.get_access_token()
+    #     raw_data = await self.session.get(url=base_url.format(structure_id), params={"token": token})
+    #     return await raw_data.json()
 
     async def refresh_structure_market_orders(self):
         for structure_id in self.tracked_structure_data:

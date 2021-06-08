@@ -1,7 +1,7 @@
 from eve_module.storage.eve_config import EVEConfig
 from alento_bot import StorageManager
 import urllib.parse
-import requests
+import aiohttp
 import logging
 import typing
 import base64
@@ -23,20 +23,21 @@ ACCESS TOKEN IS WHAT YOU GET BY (RE)USING THE REFRESH TOKEN
 
 
 class EVEAuthManager:
-    def __init__(self, storage: StorageManager):
+    def __init__(self, storage: StorageManager, session: aiohttp.ClientSession):
         self.storage: StorageManager = storage
+        self.session = session
         self.eve_config: EVEConfig = self.storage.caches.get_cache("eve_config")
         self.set_up: bool = False
 
-    def load(self):
+    async def load(self):
         if not self.eve_config.from_disk or not self.eve_config.refresh_token:
-            self.create_refresh_token_guide()
+            await self.create_refresh_token_guide()
 
-    def create_refresh_token_guide(self):
+    async def create_refresh_token_guide(self):
         if not self.eve_config.auth_code and self.create_eve_auth_url_checks():
             self.create_eve_auth_url()
         elif self.eve_config.auth_code and not self.eve_config.refresh_token:
-            self.create_refresh_token()
+            await self.create_refresh_token()
 
     def create_eve_auth_url_checks(self) -> bool:
         passed_checks = True
@@ -75,8 +76,8 @@ class EVEAuthManager:
                     " URL. Look for \"?code=<code here>\" and paste that code in auth_code in the eve_config."
                     "".format(auth_url))
 
-    def create_refresh_token(self):
-        response_dict = self.fetch_refresh_token()
+    async def create_refresh_token(self):
+        response_dict = await self.fetch_refresh_token()
         if response_dict.get("error", "") == "invalid_request":
             logger.error("Failed to get access token: {}".format(response_dict.get("error_description",
                                                                                    "No description found??")))
@@ -88,16 +89,17 @@ class EVEAuthManager:
             # logger.critical("Unexpected response given:\n{}".format(response_dict))
             logger.critical(f"Unexpected response given:\n{response_dict}")
 
-    def fetch_refresh_token(self) -> typing.Optional[dict]:
+    async def fetch_refresh_token(self) -> typing.Optional[dict]:
         auth_key = base64.b64encode(bytes("{}:{}".format(self.eve_config.client_id,
                                                          self.eve_config.secret_key), "utf-8")).decode("utf-8")
         headers = {"Authorization": f"Basic {auth_key}", "Content-Type": "application/x-www-form-urlencoded",
                    "Host": "login.eveonline.com"}
         data_bits = {"grant_type": "authorization_code", "code": self.eve_config.auth_code}
-        response = requests.post(url="https://login.eveonline.com/oauth/token", headers=headers, data=data_bits)
-        return response.json()
+        response = await self.session.post(url="https://login.eveonline.com/oauth/token", headers=headers,
+                                           data=data_bits)
+        return await response.json()
 
-    def get_access_token(self) -> typing.Optional[str]:
+    async def get_access_token(self) -> typing.Optional[str]:
         if self.eve_config.refresh_token:
             auth_key = base64.b64encode(bytes("{}:{}".format(self.eve_config.client_id,
                                                              self.eve_config.secret_key), "utf-8")).decode("utf-8")
@@ -105,10 +107,12 @@ class EVEAuthManager:
                        "Content-Type": "application/x-www-form-urlencoded", "Host": "login.eveonline.com"}
             data_bits = {"grant_type": "refresh_token", "refresh_token": self.eve_config.refresh_token}
             # print(f"EVE_AUTH GET ACCESS TOKEN {data_bits}")
-            response = requests.post(url="https://login.eveonline.com/oauth/token", headers=headers, data=data_bits)
+            # response = requests.post(url="https://login.eveonline.com/oauth/token", headers=headers, data=data_bits)
+            response = await self.session.post(url="https://login.eveonline.com/oauth/token", headers=headers,
+                                               data=data_bits)
             # print(f'EVE_AUTH RESPONSE {response.json()}')
             if response.content:
-                return response.json().get("access_token", None)
+                return (await response.json()).get("access_token", None)
             else:
                 return None
         else:
