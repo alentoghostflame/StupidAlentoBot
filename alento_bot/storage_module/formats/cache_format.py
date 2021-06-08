@@ -1,6 +1,5 @@
 from alento_bot.storage_module.formats.save_format import SaveLoadConfig
 from alento_bot.storage_module.formats.config_format import ConfigData
-import warnings
 import logging
 
 
@@ -11,18 +10,13 @@ class BaseCache(SaveLoadConfig, path="you_shouldnt_see_this_cache.yaml"):
     def __init__(self, config: ConfigData):
         super().__init__()
         self._data_path = f"{config.data_folder_path}/cache/{self._name}.yaml"
-        # self._config = config
         self._from_disk: bool = False
 
     @classmethod
     def __init_subclass__(cls, name: str = "default_cache_name", save_on_exit: bool = True, **kwargs):
-        super().__init_subclass__(path="you_shouldnt_see_this.yaml")
+        super().__init_subclass__(path=name)
         cls._name = name
         cls._save_on_exit: bool = save_on_exit
-
-    def from_disk(self) -> bool:
-        warnings.warn("Depricated", DeprecationWarning)
-        return self._from_disk
 
     def save(self, exiting: bool = False):
         if not exiting or (exiting and self._save_on_exit):

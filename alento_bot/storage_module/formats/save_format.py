@@ -24,7 +24,7 @@ class SaveLoadConfig:
     @classmethod
     def __init_subclass__(cls, path: str, **kwargs):
         super().__init_subclass__(**kwargs)
-        cls._data_path: str = path
+        cls._data_path: str = path + ".yaml"
 
     @property
     def from_disk(self) -> bool:
@@ -85,9 +85,7 @@ class SaveLoadConfig:
                 else:
                     comment_map.insert(cur_index, key, source_dict[key])
                     cur_index += 1
-            # TODO: Change following if statement to use the walrus operator once 3.8+ becomes minimum.
-            key_comment = source_dict.get(f"_c_{key}", None)
-            if key_comment:
+            if key_comment := source_dict.get(f"_c_{key}", None):
                 comment_map.yaml_set_comment_before_after_key(key, key_comment, deepness * 4)
         return cur_index
 

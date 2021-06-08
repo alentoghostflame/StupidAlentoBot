@@ -1,7 +1,7 @@
 from alento_bot.storage_module.formats.save_format import config_file
 
 
-@config_file("config.yaml")
+@config_file("config")
 class ConfigData:
     def __init__(self):
         self._c_discord_command_prefix = "Character/symbol required to prefix all your commands with."
