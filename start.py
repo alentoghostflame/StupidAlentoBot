@@ -12,6 +12,7 @@ from example_module import ExampleModule
 # from mudaemod_module import MudaeModModule
 # from battle_module import BattleModule
 # from listener_module import ListenerModule
+# from dnd_module import DnDModule
 
 
 import logging
@@ -38,6 +39,7 @@ try:
     # discord_bot.add_module(MudaeModModule)
     # discord_bot.add_module(BattleModule)
     # discord_bot.add_module(ListenerModule)
+    # discord_bot.add_module(DnDModule)
 
     discord_bot.init_modules()
     discord_bot.init_cogs()
