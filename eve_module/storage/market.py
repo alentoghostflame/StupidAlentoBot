@@ -51,7 +51,7 @@ class MarketManager:
     async def refresh_structure_info(self):
         for structure_id in self.eve_config.tracked_structure_markets:
             # raw_data = self.get_structure_info(structure_id)
-            token = self.auth.get_access_token()
+            token = await self.auth.get_access_token()
             raw_data = await self.eve_manager.esi.universe.get_structure_info(structure_id, token)
             self.tracked_structure_data[structure_id] = {"solar_system_id": raw_data.get("solar_system_id", 0),
                                                          "name": raw_data.get("name", "ERROR FORBIDDEN.")}
@@ -64,7 +64,7 @@ class MarketManager:
 
     async def refresh_structure_market_orders(self):
         for structure_id in self.tracked_structure_data:
-            token = self.auth.get_access_token()
+            token = await self.auth.get_access_token()
             raw_market_data = await self.eve_manager.esi.market.get_structure_orders(structure_id, token)
             # raw_market_data = self.fetch_structure_market_data(structure_id)
             self.structure_market_data[structure_id] = raw_market_data
